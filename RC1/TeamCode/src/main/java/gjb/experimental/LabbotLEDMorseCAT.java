@@ -30,12 +30,14 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode;
+package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import gjb.utils.TimeChecker;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -74,7 +76,7 @@ public class LabbotLEDMorseCAT extends OpMode
         //  rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         loopCounter = 0;
         tc = new TimeChecker();
-        ao = hardwareMap.analogOutput.get("light_level");
+        ao = hardwareMap.analogOutput.get("ellie-read");
         alwaysLog("LED:  ao:" + ao);
         ao.setAnalogOutputMode((byte)0); // Voltage output
         MorseGenerator mg  = new MorseGenerator();

@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package gjb.utils;
 import java.lang.System;
 // History: September 2017 - JMJ - Created
 
-class TimeChecker {
+public class TimeChecker {
     long startMs;
     long[] times;
 
@@ -17,7 +17,7 @@ class TimeChecker {
 
     // Set the intervals  by specifying a list of durations, and also
     // a multiplicative scale factor to be applied to the durations.
-    void setTimesByDurations(int[] durations, int scaleFactor) {
+    public void setTimesByDurations(int[] durations, int scaleFactor) {
         reset();
         times = new long[durations.length];
         long prevTime = 0;
