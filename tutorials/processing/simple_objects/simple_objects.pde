@@ -20,6 +20,9 @@ class MyBox {
   // So, if there are two MyBox objects, then each will have it's own copy of these variables.
   int x = 0;
   int y = 0;
+  int r = 0;
+  int g = 0;
+  int b = 0;
 
   // Moves a particular box by the amount specified, but will
   // "roll over" if the box moves off screen.
@@ -27,10 +30,18 @@ class MyBox {
     x = (x + x1) % height; // height is the height of window - currently 800 (see setup() method below)
     y += y1;
     y = (y + y1) % width; // width is width of window
+    
+    if (x < 0) {
+      x = width;
+    }
+    if (y < 0) {
+      y = height;
+    }
   }
 
   // Draws a specific box on screen
   void drawMe() {
+    fill(r % 256, g % 256 , b % 256);
     rect(x, y, 20, 30);
   }
 }
@@ -39,21 +50,29 @@ class MyBox {
 
 // Create 2 objects, both of type MyBox, and assign them to 2 variables
 // (box1 and box2)
+int i = 3;
 MyBox box1 = new MyBox();
 MyBox box2 = new MyBox();
-
-
+MyBox box3 = new MyBox();
 
 void setup() {
   size(800, 800);
+  box3.x =  400;
+  box3.y = 400;
+  box1.r = 255;
+  box2.g = 255;
+  box3.b = 255;
 }
 
 // Remember that draw method is called many times per second
 void draw() {
   // Uncomment the following line to remove the "trails" of past items drawn
-  //background(128);
+  background(160, 32, 240);
   box1.drawMe(); // Draws one object -  box1
   box2.drawMe(); // Draws a different object - box2 this time
-  box1.moveBy(2, 3); // Move box1 slightly
-  box2.moveBy(1,1);  // Move box2 slightly, but a DIFFERENT amount than box1
+  box1.moveBy(2, -3); // Move box1 slightly
+  box2.moveBy(-1,1);  // Move box2 slightly, but a DIFFERENT amount than box1
+  
+  box3.drawMe();
+  box3.moveBy(4, 4);
 }
