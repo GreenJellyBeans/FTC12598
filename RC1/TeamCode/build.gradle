@@ -9,7 +9,22 @@
 // before doing so.
 
 
-// Custom definitions may go here
-
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+
+// Custom definitions may go here
+// JMU: IMPORTANT that the custom declarations go AFTER the above line,
+// You get an error when performing "Sync project with Gradle Files these
+// lines are ABOVE the "apply" statement above.
+
+// This one added by JMJ so that the junit Jar is found online, based on
+// suggestions from Stack Overflow. Without this, junit was not being resolved.
+repositories {
+    maven { url 'http://repo1.maven.org/maven2' }
+}
+
+// This one was added by Android Studio when JMJ typed CTRL-SHIFT-T on the first class to unit test to a
+// Junit4 unit test..
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
