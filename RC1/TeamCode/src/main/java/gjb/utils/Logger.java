@@ -44,17 +44,17 @@ public class Logger {
         }
 
         @Override
-        public void crit(String msgType, String s) {
+        public void pri1(String msgType, String s) {
             rawLog("0", "CRIT", msgType, s);
         }
 
         @Override
-        public void info(String msgType, String s) {
+        public void pri2(String msgType, String s) {
             rawLog("0", "INFO", msgType, s);
         }
 
         @Override
-        public void verb(String msgType, String s) {
+        public void pri3(String msgType, String s) {
             rawLog("0", "VERB", msgType, s);
         }
 
@@ -69,30 +69,30 @@ public class Logger {
         }
 
         @Override
-        public void crit(String s) {
-            crit(OTHER, s);
+        public void pri1(String s) {
+            pri1(OTHER, s);
         }
 
         @Override
-        public void info(String s) {
-            info(OTHER, s);
+        public void pri2(String s) {
+            pri2(OTHER, s);
         }
 
         @Override
-        public void verb(String s) {
-            verb(OTHER, s);
+        public void pri3(String s) {
+            pri3(OTHER, s);
         }
 
         @Override
         public void pause() {
-            crit(LOGGER, "Logging paused.");
+            pri1(LOGGER, "Logging paused.");
             enabled = false;
         }
 
         @Override
         public void resume() {
             enabled = true;
-            crit(LOGGER, "Logging resumed.");
+            pri1(LOGGER, "Logging resumed.");
         }
 
         @Override
@@ -182,7 +182,7 @@ public class Logger {
         this.sessionStarted = true;
         seqNo.set(0); // First logged sequence number in the session is 1.
         LoggingInterface rootLog = getRootLog();
-        rootLog.crit(LoggingInterface.LOGGER, "Session started.");
+        rootLog.pri1(LoggingInterface.LOGGER, "Session started.");
     }
 
     // Caller must encure no other thread attempts to log concurrently
@@ -191,7 +191,7 @@ public class Logger {
     public synchronized void endSession() {
         assert(this.sessionStarted);
         LoggingInterface rootLog = getRootLog();
-        rootLog.crit(LoggingInterface.LOGGER, "Session stopped.");
+        rootLog.pri1(LoggingInterface.LOGGER, "Session stopped.");
         this.sessionStarted = false;
         env.fsFlush();
         env.fsCloseLog();

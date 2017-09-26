@@ -1,7 +1,6 @@
 package gjb.utils;
 import org.junit.*;
 import gjb.interfaces.LoggingInterface;
-import static org.junit.Assert.*;
 
 /**
  * Created by josephj on 9/25/2017.
@@ -35,7 +34,7 @@ public class LoggerTest {
         System.out.println("rawLogTest...");
         testLogger.beginSession("raw log session");
         LoggingInterface rootLog = testLogger.getRootLog();
-        rootLog.crit("Hi there!");
+        rootLog.pri1("Hi there!");
         testLogger.endSession();
     }
 
