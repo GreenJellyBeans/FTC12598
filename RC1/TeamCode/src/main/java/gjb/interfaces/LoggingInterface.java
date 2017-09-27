@@ -12,7 +12,7 @@ public interface LoggingInterface {
     final String TIMESTAMP = "_ts";
     final String COMPONENT = "_co";
     final String PRI = "_pri"; // Priority: 0/1/2
-    final String SEV = "_sev"; // Severity: ERR/WARN/CRIT/INFO/VERB
+    final String CAT = "_cat"; // CATEGORY: ERR/WARN/INFO
     final String TYPE = "_ty"; // Message type
 
     //
