@@ -48,6 +48,7 @@ public class MockHardwareLookup implements HardwareLookupInterface {
         }
     }
 
+
     @Override
     public AnalogInput getAnalogInput(String name) {
         return analogInputs.get(name);

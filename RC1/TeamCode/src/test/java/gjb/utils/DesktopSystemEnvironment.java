@@ -1,10 +1,11 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/25/2017.
+ */
 package gjb.utils;
 
 import gjb.interfaces.SystemEnvironmentInterface;
 
-/**
- * Created by josephj on 9/25/2017.
- */
+
 // Implements access to various system support functions whose implementation is specific to
 //    the Android OS
 public class DesktopSystemEnvironment implements SystemEnvironmentInterface {

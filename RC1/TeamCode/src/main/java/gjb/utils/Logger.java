@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/24/2017.
+ */
 package gjb.utils;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -5,9 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.SystemEnvironmentInterface;
 
-/**
- * Created by FTC12598, FRC1899 mentor josephj on 9/24/2017.
- */
 
 public class Logger {
     final String PRI0 = "0"; // Tag indicating pri0

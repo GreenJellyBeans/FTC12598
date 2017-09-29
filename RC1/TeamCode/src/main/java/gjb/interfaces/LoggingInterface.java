@@ -1,8 +1,9 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/24/2017.
+ */
 package gjb.interfaces;
 
-/**
- * Created by josephj on 9/24/2017.
- */
+
 
 public interface LoggingInterface {
     // These are reserved key names - don't use them for generating key-value

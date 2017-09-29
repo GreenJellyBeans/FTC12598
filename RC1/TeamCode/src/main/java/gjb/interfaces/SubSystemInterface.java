@@ -1,14 +1,15 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/24/2017.
+ */
 package gjb.interfaces;
 
-/**
- * Created by josephj on 9/24/2017.
- */
+
 
 public interface SubSystemInterface {
 
     // Perform  initialization activities.
     // Must not block.
-    // FUTURE: conside making this async
+    // FUTURE: consider making this async
     void init();
 
     // Perform deinitialization activities

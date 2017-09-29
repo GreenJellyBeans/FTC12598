@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 
 import gjb.interfaces.LoggingInterface;
+import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
 
 /**
@@ -12,21 +13,18 @@ import gjb.interfaces.TaskInterface;
 
 public class DriverTask_simpleDrive implements TaskInterface {
     final String THIS_COMPONENT = "TASK_SD"; // For "Task simple drive"
-    final OpMode om;
+    final RuntimeSupportInterface rt;
     final SubSysSimpleTwoMotorDrive drive;
     final LoggingInterface log;
 
-    public DriverTask_simpleDrive(OpMode om, SubSysSimpleTwoMotorDrive ssDrive, LoggingInterface log) {
-        this.om = om;
+    public DriverTask_simpleDrive(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive ssDrive) {
+        this.rt = rt;
         this.drive = ssDrive;
-        this.log = log.newLogger(THIS_COMPONENT);
+        this.log = rt.rootLog().newLogger(THIS_COMPONENT);
     }
 
     @Override
     public void init() {
-           /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
         this.log.pri1(LoggingInterface.INIT_START, "");
         drive.init();
         this.log.pri1(LoggingInterface.INIT_END, "");
@@ -48,14 +46,14 @@ public class DriverTask_simpleDrive implements TaskInterface {
         double right;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-        left = -om.gamepad1.left_stick_y;
-        right = -om.gamepad1.right_stick_y;
+        left = -rt.gamepad1().left_stick_y();
+        right = -rt.gamepad1().right_stick_y();
 
         drive.leftDrive.setPower(left);
         drive.rightDrive.setPower(right);
 
-        om.telemetry.addData("left",  "%.2f", left);
-        om.telemetry.addData("right", "%.2f", right);
+        rt.telemetry().addData("left",  "%.2f", left);
+        rt.telemetry().addData("right", "%.2f", right);
 
     }
 

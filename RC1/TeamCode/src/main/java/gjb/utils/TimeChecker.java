@@ -1,6 +1,8 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/??/2017.
+ */
 package gjb.utils;
 import java.lang.System;
-// History: September 2017 - JMJ - Created
 
 public class TimeChecker {
     long startMs;

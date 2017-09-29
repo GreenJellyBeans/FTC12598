@@ -31,43 +31,42 @@ package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
 
 import gjb.interfaces.LoggingInterface;
-import gjb.interfaces.SystemEnvironmentInterface;
-import gjb.utils.AndroidSystemEnvironment;
+import gjb.interfaces.RuntimeSupportInterface;
+import gjb.utils.AndroidRuntimeSupport;
 import gjb.utils.Logger;
 
 @TeleOp(name="DriverOM_driveOnlyPushBot-v1", group="Pushbot")
 //@Disabled
 public class DriverOM_driveOnlyPushBot extends OpMode{
-
-    // This environment gets overridden when running unit tasks on the desktop
-    SystemEnvironmentInterface env = new AndroidSystemEnvironment(this);
+    private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during init()
-    LoggingInterface rootLog;
-    SubSysSimpleTwoMotorDrive drive;
-    DriverTask_simpleDrive driveTask;
+    private SubSysSimpleTwoMotorDrive drive;
+    private DriverTask_simpleDrive driveTask;
+    private LoggingInterface log;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        rootLog = new Logger(env, "OM").getRootLog();
-        rootLog.pri1(LoggingInterface.INIT_START, "OM DriverOM_driveOnlyPushBot");
+        log = rt.rootLog();
+        log.pri1(LoggingInterface.INIT_START, "OM DriverOM_driveOnlyPushBot");
+
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
-        drive = new SubSysSimpleTwoMotorDrive(hardwareMap, rootLog, driveConfig);
-        driveTask = new DriverTask_simpleDrive(this, drive, rootLog);
+        drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
+        driveTask = new DriverTask_simpleDrive(rt, drive);
 
         // Initialize the drive subsystem and associated task
         drive.init();
         driveTask.init();
 
         // Log end of initialization
-        rootLog.pri1(LoggingInterface.INIT_END, "OM DriverOM_driveOnlyPushBot");
+        log.pri1(LoggingInterface.INIT_END, "OM DriverOM_driveOnlyPushBot");
     }
 
     /*
@@ -75,7 +74,7 @@ public class DriverOM_driveOnlyPushBot extends OpMode{
      */
     @Override
     public void init_loop() {
-        driveTask.init();
+        driveTask.init_loop();
     }
 
     /*

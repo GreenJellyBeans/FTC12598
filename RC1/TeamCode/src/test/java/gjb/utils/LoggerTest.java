@@ -1,10 +1,11 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/25/2017.
+ */
 package gjb.utils;
 import org.junit.*;
 import gjb.interfaces.LoggingInterface;
 
-/**
- * Created by josephj on 9/25/2017.
- */
+
 public class LoggerTest {
 
     DesktopSystemEnvironment env = new DesktopSystemEnvironment();
