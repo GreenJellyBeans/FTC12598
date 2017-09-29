@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.concurrent.TimeUnit;
+
 import gjb.interfaces.GamepadInterface;
 import gjb.interfaces.HardwareLookupInterface;
 import gjb.interfaces.LoggingInterface;
@@ -31,6 +33,8 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
     public final MockGamepad gamepad1;
     public final MockGamepad gamepad2;
     public final MockTelemetry telemetry;
+
+    public double runTime=0; // Tests set this to be whatever they want.
 
     public MockRuntimeSupport() {
         env = new DesktopSystemEnvironment();
@@ -107,23 +111,25 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
         assert false;
     }
 
-    @Override
-    // TODO
+     @Override
     public double getRuntime() {
-        assert false;
-        return 0;
+        return runTime; // We return whatever the test setup said it is.
     }
 
+    /**
+     * Reset the start time to zero.
+     */
     @Override
     public void resetStartTime() {
-        assert false;
+        runTime = 0; // If client code were to gall getRuntime right after reset they should get 0.
     }
 
     @Override
     public void waitForStart() {
         // Will throw cast exception if it's not in fact
         // a LinearOpMode.
-        assert false;
+        assert false; // unimplemented. Simple implementation is to update runtime  & state
+                      // and return immediately.
     }
 
     @Override

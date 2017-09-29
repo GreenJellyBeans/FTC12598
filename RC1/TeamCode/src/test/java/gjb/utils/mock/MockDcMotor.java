@@ -10,97 +10,112 @@ import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
 
 public class MockDcMotor extends MockHardwareDevice implements DcMotor {
 
+    // This is a huge class. Presently unsupported...
+    // public MotorConfigurationType motorType;
+
+    public ZeroPowerBehavior zeroPowerBehavior;
+    public boolean powerFloat;
+    public int targetPosition;
+    public boolean busy;
+    public int currentPosition;
+    public RunMode mode;
+    public Direction direction;
+    public double power;
+
+
     public MockDcMotor(int seq, String name) {
         super(seq, name);
     }
 
     @Override
     public MotorConfigurationType getMotorType() {
+        assert false; // currently unsupported.
         return null;
     }
 
     @Override
     public void setMotorType(MotorConfigurationType motorType) {
-
+        assert false; // currently unsupported.
     }
 
     @Override
     public DcMotorController getController() {
+        assert false; // currently unsupported
         return null;
     }
 
     @Override
     public int getPortNumber() {
-        return 0;
+        return seq;
     }
 
     @Override
     public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
-
+        this.zeroPowerBehavior = zeroPowerBehavior;
     }
 
     @Override
     public ZeroPowerBehavior getZeroPowerBehavior() {
-        return null;
+        return zeroPowerBehavior;
     }
 
     @Override
     public void setPowerFloat() {
-
+        powerFloat = true;
     }
 
     @Override
     public boolean getPowerFloat() {
-        return false;
+        return powerFloat;
     }
 
     @Override
     public void setTargetPosition(int position) {
-
+        this.targetPosition = position;
     }
 
     @Override
     public int getTargetPosition() {
-        return 0;
+        return targetPosition;
     }
 
     @Override
     public boolean isBusy() {
-        return false;
+        return busy;
     }
 
     @Override
     public int getCurrentPosition() {
-        return 0;
+        return currentPosition;
     }
 
     @Override
     public void setMode(RunMode mode) {
-
+        this.mode = mode;
     }
 
     @Override
     public RunMode getMode() {
-        return null;
+        return mode;
     }
 
     @Override
     public void setDirection(Direction direction) {
-
+        this.direction = direction;
     }
 
     @Override
     public Direction getDirection() {
-        return null;
+        return direction;
     }
 
     @Override
     public void setPower(double power) {
-
+        this.power = power;
     }
 
     @Override
     public double getPower() {
-        return 0;
+        return power;
     }
 }
