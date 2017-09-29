@@ -32,8 +32,4 @@ public class AutonTaskLEDLights implements TaskInterface {
 
     }
 
-    @Override
-    public double getRuntime() {
-        return 0;
-    }
 }

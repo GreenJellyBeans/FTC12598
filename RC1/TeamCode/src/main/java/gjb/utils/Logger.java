@@ -189,7 +189,7 @@ public class Logger {
         this.sessionStarted = true;
         seqNo.set(0); // First logged sequence number in the session is 1.
         LoggingInterface rootLog = getRootLog();
-        rootLog.pri1(LoggingInterface.LOGGER, "Session started.");
+        rootLog.pri1(LoggingInterface.LOGGER, sessionDescription + " session started.");
     }
 
     // Caller must encure no other thread attempts to log concurrently

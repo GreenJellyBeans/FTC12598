@@ -26,7 +26,4 @@ public interface TaskInterface {
     // Similar semantics to OpMode stop()
     void stop();
 
-    // Similar semantics to OpMode getRunTime(). Should return sub millisecond
-    // accuracy
-    public double getRuntime();
 }

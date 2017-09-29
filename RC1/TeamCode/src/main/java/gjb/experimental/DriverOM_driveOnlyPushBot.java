@@ -45,6 +45,7 @@ public class DriverOM_driveOnlyPushBot extends OpMode{
     // These are initialized during init()
     private SubSysSimpleTwoMotorDrive drive;
     private DriverTask_simpleDrive driveTask;
+    private Logger logger;
     private LoggingInterface log;
 
     /*
@@ -52,7 +53,9 @@ public class DriverOM_driveOnlyPushBot extends OpMode{
      */
     @Override
     public void init() {
-        log = rt.rootLog();
+        logger = rt.logger();
+        logger.beginSession(DriverOM_driveOnlyPushBot.class.toString());
+        log = logger.getRootLog();
         log.pri1(LoggingInterface.INIT_START, "OM DriverOM_driveOnlyPushBot");
 
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()

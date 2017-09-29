@@ -4,17 +4,18 @@
 package gjb.utils;
 import org.junit.*;
 import gjb.interfaces.LoggingInterface;
+import gjb.utils.mock.MockRuntimeSupport;
 
 
 public class LoggerTest {
 
-    DesktopSystemEnvironment env = new DesktopSystemEnvironment();
+    MockRuntimeSupport rt = new MockRuntimeSupport();
     Logger testLogger;
 
     @Before
     public void setup() throws Exception {
         System.out.println("setUp() called.");
-        testLogger = new Logger(env, "ROOT");
+        testLogger = new Logger(rt.sysEnv(), "ROOT");
     }
 
     @After

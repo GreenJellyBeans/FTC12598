@@ -5,10 +5,12 @@ package gjb.interfaces;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import gjb.utils.Logger;
+
 
 public interface RuntimeSupportInterface {
 
-    LoggingInterface rootLog();
+    Logger logger();
     SystemEnvironmentInterface sysEnv();
     HardwareLookupInterface hwLookup();
     GamepadInterface gamepad1();

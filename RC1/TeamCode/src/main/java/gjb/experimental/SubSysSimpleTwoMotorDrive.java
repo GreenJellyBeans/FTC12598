@@ -40,7 +40,7 @@ public class SubSysSimpleTwoMotorDrive implements SubSystemInterface {
 
     public SubSysSimpleTwoMotorDrive(RuntimeSupportInterface rt, Config c) {
         this.rt = rt;
-        this.log = rt.rootLog().newLogger(THIS_COMPONENT); // Create a child log.
+        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
         config = c;
     }
 

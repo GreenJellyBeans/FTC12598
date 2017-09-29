@@ -141,8 +141,8 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
     // INTERFACE METHOD IMPLEMENTATIONS ...
 
     @Override
-    public LoggingInterface rootLog() {
-        return logger.getRootLog();
+    public Logger logger() {
+        return logger;
     }
 
     @Override

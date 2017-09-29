@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
+import gjb.utils.Logger;
 
 /**
  * Created by josephj on 9/26/2017.
@@ -20,7 +21,7 @@ public class DriverTask_simpleDrive implements TaskInterface {
     public DriverTask_simpleDrive(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive ssDrive) {
         this.rt = rt;
         this.drive = ssDrive;
-        this.log = rt.rootLog().newLogger(THIS_COMPONENT);
+        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
     }
 
     @Override
@@ -63,8 +64,4 @@ public class DriverTask_simpleDrive implements TaskInterface {
         drive.deinit();
     }
 
-    @Override
-    public double getRuntime() {
-        return 0;
-    }
 }
