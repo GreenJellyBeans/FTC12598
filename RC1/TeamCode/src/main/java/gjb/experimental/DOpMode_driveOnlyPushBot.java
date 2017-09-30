@@ -37,14 +37,14 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 import gjb.utils.Logger;
 
-@TeleOp(name="DriverOM_driveOnlyPushBot-v1", group="Pushbot")
+@TeleOp(name="DOpMode_driveOnlyPushBot-v1", group="Pushbot")
 //@Disabled
-public class DriverOM_driveOnlyPushBot extends OpMode{
+public class DOpMode_driveOnlyPushBot extends OpMode{
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during init()
     private SubSysSimpleTwoMotorDrive drive;
-    private DriverTask_simpleDrive driveTask;
+    private DTask_simpleDrive driveTask;
     private Logger logger;
     private LoggingInterface log;
 
@@ -54,22 +54,22 @@ public class DriverOM_driveOnlyPushBot extends OpMode{
     @Override
     public void init() {
         logger = rt.logger();
-        logger.beginSession(DriverOM_driveOnlyPushBot.class.toString());
+        logger.beginSession(DOpMode_driveOnlyPushBot.class.toString());
         log = logger.getRootLog();
-        log.pri1(LoggingInterface.INIT_START, "OM DriverOM_driveOnlyPushBot");
+        log.pri1(LoggingInterface.INIT_START, "OM DOpMode_driveOnlyPushBot");
 
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
-        driveTask = new DriverTask_simpleDrive(rt, drive);
+        driveTask = new DTask_simpleDrive(rt, drive);
 
         // Initialize the drive subsystem and associated task
         drive.init();
         driveTask.init();
 
         // Log end of initialization
-        log.pri1(LoggingInterface.INIT_END, "OM DriverOM_driveOnlyPushBot");
+        log.pri1(LoggingInterface.INIT_END, "OM DOpMode_driveOnlyPushBot");
     }
 
     /*

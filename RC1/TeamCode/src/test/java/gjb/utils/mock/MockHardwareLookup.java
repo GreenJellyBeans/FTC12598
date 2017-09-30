@@ -28,17 +28,23 @@ public class MockHardwareLookup implements HardwareLookupInterface {
     private HashMap<String, DigitalChannel> digitalChannels = new HashMap<String, DigitalChannel>();
     private HashMap<String, Servo> servos = new HashMap<String, Servo>();
 
-    // You can call this method multiple times, but just once with a particular
-    // controller. We don't check this. The sequence no for each output is sequential for each
-    // controller.
-    public void setupAnalogOutputs(String controllerName, String[] names) {
-        AnalogOutputController aoc = analogOutputControllers.get(controllerName);
-        for (int i = 0; i < names.length; i++) {
-            String n = names[i];
-            AnalogOutput ao = new AnalogOutput(aoc, i);
-            analogOutputs.put(n, ao);
+    public void setupAnalogOutputControllers(String[] cNames, String[][]aoNames) {
+         for (int i = 0; i < cNames.length; i++) {
+             String cn = cNames[i];
+             String[] aoNamesForC = aoNames[i];
+
+             // Setup all the ports for a particular controller.
+             MockAnalogOutputController aoc = new MockAnalogOutputController(i, cn, aoNamesForC);
+             for (int port = 0; port < aoNamesForC.length; port++) {
+                 String n = aoNamesForC[port];
+                 AnalogOutput ao = new AnalogOutput(aoc, port);
+                 analogOutputs.put(n, ao);
+             }
+
+             analogOutputControllers.put(cn, aoc);
         }
     }
+
 
     public void setupDcMotors(String[] names) {
         for (int i = 0; i < names.length; i++) {

@@ -4,27 +4,35 @@
 package gjb.utils;
 import java.lang.System;
 
+import gjb.interfaces.RuntimeSupportInterface;
+
 public class TimeChecker {
-    long startMs;
-    long[] times;
+    // We need this to get elapsed time - we do not want to use
+    // System.currentTimeMillis or any other system call because we want to be
+    // able to setup unit tests with sumulated time. Besides, for FTC, we want to be consistant
+    // in the use of time functions.
+    final RuntimeSupportInterface rt;
+    // All times in seconds (and fractional seconds)
+    double start;
+    double[] times;
 
-    public TimeChecker() {
-
+    public TimeChecker(RuntimeSupportInterface rt) {
+        this.rt = rt;
     }
 
     // Reset the time checker so that it starts now
     public void reset() {
-        startMs = System.currentTimeMillis();
+        start = rt.getRuntime();
     }
 
     // Set the intervals  by specifying a list of durations, and also
     // a multiplicative scale factor to be applied to the durations.
-    public void setTimesByDurations(int[] durations, int scaleFactor) {
+    public void setTimesByDurations(int[] durations, double startDelay, double scaleFactor) {
         reset();
-        times = new long[durations.length];
-        long prevTime = 0;
+        times = new double[durations.length];
+        double prevTime = startDelay;
         for (int i = 0; i < times.length; i++) {
-            times[i] = prevTime + durations[i]*scaleFactor;
+            times[i] = prevTime + durations[i] * scaleFactor;
             prevTime = times[i];
         }
     }
@@ -32,13 +40,18 @@ public class TimeChecker {
 
     // returns the index i, where t_(i-1) < t <= t_i.
     public int getCurrentStage() {
-        long elapsed = System.currentTimeMillis() - startMs;
+        double elapsed = rt.getRuntime() - start;
         for (int i = 0; i < times.length; i++) {
             if (elapsed <= times[i]) {
                 return i; // return the first i for which this is true.
             }
         }
         return times.length; // 1 more than last index if last time has expired.
+    }
+
+    // returns true IFF time has moved beyond the last stage.
+    public boolean expired() {
+        return (times.length == 0) || (times[times.length-1] < rt.getRuntime());
     }
 
     public int getNumStages() {

@@ -13,10 +13,10 @@ import static org.junit.Assert.*;
 /**
  * Created by josephj on 9/28/2017.
  */
-public class DriverTask_simpleDriveTest {
+public class DTask_simpleDriveTest {
     MockRuntimeSupport rt;
     SubSysSimpleTwoMotorDrive drive;
-    DriverTask_simpleDrive driveTask;
+    DTask_simpleDrive driveTask;
     final String LEFT_MOTOR = "left_drive";
     final String RIGHT_MOTOR  = "right_drive";
     MockDcMotor leftMotor=null;
@@ -25,16 +25,16 @@ public class DriverTask_simpleDriveTest {
     @Before
     public void setUp() throws Exception {
         rt = new MockRuntimeSupport();
-        rt.logger().beginSession(DriverTask_simpleDriveTest.class.toString());
+        rt.logger().beginSession(DTask_simpleDriveTest.class.toString());
         String[] dcMotorNames = {LEFT_MOTOR, RIGHT_MOTOR};
-        rt.hwLookup.setupDcMotors(dcMotorNames);
-        leftMotor = (MockDcMotor) rt.hwLookup.getDcMotor(LEFT_MOTOR);
-        rightMotor = (MockDcMotor) rt.hwLookup.getDcMotor(RIGHT_MOTOR);
+        rt.mhwLookup.setupDcMotors(dcMotorNames);
+        leftMotor = (MockDcMotor) rt.mhwLookup.getDcMotor(LEFT_MOTOR);
+        rightMotor = (MockDcMotor) rt.mhwLookup.getDcMotor(RIGHT_MOTOR);
         // Let's set the motor power to random values
         leftMotor.power = Math.random();
         rightMotor.power  = Math.random();
         drive = new SubSysSimpleTwoMotorDrive(rt,null);
-        driveTask = new DriverTask_simpleDrive(rt, drive);
+        driveTask = new DTask_simpleDrive(rt, drive);
         rt.runTime = 0;
         System.out.println("TEST STARTING");
     }

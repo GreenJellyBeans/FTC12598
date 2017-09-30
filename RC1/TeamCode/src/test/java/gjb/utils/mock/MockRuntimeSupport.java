@@ -29,7 +29,7 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
     // Test code needs access to these to set things up.
     public final SystemEnvironmentInterface env;
     public final Logger logger;
-    public final MockHardwareLookup hwLookup;
+    public final MockHardwareLookup mhwLookup;
     public final MockGamepad gamepad1;
     public final MockGamepad gamepad2;
     public final MockTelemetry telemetry;
@@ -39,7 +39,7 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
     public MockRuntimeSupport() {
         env = new DesktopSystemEnvironment();
         logger = new Logger(env, "root");
-        hwLookup = new MockHardwareLookup();
+        mhwLookup = new MockHardwareLookup();
         gamepad1 = new MockGamepad();
         gamepad2 = new MockGamepad();
         telemetry = new MockTelemetry();
@@ -54,12 +54,12 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public void dsPrintln(String s) {
-            System.err.println(s);
+            System.err.println("**DS** " + s);
         }
 
         @Override
         public void fsPrintln(String s) {
-            System.out.println(s);
+            System.out.println("**FS** " + s);
         }
 
         @Override
@@ -94,7 +94,7 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
 
     @Override
     public HardwareLookupInterface hwLookup() {
-        return hwLookup;
+        return mhwLookup;
     }
 
     @Override

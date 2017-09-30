@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import gjb.utils.OldTimeChecker;
 import gjb.utils.TimeChecker;
 
 /**
@@ -53,7 +54,7 @@ public class LabbotLEDMorseCAT extends OpMode
     /* Declare OpMode members. */
     private ElapsedTime runtime = new  ElapsedTime();
     private int loopCounter = 0; // incremented each time a loop method is called.
-    TimeChecker tc;
+    OldTimeChecker tc;
 
     AnalogOutput ao;
     /*
@@ -75,7 +76,7 @@ public class LabbotLEDMorseCAT extends OpMode
         // leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         //  rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
         loopCounter = 0;
-        tc = new TimeChecker();
+        tc = new OldTimeChecker();
         ao = hardwareMap.analogOutput.get("ellie-read");
         alwaysLog("LED:  ao:" + ao);
         ao.setAnalogOutputMode((byte)0); // Voltage output
@@ -150,7 +151,7 @@ public class LabbotLEDMorseCAT extends OpMode
         telemetry.addData("Status", "[" + msg + "] rt: " + runtime.toString());
     }
 
-    void processStages(TimeChecker tc) {
+    void processStages(OldTimeChecker tc) {
         int stage = tc.getCurrentStage(); // Returns i where time is < ith value
         boolean lightsOn = false;
         if (stage % 2 == 1 && stage < tc.getNumStages()) {

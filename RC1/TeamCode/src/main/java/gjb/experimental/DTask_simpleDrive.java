@@ -12,13 +12,13 @@ import gjb.utils.Logger;
  * Created by josephj on 9/26/2017.
  */
 
-public class DriverTask_simpleDrive implements TaskInterface {
+public class DTask_simpleDrive implements TaskInterface {
     final String THIS_COMPONENT = "TASK_SD"; // For "Task simple drive"
     final RuntimeSupportInterface rt;
     final SubSysSimpleTwoMotorDrive drive;
     final LoggingInterface log;
 
-    public DriverTask_simpleDrive(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive ssDrive) {
+    public DTask_simpleDrive(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive ssDrive) {
         this.rt = rt;
         this.drive = ssDrive;
         this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
