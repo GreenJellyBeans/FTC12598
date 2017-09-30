@@ -1,12 +1,11 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
+ */
 package gjb.utils.mock;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
-
-/**
- * Created by josephj on 9/26/2017.
- */
 
 public class MockDcMotor extends MockHardwareDevice implements DcMotor {
 

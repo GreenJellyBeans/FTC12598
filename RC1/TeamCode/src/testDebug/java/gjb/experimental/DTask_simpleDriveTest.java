@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/28/2017.
+ */
 package gjb.experimental;
 
 import org.junit.After;
@@ -10,9 +13,6 @@ import gjb.utils.mock.MockRuntimeSupport;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by josephj on 9/28/2017.
- */
 public class DTask_simpleDriveTest {
     MockRuntimeSupport rt;
     SubSysSimpleTwoMotorDrive drive;

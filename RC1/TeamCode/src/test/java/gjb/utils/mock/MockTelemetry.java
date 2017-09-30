@@ -1,11 +1,11 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/28/2017.
+ */
 package gjb.utils.mock;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-/**
- * Created by josephj on 9/28/2017.
- */
 
 public class MockTelemetry implements Telemetry {
     @Override

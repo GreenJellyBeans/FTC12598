@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
+ */
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -7,10 +10,6 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
 import gjb.utils.Logger;
-
-/**
- * Created by josephj on 9/26/2017.
- */
 
 public class ITask_simpleDrive implements TaskInterface {
     final String THIS_COMPONENT = "TASK_SD"; // For "Task simple drive"

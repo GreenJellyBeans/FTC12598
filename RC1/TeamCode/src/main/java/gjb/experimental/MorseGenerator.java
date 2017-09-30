@@ -1,9 +1,8 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/16/2017.
+ */
 package gjb.experimental;
 import java.util.ArrayList;
-
-/**
- * Created by josephj on 9/16/2017.
- */
 
 // Generates time delays for morse code from text strings.
 class MorseGenerator {

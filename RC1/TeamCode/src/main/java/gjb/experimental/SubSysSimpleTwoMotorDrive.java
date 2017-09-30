@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
+ */
 package gjb.experimental;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,10 +10,6 @@ import gjb.interfaces.HardwareLookupInterface;
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.SubSystemInterface;
-
-/**
- * Created by josephj on 9/26/2017.
- */
 
 public class SubSysSimpleTwoMotorDrive implements SubSystemInterface {
     final String THIS_COMPONENT = "S2MD"; // For "simple 2-motor drive"

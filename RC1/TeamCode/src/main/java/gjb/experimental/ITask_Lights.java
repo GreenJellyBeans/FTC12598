@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/30/2017.
+ */
 package gjb.experimental;
 
 import gjb.interfaces.LoggingInterface;
@@ -5,9 +8,6 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
 import gjb.utils.TimeChecker;
 
-/**
- * Created by josephj on 9/24/2017.
- */
 
 public class ITask_Lights implements TaskInterface {
     final String THIS_COMPONENT = "TASK_LIGHTS"; // For "Task simple drive"

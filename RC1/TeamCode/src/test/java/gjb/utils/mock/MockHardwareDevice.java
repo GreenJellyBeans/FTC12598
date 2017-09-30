@@ -1,10 +1,10 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
+ */
 package gjb.utils.mock;
 
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
-/**
- * Created by josephj on 9/26/2017.
- */
 
 public class MockHardwareDevice implements HardwareDevice {
     public final int seq; // Sequence in list of devices of the same tupe.

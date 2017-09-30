@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/28/2017.
+ */
 package gjb.experimental;
 
 import com.qualcomm.robotcore.hardware.AnalogOutput;
@@ -14,9 +17,6 @@ import gjb.utils.mock.MockRuntimeSupport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by josephj on 9/28/2017.
- */
 public class ITask_LightsTest {
     MockRuntimeSupport rt;
     SubSysLights lights;

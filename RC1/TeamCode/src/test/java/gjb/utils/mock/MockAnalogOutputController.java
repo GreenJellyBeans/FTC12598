@@ -1,3 +1,6 @@
+/**
+ * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
+ */
 package gjb.utils.mock;
 
 import com.qualcomm.robotcore.hardware.AnalogOutput;
@@ -5,9 +8,6 @@ import com.qualcomm.robotcore.hardware.AnalogOutputController;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.SerialNumber;
 
-/**
- * Created by josephj on 9/26/2017.
- */
 
 public class MockAnalogOutputController extends MockHardwareDevice implements AnalogOutputController {
     public final int MIN_VOLTAGE_VALUE = -1023;
