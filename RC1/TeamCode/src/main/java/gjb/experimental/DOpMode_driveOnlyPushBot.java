@@ -44,7 +44,7 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
 
     // These are initialized during init()
     private SubSysSimpleTwoMotorDrive drive;
-    private DTask_simpleDrive driveTask;
+    private ITask_simpleDrive driveTask;
     private Logger logger;
     private LoggingInterface log;
 
@@ -62,7 +62,7 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
-        driveTask = new DTask_simpleDrive(rt, drive);
+        driveTask = new ITask_simpleDrive(rt, drive);
 
         // Initialize the drive subsystem and associated task
         drive.init();

@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class DTask_simpleDriveTest {
     MockRuntimeSupport rt;
     SubSysSimpleTwoMotorDrive drive;
-    DTask_simpleDrive driveTask;
+    ITask_simpleDrive driveTask;
     final String LEFT_MOTOR = "left_drive";
     final String RIGHT_MOTOR  = "right_drive";
     MockDcMotor leftMotor=null;
@@ -34,7 +34,7 @@ public class DTask_simpleDriveTest {
         leftMotor.power = Math.random();
         rightMotor.power  = Math.random();
         drive = new SubSysSimpleTwoMotorDrive(rt,null);
-        driveTask = new DTask_simpleDrive(rt, drive);
+        driveTask = new ITask_simpleDrive(rt, drive);
         rt.runTime = 0;
         System.out.println("TEST STARTING");
     }
