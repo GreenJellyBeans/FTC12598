@@ -22,7 +22,7 @@ public class ITask_Lights implements TaskInterface {
     /*
      * actual delay_i == startDelay + delays[i]*scaleFactor.
      */
-    public ITask_Lights(RuntimeSupportInterface rt, SubSysLights lights, int[] delays, double startDelay, double scaleFactor ) {
+    public ITask_Lights(RuntimeSupportInterface rt, SubSysLights lights, double[] delays, double startDelay, double scaleFactor ) {
         this.rt = rt;
         this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
         this.lights = lights;
@@ -33,7 +33,7 @@ public class ITask_Lights implements TaskInterface {
     @Override
     public void init() {
         this.log.pri1(LoggingInterface.INIT_START, "");
-        lights.init();
+        // OBSOLETE (OM must init sub systems) lights.init();
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 

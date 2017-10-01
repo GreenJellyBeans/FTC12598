@@ -25,7 +25,7 @@ public class ITask_LightsTest {
     final String AO_PORT_NAME = "light_level";
     final int VOLTAGE_MODE = 0; // 0 == fixed voltage, according to API.
     MockAnalogOutputController.PortData portData = null;
-    int[] delays  = {0,1,0};
+    double[] delays  = {0,1,0};
     double startDelay = 2;
     double scaleFactor = 2;
 
@@ -50,13 +50,14 @@ public class ITask_LightsTest {
 
     @After
     public void tearDown() throws Exception {
+        rt.logger().endSession();
         System.out.println("TEST FINISHED");
     }
 
     @Test
     public void randomLightsTest() throws Exception {
         // Tests creation, init, init_loop, start, stop in quick succession.
-
+        lights.init();
         task.init();
 
         task.init_loop();

@@ -41,16 +41,17 @@ public class DTask_simpleDriveTest {
 
     @After
     public void tearDown() throws Exception {
-        System.out.println("TEST FINISHED");
+        rt.logger().endSession();
         driveTask = null;
         drive = null;
         rt = null;
+        System.out.println("TEST FINISHED");
     }
 
     @Test
     public void initShutdownTest() throws Exception {
         // Tests creation, init, init_loop, start, stop in quick succession.
-
+        drive.init();
         driveTask.init();
 
         // Check that the power is set to 0 on both motors...

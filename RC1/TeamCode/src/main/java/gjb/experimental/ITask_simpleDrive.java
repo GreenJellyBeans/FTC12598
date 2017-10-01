@@ -26,7 +26,6 @@ public class ITask_simpleDrive implements TaskInterface {
     @Override
     public void init() {
         this.log.pri1(LoggingInterface.INIT_START, "");
-        drive.init();
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 

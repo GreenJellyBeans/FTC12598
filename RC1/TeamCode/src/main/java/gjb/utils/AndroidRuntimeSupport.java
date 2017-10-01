@@ -124,7 +124,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public double right_stick_y() {
-            return gp.left_stick_y;
+            return gp.right_stick_y;
         }
 
         @Override

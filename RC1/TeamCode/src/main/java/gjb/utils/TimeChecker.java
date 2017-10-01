@@ -25,9 +25,9 @@ public class TimeChecker {
         start = rt.getRuntime();
     }
 
-    // Set the intervals  by specifying a list of durations, and also
-    // a multiplicative scale factor to be applied to the durations.
-    public void setTimesByDurations(int[] durations, double startDelay, double scaleFactor) {
+    // Set state times given a list of individual stage times. These stimes are multiplied
+    // by {scaleFactor}. An initial delay of {startDelay} is then applied.
+    public void setTimesByDurations(double[] durations, double startDelay, double scaleFactor) {
         reset();
         times = new double[durations.length];
         double prevTime = startDelay;

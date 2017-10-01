@@ -48,7 +48,7 @@ import gjb.utils.TimeChecker;
  * It includes all the skeletal structure that all iterative OpModes contain.
  *
  */
-@TeleOp(name="LabbotLEDMorseCAT.01", group="Iterative Opmode")
+@TeleOp(name="LabbotLEDMorseCAT.2", group="Iterative Opmode")
 public class LabbotLEDMorseCAT extends OpMode
 {
     /* Declare OpMode members. */
@@ -81,8 +81,8 @@ public class LabbotLEDMorseCAT extends OpMode
         alwaysLog("LED:  ao:" + ao);
         ao.setAnalogOutputMode((byte)0); // Voltage output
         MorseGenerator mg  = new MorseGenerator();
-        int[] delays = mg.generateDelays("CAT", 10);
-        tc.setTimesByDurations(delays, 75);
+        double[] delays = mg.generateDelays("CAT", 1.0); // 1.0 == dot time
+        tc.setTimesByDurations(delays, 100); // we want dot time to be 100 ms.
         alwaysLog("LED:EXITING  init().");
     }
 

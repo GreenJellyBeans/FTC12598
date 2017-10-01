@@ -198,7 +198,7 @@ public class Logger {
     public synchronized void endSession() {
         assert(this.sessionStarted);
         LoggingInterface rootLog = getRootLog();
-        rootLog.pri1(LoggingInterface.LOGGER, "Session stopped.");
+        rootLog.pri1(LoggingInterface.LOGGER, "Session ended.");
         this.sessionStarted = false;
         env.fsFlush();
         env.fsCloseLog();

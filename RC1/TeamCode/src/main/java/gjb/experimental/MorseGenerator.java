@@ -6,10 +6,11 @@ import java.util.ArrayList;
 
 // Generates time delays for morse code from text strings.
 class MorseGenerator {
-    final int DOT_DELAY = 4;
-    final int DASH_DELAY = 12;
-    final int LETTERGAP_DELAY = 28; // between dlett
-    final int GAP_DELAY = 4; // between symbols
+    // These are relative times.
+    final int DOT_TIME = 1;
+    final int DASH_TIME = 3;
+    final int LETTERGAP_TIME = 7; // between dlett
+    final int GAP_TIME = 1; // between symbols
 
     final String[] morse  = {
             ".-", "-...", "-.-.", "-..", ".", // ABCDE
@@ -20,13 +21,16 @@ class MorseGenerator {
             "--.."
     };
 
-    // Generate time delays for string {s}
-    public int[] generateDelays(String s, int startDelay) {
-        ArrayList<Integer> delays = new ArrayList<Integer>();
+    // Generate time delays for string {s}. {dotWidth} is the time
+    // for one dot. An initial delay of 0 is inserted first - this is
+    // a "switch off" transition.
+    public double[] generateDelays(String s, double dotTime) {
+        final double frac = dotTime/DOT_TIME;
+        ArrayList<Double> delays = new ArrayList<Double>();
         assert(morse.length == 26);
-        int delay = startDelay;
+        double delay = 0;
         s = s.toUpperCase();
-        delays.add(startDelay); // Initial off
+        delays.add(0.0); // Initial off
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c<'A' || c>'Z') {
@@ -36,15 +40,15 @@ class MorseGenerator {
             String code = morse[c - 'A'];
             for (int j = 0; j < code.length(); j++) {
                 char d = code.charAt(j);
-                delay = (d == '-') ? DASH_DELAY : DOT_DELAY;
+                delay = (d == '-') ? frac*DASH_TIME : frac*DOT_TIME;
                 delays.add(delay); // lights on
-                delays.add(GAP_DELAY); // lights off
+                delays.add(frac*GAP_TIME); // lights off
             }
 
             int last = delays.size()-1;
-            delays.set(last, delays.get(last) + LETTERGAP_DELAY) ; // SHould be adding to off time
+            delays.set(last, delays.get(last) + frac*LETTERGAP_TIME) ; // SHould be adding to off time
         }
-        int[] delayArray = new int[delays.size()];
+        double[] delayArray = new double[delays.size()];
         for (int i = 0; i< delayArray.length; i++) {
             delayArray[i] = delays.get(i);
         }

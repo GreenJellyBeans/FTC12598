@@ -4,8 +4,8 @@
 package gjb.utils;
 
 public class OldTimeChecker {
-    long startMs;
-    long[] times;
+    double startMs;
+    double[] times; // in MILLIseconds.
 
     public OldTimeChecker() {
 
@@ -16,12 +16,12 @@ public class OldTimeChecker {
         startMs = System.currentTimeMillis();
     }
 
-    // Set the intervals  by specifying a list of durations, and also
+    // Set the intervals  by specifying a list of durations, in MILLISECONDS and also
     // a multiplicative scale factor to be applied to the durations.
-    public void setTimesByDurations(int[] durations, int scaleFactor) {
+    public void setTimesByDurations(double[] durations, double scaleFactor) {
         reset();
-        times = new long[durations.length];
-        long prevTime = 0;
+        times = new double[durations.length];
+        double prevTime = 0;
         for (int i = 0; i < times.length; i++) {
             times[i] = prevTime + durations[i]*scaleFactor;
             prevTime = times[i];
@@ -31,7 +31,7 @@ public class OldTimeChecker {
 
     // returns the index i, where t_(i-1) < t <= t_i.
     public int getCurrentStage() {
-        long elapsed = System.currentTimeMillis() - startMs;
+        double elapsed = System.currentTimeMillis() - startMs;
         for (int i = 0; i < times.length; i++) {
             if (elapsed <= times[i]) {
                 return i; // return the first i for which this is true.
