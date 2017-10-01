@@ -3,20 +3,16 @@
  */
 package gjb.experimental;
 
-import gjb.interfaces.LoggingInterface;
-import gjb.interfaces.RuntimeSupportInterface;
-import gjb.interfaces.TaskInterface;
-import gjb.utils.TimeChecker;
+import gjb.interfaces.*;
+import gjb.utils.*;
 
 
 public class ITask_Lights implements TaskInterface {
     final String THIS_COMPONENT = "TASK_LIGHTS"; // For "Task simple drive"
-
     final RuntimeSupportInterface rt;
     final LoggingInterface log;
     final TimeChecker tc;
     final SubSysLights lights;
-
 
 
     /*
@@ -30,6 +26,7 @@ public class ITask_Lights implements TaskInterface {
         tc.setTimesByDurations(delays, startDelay, scaleFactor);
     }
 
+    /****** START OF TASK INTERFACE METHODS *********************/
     @Override
     public void init() {
         this.log.pri1(LoggingInterface.INIT_START, "");
@@ -37,10 +34,12 @@ public class ITask_Lights implements TaskInterface {
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 
+
     @Override
     public void init_loop() {
 
     }
+
 
     @Override
     public void start() {
@@ -48,10 +47,12 @@ public class ITask_Lights implements TaskInterface {
         tc.reset();
     }
 
+
     @Override
     public void loop() {
         processStages(tc);
     }
+
 
     @Override
     public void stop() {
@@ -59,6 +60,9 @@ public class ITask_Lights implements TaskInterface {
         lights.turnLightsOff();
     }
 
+/************* END OF TASK INTERFACE METHODS ****************/
+
+    // Helper method to decide whether to switch lights on or off
     private void processStages(TimeChecker tc) {
         boolean lightsOn = false;
         int stage = tc.getCurrentStage(); // Returns i where time is <= ith value

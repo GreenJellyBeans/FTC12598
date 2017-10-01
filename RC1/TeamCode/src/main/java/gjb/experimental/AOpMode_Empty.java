@@ -5,27 +5,25 @@ package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import gjb.interfaces.*;
 import gjb.utils.*;
 
-
-@Autonomous(name="AOpMode_LEDMorseCAT-v1", group="Pushbot")
+// NOTE: You can used this as the base for a TeleopMode - all that needs to be
+// done is to replace the @Autonomous annotation by @TeleOp below.
+@Autonomous(name="AOpMode_Empty", group="dummy")
 //@Disabled
 /*
- *  This Autonomous OpMode makes the LED lights play "CAT" in morse code.
+ *  This Autonomous OpMode makes initializes the Empty subsystem and starts the Empty task.
+ *  ADD/REPLACE THIS COMMENT BASED ON THE WHEN THE NEW TASK WAS CREATED
  */
-public class AOpMode_LEDMorseCAT extends OpMode{
-    final String THIS_COMPONENT = "AOM_LEDMorseCAT"; // Replace EMPTY by short word identifying Op mode
+public class AOpMode_Empty extends OpMode{
+    final String THIS_COMPONENT = "AOM_EMPTY"; // Replace EMPTY by short word identifying Op mode
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
-    final String MORSE_MESSAGE = "CAT";
-    final double START_DELAY = 1.0; // seconds
-    final double DOT_TIME = 0.1; // Time for one Morse "dot"
 
     // These are initialized during init()
-    SubSysLights lights;
-    ITask_Lights task;
+    SubSysEmpty empty;
+    ITask_Empty task;
     private Logger logger;
     private LoggingInterface log;
 
@@ -34,19 +32,17 @@ public class AOpMode_LEDMorseCAT extends OpMode{
     @Override
     public void init() {
         logger = rt.logger();
-        logger.beginSession(AOpMode_LEDMorseCAT.class.toString());
+        logger.beginSession(AOpMode_Empty.class.toString());
         log = logger.getRootLog();
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
-        lights = new SubSysLights(rt);
+        empty = new SubSysEmpty(rt);
 
-        // Setup Lights task to display morse code.
-        MorseGenerator mg  = new MorseGenerator();
-        double[] delays = mg.generateDelays(MORSE_MESSAGE, DOT_TIME);
-        task = new ITask_Lights(rt, lights, delays, START_DELAY, 1.0);//1.0 == don't scale.
+        // Do any additional op-mode initialization here.
+        task = new ITask_Empty(rt);
 
-        // Initialize the hardware subsystem and associated task
-        lights.init();
+        // Initialize the  subsystem and associated task
+        empty.init();
         task.init();
 
         log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);

@@ -6,9 +6,7 @@ package gjb.experimental;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.util.Range;
 
-import gjb.interfaces.LoggingInterface;
-import gjb.interfaces.RuntimeSupportInterface;
-import gjb.interfaces.SubSystemInterface;
+import gjb.interfaces.*;
 
 
 public class SubSysLights implements SubSystemInterface {
@@ -28,6 +26,8 @@ public class SubSysLights implements SubSystemInterface {
         this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
     }
 
+    /********* START OF SUBSYSTEM INTERFACE METHODS ***************/
+
     @Override
     public void init() {
         this.log.pri1(LoggingInterface.INIT_START, "");
@@ -39,6 +39,7 @@ public class SubSysLights implements SubSystemInterface {
 
     }
 
+
     @Override
     public void deinit() {
         this.log.pri1(LoggingInterface.DEINIT_START, "");
@@ -46,6 +47,9 @@ public class SubSysLights implements SubSystemInterface {
         this.log.pri1(LoggingInterface.DEINIT_END, "");
 
     }
+
+    /************ END OF SUBSYSTEM INTERFACE METHODS ****************/
+
 
     public synchronized void  turnLightsOn() {
         if (!lightsAreOn) {
@@ -55,6 +59,7 @@ public class SubSysLights implements SubSystemInterface {
         }
     }
 
+
     public synchronized void turnLightsOff() {
         if (lightsAreOn) {
             log.pri1("Turning lights OFF.");
@@ -62,6 +67,7 @@ public class SubSysLights implements SubSystemInterface {
             lightsAreOn = false;
         }
     }
+
 
     public void setVoltage(double voltage) {
         //Sets the channel output voltage. If mode == 0: takes input from -1023-1023, output in the range -4 to +4 volts. If mode == 1, 2, or 3: takes input from 0-1023, output in the range 0 to 8 volts.

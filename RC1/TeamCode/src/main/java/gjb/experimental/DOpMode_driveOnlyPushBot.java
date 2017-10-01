@@ -13,7 +13,11 @@ import gjb.utils.Logger;
 
 @TeleOp(name="DOpMode_driveOnlyPushBot-v1", group="Pushbot")
 //@Disabled
+/*
+ *  This Driver Controlled OpMode does controls the wheels of the pushbot.
+ */
 public class DOpMode_driveOnlyPushBot extends OpMode{
+    final String THIS_COMPONENT = "DOM_driveOnlyPushBot";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during init()
@@ -22,13 +26,14 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
     private Logger logger;
     private LoggingInterface log;
 
+    /*************** START OF OPMODE INTERFACE METHODS **********************/
 
     @Override
     public void init() {
         logger = rt.logger();
         logger.beginSession(DOpMode_driveOnlyPushBot.class.toString());
         log = logger.getRootLog();
-        log.pri1(LoggingInterface.INIT_START, "OM DOpMode_driveOnlyPushBot");
+        log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
                 .leftMotorName("left_drive")
@@ -40,7 +45,7 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
         drive.init();
         driveTask.init();
 
-        log.pri1(LoggingInterface.INIT_END, "OM DOpMode_driveOnlyPushBot");
+        log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
     }
 
 
@@ -63,4 +68,6 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
     public void stop() {
         driveTask.stop();
     }
+
+    /*************** END OF OPMODE INTERFACE METHODS ************************/
 }
