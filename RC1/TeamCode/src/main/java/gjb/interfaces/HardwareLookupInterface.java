@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.hardware.AnalogOutputController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -34,6 +35,7 @@ publicclassModernRoboticsI2cRangeSensorextendsI2cDeviceSynchDevice<I2cDeviceSync
  */
 
 public interface HardwareLookupInterface {
+    DeviceInterfaceModule getDeviceInterfaceModule(String name);
     AnalogInput getAnalogInput(String name);
     AnalogInputController getAnalogInputController(String name);
     AnalogOutput getAnalogOutput(String name);

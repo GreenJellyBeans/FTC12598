@@ -23,16 +23,13 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
     // These are initialized during init()
     private  SubSysSimpleTwoMotorDrive drive;
     private ITask_simpleDrive driveTask;
-    private Logger logger;
     private LoggingInterface log;
 
     /*************** START OF OPMODE INTERFACE METHODS **********************/
 
     @Override
     public void init() {
-        logger = rt.logger();
-        logger.beginSession(DOpMode_driveOnlyPushBot.class.toString());
-        log = logger.getRootLog();
+        log = rt.startLogging(DOpMode_driveOnlyPushBot.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
@@ -67,6 +64,7 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
     @Override
     public void stop() {
         driveTask.stop();
+        rt.stopLogging();
     }
 
     /*************** END OF OPMODE INTERFACE METHODS ************************/

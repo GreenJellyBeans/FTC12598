@@ -70,6 +70,11 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
     private class AndroidHardwareLookup implements HardwareLookupInterface {
 
         @Override
+        public DeviceInterfaceModule getDeviceInterfaceModule(String name) {
+            return om.hardwareMap.get(DeviceInterfaceModule.class, name);
+        }
+
+        @Override
         public AnalogInput getAnalogInput(String name) {
             return null;
         }
@@ -101,7 +106,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public DigitalChannel getDigitalChannel(String name) {
-            return null;
+            return om.hardwareMap.get(DigitalChannel.class, name);
         }
 
         @Override
@@ -140,9 +145,25 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
     // INTERFACE METHOD IMPLEMENTATIONS ...
 
-    @Override
+   //OBSOLETE @Override
     public Logger logger() {
         return logger;
+    }
+
+    @Override
+    public LoggingInterface startLogging(String sessionName) {
+        logger.beginSession(sessionName);
+        return logger.getRootLog();
+    }
+
+    @Override
+    public LoggingInterface getRootLog() {
+        return logger.getRootLog();
+    }
+
+    @Override
+    public void stopLogging() {
+        logger.endSession();
     }
 
     @Override

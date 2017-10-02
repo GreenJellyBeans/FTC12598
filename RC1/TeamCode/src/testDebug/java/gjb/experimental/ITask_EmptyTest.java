@@ -10,6 +10,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import gjb.interfaces.LoggingInterface;
 import gjb.utils.mock.*;
 
 /*
@@ -25,7 +26,7 @@ public class ITask_EmptyTest {
     @Before
     public void setUp() throws Exception {
         rt = new MockRuntimeSupport();
-        rt.logger().beginSession(ITask_EmptyTest.class.toString());
+        LoggingInterface opLog = rt.startLogging(ITask_EmptyTest.class.toString());
         subsystem = new SubSysEmpty(rt); // Replace by subsystem(s) under test
         task = new ITask_Empty(rt); // Replace by task under test
         rt.resetStartTime();

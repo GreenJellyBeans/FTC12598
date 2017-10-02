@@ -82,9 +82,26 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
 
     // INTERFACE METHOD IMPLEMENTATIONS ...
 
-    @Override
+    // OBSOLETE @Override
     public Logger logger() {
         return logger;
+    }
+
+
+    @Override
+    public LoggingInterface startLogging(String sessionName) {
+        logger.beginSession(sessionName);
+        return logger.getRootLog();
+    }
+
+    @Override
+    public LoggingInterface getRootLog() {
+        return logger.getRootLog();
+    }
+
+    // @Override
+    public void stopLogging() {
+        logger.endSession();
     }
 
     @Override

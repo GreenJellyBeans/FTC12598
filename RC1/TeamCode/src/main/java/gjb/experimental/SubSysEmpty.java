@@ -14,14 +14,15 @@ public class SubSysEmpty implements SubSystemInterface {
     final String THIS_COMPONENT = "SS_EMPTY"; // // Replace EMPTY by short word identifying task
     final public RuntimeSupportInterface rt;
     final public LoggingInterface log;
-    // Place additional instance variables here - like sub system objects..
+
+    // Place additional instance variables here - like hardware access objects
 
 
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
     public SubSysEmpty(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
     }
 
 

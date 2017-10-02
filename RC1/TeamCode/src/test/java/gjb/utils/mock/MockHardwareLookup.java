@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.hardware.AnalogOutputController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -53,6 +54,13 @@ public class MockHardwareLookup implements HardwareLookupInterface {
         }
     }
 
+
+    @Override
+    // We don't presently mock this - too involved as the interface module
+    // extends at least 3 other interface.
+    public DeviceInterfaceModule getDeviceInterfaceModule(String name) {
+        return null;
+    }
 
     @Override
     public AnalogInput getAnalogInput(String name) {

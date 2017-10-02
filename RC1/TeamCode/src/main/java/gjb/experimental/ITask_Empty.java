@@ -13,14 +13,15 @@ public class ITask_Empty implements TaskInterface {
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
+
     // Place additional instance variables here - like sub system objects..
 
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
-    public ITask_Empty(RuntimeSupportInterface rt ) {
+    public ITask_Empty(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
 

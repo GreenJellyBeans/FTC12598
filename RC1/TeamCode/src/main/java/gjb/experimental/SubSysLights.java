@@ -23,7 +23,7 @@ public class SubSysLights implements SubSystemInterface {
 
     public SubSysLights(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
     }
 
     /********* START OF SUBSYSTEM INTERFACE METHODS ***************/

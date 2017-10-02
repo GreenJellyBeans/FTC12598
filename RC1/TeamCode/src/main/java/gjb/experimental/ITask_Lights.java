@@ -18,9 +18,10 @@ public class ITask_Lights implements TaskInterface {
     /*
      * actual delay_i == startDelay + delays[i]*scaleFactor.
      */
-    public ITask_Lights(RuntimeSupportInterface rt, SubSysLights lights, double[] delays, double startDelay, double scaleFactor ) {
+    public ITask_Lights(RuntimeSupportInterface rt, SubSysLights lights,
+                        double[] delays, double startDelay, double scaleFactor ) {
         this.rt = rt;
-        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
         this.lights = lights;
         tc = new TimeChecker(rt);
         tc.setTimesByDurations(delays, startDelay, scaleFactor);

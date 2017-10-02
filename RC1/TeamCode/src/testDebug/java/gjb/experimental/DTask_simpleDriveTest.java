@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import gjb.interfaces.LoggingInterface;
 import gjb.utils.GjbUtils;
 import gjb.utils.mock.MockDcMotor;
 import gjb.utils.mock.MockRuntimeSupport;
@@ -25,12 +26,13 @@ public class DTask_simpleDriveTest {
     @Before
     public void setUp() throws Exception {
         rt = new MockRuntimeSupport();
-        rt.logger().beginSession(DTask_simpleDriveTest.class.toString());
+        LoggingInterface opLog = rt.startLogging(DTask_simpleDriveTest.class.toString());
         String[] dcMotorNames = {LEFT_MOTOR, RIGHT_MOTOR};
         rt.mhwLookup.setupDcMotors(dcMotorNames);
         leftMotor = (MockDcMotor) rt.mhwLookup.getDcMotor(LEFT_MOTOR);
         rightMotor = (MockDcMotor) rt.mhwLookup.getDcMotor(RIGHT_MOTOR);
         // Let's set the motor power to random values
+
         leftMotor.power = Math.random();
         rightMotor.power  = Math.random();
         drive = new SubSysSimpleTwoMotorDrive(rt,null);

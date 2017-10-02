@@ -20,7 +20,7 @@ public class ITask_simpleDrive implements TaskInterface {
     public ITask_simpleDrive(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive ssDrive) {
         this.rt = rt;
         this.drive = ssDrive;
-        this.log = rt.logger().getRootLog().newLogger(THIS_COMPONENT);
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
     @Override

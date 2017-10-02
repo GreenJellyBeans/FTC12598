@@ -26,16 +26,13 @@ public class AOpMode_LEDMorseCAT extends OpMode{
     // These are initialized during init()
     SubSysLights lights;
     ITask_Lights task;
-    private Logger logger;
     private LoggingInterface log;
 
     /*************** START OF OPMODE INTERFACE METHODS **********************/
 
     @Override
     public void init() {
-        logger = rt.logger();
-        logger.beginSession(AOpMode_LEDMorseCAT.class.toString());
-        log = logger.getRootLog();
+        log = rt.startLogging(AOpMode_LEDMorseCAT.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         lights = new SubSysLights(rt);
@@ -74,7 +71,7 @@ public class AOpMode_LEDMorseCAT extends OpMode{
     @Override
     public void stop() {
         task.stop();
-        rt.logger().endSession();
+        rt.stopLogging();
     }
 
     /*************** END OF OPMODE INTERFACE METHODS ************************/

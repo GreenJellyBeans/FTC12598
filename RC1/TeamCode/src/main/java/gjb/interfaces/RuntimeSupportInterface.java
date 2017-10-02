@@ -10,7 +10,10 @@ import gjb.utils.Logger;
 
 public interface RuntimeSupportInterface {
 
-    Logger logger();
+    LoggingInterface startLogging(String sessionName); // returns root log for session.
+    LoggingInterface getRootLog(); // Returns root log (assuming session is started)
+    void stopLogging(); // Stops the session.
+    //Logger logger(); // Returns logging class - in most cases this class needn't be accessed.
     SystemEnvironmentInterface sysEnv();
     HardwareLookupInterface hwLookup();
     GamepadInterface gamepad1();

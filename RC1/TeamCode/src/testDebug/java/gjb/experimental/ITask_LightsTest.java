@@ -9,6 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import gjb.interfaces.LoggingInterface;
+import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.GjbUtils;
 import gjb.utils.mock.MockAnalogOutputController;
 import gjb.utils.mock.MockHardwareLookup;
@@ -32,7 +34,7 @@ public class ITask_LightsTest {
     @Before
     public void setUp() throws Exception {
         rt = new MockRuntimeSupport();
-        rt.logger().beginSession(ITask_LightsTest.class.toString());
+        LoggingInterface opLog = rt.startLogging(ITask_LightsTest.class.toString());
         setupControllerHardware();
         lights = new SubSysLights(rt);
         task = new ITask_Lights(rt, lights, delays, startDelay, scaleFactor);
