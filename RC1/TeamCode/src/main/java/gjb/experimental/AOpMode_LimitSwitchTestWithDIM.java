@@ -31,9 +31,8 @@ public class AOpMode_LimitSwitchTestWithDIM extends OpMode{
     // Place additional instance variables here - like sub system objects..
     final int BLUE_LED_CHANNEL = 0;
     final int RED_LED_CHANNEL = 1;
-    boolean   inputPin;             // Input State
-    DeviceInterfaceModule dim;                  // Device Object
-    DigitalChannel digIn;                // Device Object
+    DeviceInterfaceModule dim;            // Core Device Interface
+    DigitalChannel digIn;                // Object representing ONE channel
 
     /*************** START OF OPMODE INTERFACE METHODS **********************/
 

@@ -1,0 +1,67 @@
+/**
+ *Class created by Aparna, Keya, and Mira
+ * FTC #12598 on 10/8/17
+ */
+package gjb.experimental;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+
+import gjb.interfaces.LoggingInterface;
+import gjb.interfaces.RuntimeSupportInterface;
+import gjb.interfaces.SubSystemInterface;
+
+
+public class SubSysArm implements SubSystemInterface {
+    final String THIS_COMPONENT = "SS_EMPTY"; // // Replace EMPTY by short word identifying task
+    final public RuntimeSupportInterface rt;
+    final public LoggingInterface log;
+
+    // Place additional instance variables here - like hardware access objects
+    DigitalChannel limitswitch;
+    public DcMotor armM;
+
+
+    // Modify this constructor to add any additional initialization parameters - see
+    // other subsystems for examples.
+    public SubSysArm(RuntimeSupportInterface rt) {
+        this.rt = rt;
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
+    }
+
+
+    /********* START OF SUBSYSTEM INTERFACE METHODS ***************/
+
+    @Override
+    public void init() {
+        this.log.pri1(LoggingInterface.INIT_START, "");
+        // Any subsystem initialization code goes here.
+        // Define and Initialize Motors
+        armM = rt.hwLookup().getDcMotor("arm_motor");
+        armM.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        limitswitch  = rt.hwLookup().getDigitalChannel("limit_switch");
+        limitswitch.setMode(DigitalChannel.Mode.INPUT);
+
+        // Set armM motor to zero power
+        armM.setPower(0);
+
+        // Set armM motor to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        armM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.log.pri1(LoggingInterface.INIT_END, "");
+    }
+
+
+    @Override
+    public void deinit() {
+        this.log.pri1(LoggingInterface.DEINIT_START, "");
+        // Place any shutdown/deinitialization code here  - this is called ONCE
+        // after tasks & OpModes have stopped.
+        this.log.pri1(LoggingInterface.DEINIT_END, "");
+
+    }
+
+    /************ END OF SUBSYSTEM INTERFACE METHODS ****************/
+
+    // Place additional helper methods here.
+}
