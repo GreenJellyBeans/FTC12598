@@ -20,6 +20,8 @@ public interface RuntimeSupportInterface {
     GamepadInterface gamepad2();
     Telemetry telemetry();
 
+    // These are selected methods from opMode.hardwareMap.appContext
+    int getIdentifierFromPackage(String name, String defType); // appContext().getResources().getIdentifier(..., this package name)
 
     // General OpMode methods
     void requestOpModeStop();

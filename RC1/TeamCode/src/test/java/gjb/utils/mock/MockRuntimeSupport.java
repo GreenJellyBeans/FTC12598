@@ -124,6 +124,12 @@ public class MockRuntimeSupport implements RuntimeSupportInterface {
     public Telemetry telemetry() { return telemetry; }
 
     @Override
+    public int getIdentifierFromPackage(String name, String defType) {
+        assert false; // unimplemented
+        return -1;
+    }
+
+    @Override
     public void requestOpModeStop() {
         assert false;
     }

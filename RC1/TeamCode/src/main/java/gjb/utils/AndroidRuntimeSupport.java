@@ -201,6 +201,10 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         return om.telemetry;
     }
 
+    @Override
+    public int getIdentifierFromPackage(String name, String defType) {
+        return om.hardwareMap.appContext.getResources().getIdentifier(name, defType, om.hardwareMap.appContext.getPackageName());
+    }
 
 
     @Override
