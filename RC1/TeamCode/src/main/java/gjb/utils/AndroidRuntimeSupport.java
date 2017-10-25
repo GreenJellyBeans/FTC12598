@@ -141,6 +141,16 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         public boolean right_bumper() {
             return gp.right_bumper;
         }
+
+        @Override
+        public boolean y() {
+            return gp.y;
+        }
+
+        @Override
+        public boolean a() {
+            return gp.a;
+        }
     }
 
     // INTERFACE METHOD IMPLEMENTATIONS ...

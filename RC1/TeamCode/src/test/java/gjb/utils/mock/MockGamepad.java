@@ -32,4 +32,14 @@ public class MockGamepad implements GamepadInterface {
     public boolean right_bumper() {
         return right_bumper;
     }
+
+    @Override
+    public boolean y() {
+        return false;
+    }
+
+    @Override
+    public boolean a() {
+        return false;
+    }
 }

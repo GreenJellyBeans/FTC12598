@@ -17,6 +17,10 @@ public class SubSysArm implements SubSystemInterface {
     final public RuntimeSupportInterface rt;
     final public LoggingInterface log;
 
+    public static final double MID_SERVO       =  0.5 ;
+    public static final double ARM_UP_POWER    =  0.45 ;
+    public static final double ARM_DOWN_POWER  = -0.45 ;
+
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch;
     public DcMotor armM;

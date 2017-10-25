@@ -4,6 +4,8 @@
  */
 package gjb.experimental;
 
+import com.qualcomm.robotcore.util.Range;
+
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
@@ -12,11 +14,13 @@ import gjb.interfaces.TaskInterface;
 public class ITask_ArmWLimitSwitches implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
+    final double CLAW_SPEED = 0.02;
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
     SubSysArm armS;
+    double clawOffset = 0.0;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
@@ -49,8 +53,8 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
     }
 
 
-    @Override
-    public void loop() {
+   // @Override
+    public void loop_OLD() {
         // Periodic code to be run when the task is actually running (after start and
         // before stop) goes here.
         //if limit switch is high, set power to zer.
@@ -66,6 +70,38 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         }
     }
 
+    @Override
+    public void loop() {
+        if (armS.limitswitch.getState()) {
+            rt.telemetry().addData("limitswitch", "HIGH");
+            armS.armM.setPower(0);
+        } else {
+            rt.telemetry().addData("LimitSwitch", "LOW");
+            armS.armM.setPower(0.5);
+        }
+
+        // Use gamepad left & right Bumpers to open and close the claw
+        if (rt.gamepad1().right_bumper())
+            clawOffset += CLAW_SPEED;
+        else if (rt.gamepad1().left_bumper())
+            clawOffset -= CLAW_SPEED;
+
+        // Move both servos to new position.  Assume servos are mirror image of each other.
+        clawOffset = Range.clip(clawOffset, -0.5, 0.5);
+        //robot.leftClaw.setPosition(armS.MID_SERVO + clawOffset);
+        //robot.rightClaw.setPosition(armS.MID_SERVO - clawOffset);
+
+        // Use gamepad buttons to move the arm up (Y) and down (A)
+        if (rt.gamepad1().y())
+            armS.armM.setPower(armS.ARM_UP_POWER);
+        else if (rt.gamepad1().a())
+            armS.armM.setPower(armS.ARM_DOWN_POWER);
+        else
+            armS.armM.setPower(0.0);
+
+        // Send telemetry message to signify robot running;
+        rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
+    }
 
     @Override
     public void stop() {
