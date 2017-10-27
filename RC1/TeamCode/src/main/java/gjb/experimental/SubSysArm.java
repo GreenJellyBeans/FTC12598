@@ -22,7 +22,8 @@ public class SubSysArm implements SubSystemInterface {
     public static final double ARM_DOWN_POWER  = -0.45 ;
 
     // Place additional instance variables here - like hardware access objects
-    DigitalChannel limitswitch;
+    DigitalChannel limitswitch_Y;
+    DigitalChannel limitswitch_A;
     public DcMotor armM;
 
 
@@ -43,8 +44,10 @@ public class SubSysArm implements SubSystemInterface {
         // Define and Initialize Motors
         armM = rt.hwLookup().getDcMotor("arm_motor");
         armM.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        limitswitch  = rt.hwLookup().getDigitalChannel("limit_switch");
-        limitswitch.setMode(DigitalChannel.Mode.INPUT);
+        limitswitch_A  = rt.hwLookup().getDigitalChannel("limit_switch_down");
+        limitswitch_A.setMode(DigitalChannel.Mode.INPUT);
+        limitswitch_Y  = rt.hwLookup().getDigitalChannel("limit_switch_up");
+        limitswitch_Y.setMode(DigitalChannel.Mode.INPUT);
 
         // Set armM motor to zero power
         armM.setPower(0);

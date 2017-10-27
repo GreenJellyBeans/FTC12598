@@ -61,7 +61,7 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         //else set power to one
         //armM.leftDrive.setPower(1);
         // Set the red led on the DIM based on the input digital channel state.
-        if (armS.limitswitch.getState()) {
+        if (armS.limitswitch_Y.getState()) {
             rt.telemetry().addData("limitswitch", "HIGH");
             armS.armM.setPower(0);
         } else {
@@ -72,13 +72,6 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
 
     @Override
     public void loop() {
-        if (armS.limitswitch.getState()) {
-            rt.telemetry().addData("limitswitch", "HIGH");
-            armS.armM.setPower(0);
-        } else {
-            rt.telemetry().addData("LimitSwitch", "LOW");
-            armS.armM.setPower(0.5);
-        }
 
         // Use gamepad left & right Bumpers to open and close the claw
         if (rt.gamepad1().right_bumper())
@@ -90,14 +83,44 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         clawOffset = Range.clip(clawOffset, -0.5, 0.5);
         //robot.leftClaw.setPosition(armS.MID_SERVO + clawOffset);
         //robot.rightClaw.setPosition(armS.MID_SERVO - clawOffset);
-
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        if (rt.gamepad1().y())
-            armS.armM.setPower(armS.ARM_UP_POWER);
-        else if (rt.gamepad1().a())
-            armS.armM.setPower(armS.ARM_DOWN_POWER);
-        else
-            armS.armM.setPower(0.0);
+
+
+        //if (rt.gamepad1().y())
+          //  armS.armM.setPower(armS.ARM_UP_POWER);
+       // else if (rt.gamepad1().a())
+        //    armS.armM.setPower(armS.ARM_DOWN_POWER);
+        //else
+          //  armS.armM.setPower(0.0);
+
+       // if (!armS.limitswitch_Y.getState() && rt.gamepad1().a())
+          //   armS.armM.setPower(armS.ARM_DOWN_POWER);
+        //else if (!armS.limitswitch_A.getState() && rt.gamepad1().y())
+          //  armS.armM.setPower(armS.ARM_UP_POWER);
+       // else
+         //   armS.armM.setPower(0);
+        double power = 0;
+        if (armS.limitswitch_Y.getState()) {
+            rt.telemetry().addData("limitswitch_Y", "HIGH");
+            if (rt.gamepad1().a())
+                power = armS.ARM_DOWN_POWER;
+        } else if (rt.gamepad1().y()){
+            rt.telemetry().addData("LimitSwitch_Y", "LOW");
+            power = armS.ARM_UP_POWER;
+        }
+
+        if (armS.limitswitch_A.getState()) {
+            rt.telemetry().addData("limitswitch_A", "HIGH");
+            power = 0;
+            if (rt.gamepad1().y())
+                power = armS.ARM_UP_POWER;
+        } else if (rt.gamepad1().a()){
+            rt.telemetry().addData("LimitSwitch_A", "LOW");
+            power = armS.ARM_DOWN_POWER;
+        }
+
+        armS.armM.setPower(power);
+        rt.telemetry().addData("arm",  "power = %.2f", power);
 
         // Send telemetry message to signify robot running;
         rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
