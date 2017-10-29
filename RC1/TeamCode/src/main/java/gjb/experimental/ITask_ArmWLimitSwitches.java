@@ -81,30 +81,17 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
         clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-        //robot.leftClaw.setPosition(armS.MID_SERVO + clawOffset);
-        //robot.rightClaw.setPosition(armS.MID_SERVO - clawOffset);
+        armS.left_dinosorvor.setPosition(armS.MID_SERVO + clawOffset);
+        armS.right_dinosorvor.setPosition(armS.MID_SERVO - clawOffset);
+
         // Use gamepad buttons to move the arm up (Y) and down (A)
 
-
-        //if (rt.gamepad1().y())
-          //  armS.armM.setPower(armS.ARM_UP_POWER);
-       // else if (rt.gamepad1().a())
-        //    armS.armM.setPower(armS.ARM_DOWN_POWER);
-        //else
-          //  armS.armM.setPower(0.0);
-
-       // if (!armS.limitswitch_Y.getState() && rt.gamepad1().a())
-          //   armS.armM.setPower(armS.ARM_DOWN_POWER);
-        //else if (!armS.limitswitch_A.getState() && rt.gamepad1().y())
-          //  armS.armM.setPower(armS.ARM_UP_POWER);
-       // else
-         //   armS.armM.setPower(0);
         double power = 0;
         if (armS.limitswitch_Y.getState()) {
             rt.telemetry().addData("limitswitch_Y", "HIGH");
             if (rt.gamepad1().a())
                 power = armS.ARM_DOWN_POWER;
-        } else if (rt.gamepad1().y()){
+         } else if (rt.gamepad1().y()){
             rt.telemetry().addData("LimitSwitch_Y", "LOW");
             power = armS.ARM_UP_POWER;
         }

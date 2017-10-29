@@ -6,6 +6,7 @@ package gjb.experimental;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
@@ -25,7 +26,8 @@ public class SubSysArm implements SubSystemInterface {
     DigitalChannel limitswitch_Y;
     DigitalChannel limitswitch_A;
     public DcMotor armM;
-
+    public Servo left_dinosorvor   = null;
+    public Servo right_dinosorvor   = null;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
@@ -55,6 +57,15 @@ public class SubSysArm implements SubSystemInterface {
         // Set armM motor to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         armM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        // Set up the sorvors
+        left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
+        right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
+        left_dinosorvor.setPosition(MID_SERVO);
+        right_dinosorvor.setPosition(MID_SERVO);
+
+
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 
