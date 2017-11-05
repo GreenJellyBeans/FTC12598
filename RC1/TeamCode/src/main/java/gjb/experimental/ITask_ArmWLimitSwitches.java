@@ -14,7 +14,9 @@ import gjb.interfaces.TaskInterface;
 public class ITask_ArmWLimitSwitches implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
-    final double CLAW_SPEED = 0.02;
+    final double CLAW_SPEED = 0.005; //was 0.02
+    final double MIN_CLAW = -0.5;
+    final double MAX_CLAW = -0.08;
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
@@ -80,9 +82,10 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
             clawOffset -= CLAW_SPEED;
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
-        clawOffset = Range.clip(clawOffset, -0.5, 0.5);
+        clawOffset = Range.clip(clawOffset, MIN_CLAW, MAX_CLAW);
         armS.left_dinosorvor.setPosition(armS.MID_SERVO + clawOffset);
         armS.right_dinosorvor.setPosition(armS.MID_SERVO - clawOffset);
+
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
 
@@ -91,7 +94,7 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
             rt.telemetry().addData("limitswitch_Y", "HIGH");
             if (rt.gamepad1().a())
                 power = armS.ARM_DOWN_POWER;
-         } else if (rt.gamepad1().y()){
+        } else if (rt.gamepad1().y()){
             rt.telemetry().addData("LimitSwitch_Y", "LOW");
             power = armS.ARM_UP_POWER;
         }

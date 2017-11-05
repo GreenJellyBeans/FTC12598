@@ -52,20 +52,19 @@ public class SubSysArm implements SubSystemInterface {
         limitswitch_Y.setMode(DigitalChannel.Mode.INPUT);
 
         // Set armM motor to zero power
+        armM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armM.setPower(0);
+
 
         // Set armM motor to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         armM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
 
         // Set up the sorvors
         left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
         right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
         left_dinosorvor.setPosition(MID_SERVO);
         right_dinosorvor.setPosition(MID_SERVO);
-
-
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 
@@ -75,6 +74,8 @@ public class SubSysArm implements SubSystemInterface {
         this.log.pri1(LoggingInterface.DEINIT_START, "");
         // Place any shutdown/deinitialization code here  - this is called ONCE
         // after tasks & OpModes have stopped.
+        armM.setPower(0);
+        armM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.log.pri1(LoggingInterface.DEINIT_END, "");
 
     }
