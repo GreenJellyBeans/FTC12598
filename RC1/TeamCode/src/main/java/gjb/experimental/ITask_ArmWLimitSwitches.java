@@ -16,7 +16,7 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
     final double CLAW_SPEED = 0.005; //was 0.02
     final double MIN_CLAW = -0.5;
-    final double MAX_CLAW = -0.08;
+    final double MAX_CLAW = 0.0;
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 

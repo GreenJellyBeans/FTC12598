@@ -47,6 +47,12 @@ public class ITask_simpleDrive implements TaskInterface {
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
         left = -rt.gamepad1().left_stick_y();
         right = -rt.gamepad1().right_stick_y();
+        // left = 0.3
+        // right = 0.1
+        left = adjustPower(left);
+        right = adjustPower(right);
+        // left = 0.3
+        // right = .04
 
         drive.leftDrive.setPower(left);
         drive.rightDrive.setPower(right);
@@ -54,6 +60,22 @@ public class ITask_simpleDrive implements TaskInterface {
         rt.telemetry().addData("left",  "%.2f", left);
         rt.telemetry().addData("right", "%.2f", right);
 
+    }
+
+    private double adjustPower(double x) {
+        double y = x;
+        double firstSlope = 0.4;
+        double secondSlope = 9.0/7.5;
+        if (Math.abs(x) <= 0.25) { // -0.25 < x > 0.25
+            y = x * firstSlope;
+        } else {
+            if (x > 0.25) {
+                y  = 0.1 + secondSlope * (x - 0.25);
+            } else if (x < - 0.25) {
+                y = -0.1 + secondSlope * (x  + 0.25);
+            }
+        }
+        return y;
     }
 
     @Override
