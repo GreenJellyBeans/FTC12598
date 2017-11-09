@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.R;
 
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import gjb.interfaces.LoggingInterface;
@@ -18,7 +19,7 @@ import gjb.utils.Logger;
 // NOTE: You can used this as the base for a TeleopMode - all that needs to be
 // done is to replace the @Autonomous annotation by @TeleOp below.
 @Autonomous(name="AOpMode_TestSoundPlayer", group="dummy")
-//@Disabled
+@Disabled
 /*
  *  This Autonomous OpMode makes initializes the Empty subsystem and starts the Empty task.
  *  ADD/REPLACE THIS COMMENT BASED ON THE WHEN THE NEW TASK WAS CREATED

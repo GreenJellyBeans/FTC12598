@@ -4,6 +4,7 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -16,7 +17,7 @@ import gjb.utils.Logger;
 // NOTE: You can used this as the base for a TeleopMode - all that needs to be
 // done is to replace the @Autonomous annotation by @TeleOp below.
 @Autonomous(name="AOpMode_LimitSwitchTestWithDIM", group="dummy")
-//@Disabled
+@Disabled
 /*
  *  This Autonomous OpMode makes initializes the Empty subsystem and starts the Empty task.
  *  ADD/REPLACE THIS COMMENT BASED ON THE WHEN THE NEW TASK WAS CREATED
