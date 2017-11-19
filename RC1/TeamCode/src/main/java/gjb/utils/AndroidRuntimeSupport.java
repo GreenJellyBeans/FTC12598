@@ -96,7 +96,8 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public ColorSensor getColorSensor(String name) {
-            return null;
+
+            return om.hardwareMap.get(ColorSensor.class, name);
         }
 
         @Override

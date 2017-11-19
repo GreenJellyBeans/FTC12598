@@ -64,13 +64,15 @@ public class ITask_simpleAutonDrive implements TaskInterface {
         this.log.pri1("START", "");
         int newLeftTarget = drive.leftDrive.getCurrentPosition() + (int)(FORWARD_INCHES * COUNTS_PER_INCH);
         int newRightTarget = drive.rightDrive.getCurrentPosition() + (int)(FORWARD_INCHES * COUNTS_PER_INCH);
-        drive.leftDrive.setTargetPosition(newLeftTarget);
-        drive.rightDrive.setTargetPosition(newRightTarget);
 
         // Turn On RUN_TO_POSITION
         drive.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        drive.leftDrive.setTargetPosition(newLeftTarget);
+        drive.rightDrive.setTargetPosition(newRightTarget);
+
+        rt.resetStartTime();
         drive.leftDrive.setPower(Math.abs(SPEEDO));
         drive.rightDrive.setPower(Math.abs(SPEEDO));
 
@@ -78,7 +80,14 @@ public class ITask_simpleAutonDrive implements TaskInterface {
 
     @Override
     public void loop() {
-
+        if (rt.gamepad1().a()) {
+            // Send telemetry message to indicate successful Encoder reset
+            rt.telemetry().addData("LoopEncoder",  "Time %f; Currently at %7d :%7d",
+                    rt.getRuntime(),
+                    drive.leftDrive.getCurrentPosition(),
+                    drive.rightDrive.getCurrentPosition());
+            rt.telemetry().update();
+        }
     }
 
     @Override

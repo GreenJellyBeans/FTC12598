@@ -38,7 +38,7 @@ public class AOpMode_SimpleAuton extends OpMode{
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
-        driveTask = new ITask_simpleAutonDrive(rt, drive, 26.0); // inches to drive
+        driveTask = new ITask_simpleAutonDrive(rt, drive, -29.0); // inches to drive
 
         // Initialize the subsystem and associated task
         drive.init();

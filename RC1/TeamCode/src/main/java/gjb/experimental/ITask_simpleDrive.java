@@ -47,12 +47,8 @@ public class ITask_simpleDrive implements TaskInterface {
         // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
         left = -rt.gamepad1().left_stick_y();
         right = -rt.gamepad1().right_stick_y();
-        // left = 0.3
-        // right = 0.1
         left = adjustPower(left);
         right = adjustPower(right);
-        // left = 0.3
-        // right = .04
 
         drive.leftDrive.setPower(left);
         drive.rightDrive.setPower(right);
