@@ -25,6 +25,7 @@ public class SubSysSimpleTwoMotorDrive implements SubSystemInterface {
     public static class Config {
         public String leftMotorName;
         public String rightMotorName;
+        public boolean reverseMotors;
 
         public Config leftMotorName(String name) {
             this.leftMotorName = name;
@@ -33,6 +34,11 @@ public class SubSysSimpleTwoMotorDrive implements SubSystemInterface {
 
         public Config rightMotorName(String name) {
             this.rightMotorName = name;
+            return this;
+        }
+
+        public Config reverseMotors(boolean reverse) {
+            this.reverseMotors = reverse;
             return this;
         }
     }
