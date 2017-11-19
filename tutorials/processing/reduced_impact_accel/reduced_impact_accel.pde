@@ -23,11 +23,13 @@ void draw() {
   moveDisk(delta);
   drawDisk();
 
-  if (frameCount % 30 == 0) {
+  if (frameCount % 3 == 0) {
     fill(128);
     rect(0, 0, width, 150);
     fill(255);
     displayText = "speed: " + speed + "\nmaxA: " + maxAcceleration;
+  }
+  if (frameCount % 30 == 0) {
     maxAcceleration = 0;
   }
   text(displayText, 50, 50);
@@ -65,8 +67,8 @@ double clipToRange(double in, double min, double max) {
 
 
 double calculatePowerIncrement(double currentPower, double targetPower, double minStartPower, double maxPower) {
-  final double MAX_INCREASE = 0.01; // The fractional amount of maxPower we increase each time
-  final double MAX_DECREASE = 0.2;
+  final double MAX_INCREASE = 0.05; // The fractional amount of maxPower we increase power each time
+  final double MAX_DECREASE = 0.2;  // The fractional amount of maxPower we decrease power each time
   double speedDelta = targetPower-currentPower;
   double maxIncrement = maxPower*MAX_INCREASE;
   double absCurrentPower = Math.abs(currentPower); 
@@ -80,6 +82,7 @@ double calculatePowerIncrement(double currentPower, double targetPower, double m
       maxIncrement = maxPower*MAX_INCREASE;
     }
   } else {
+    // power is decreasing...
     maxIncrement = maxPower*MAX_DECREASE;
   }
 
