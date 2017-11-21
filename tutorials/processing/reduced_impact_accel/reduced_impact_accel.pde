@@ -8,6 +8,7 @@ final double NANOS_PER_SECOND = 1e9;
 double speed  = 1.0;
 double  maxAcceleration= 0.0; // Magnetude.
 String displayText = "";
+GJBPowerController controller = new GJBPowerController(0.1, 0.05, 0.2); // start, min-increase, min-decrease
 
 void setup() {
   size(800, 800);
@@ -54,68 +55,16 @@ void updateSpeed(double delta) {
     previousTargetSpeed = targetSpeed;
   }
 
-  double speedDelta = calculatePowerIncrement(speed, targetSpeed, 0.1, 1);
+  double speedDelta = controller.calculatePowerIncrement(speed, targetSpeed);
   double newSpeed = speed + speedDelta;
   double acceleration = Math.abs((newSpeed-speed)/delta);
   maxAcceleration = Math.max(maxAcceleration, acceleration);
   speed = newSpeed;
 }
 
-double clipToRange(double in, double min, double max) {
-  return Math.max(Math.min(in, max), min);
-}
 
 
-double calculatePowerIncrement(double currentPower, double targetPower, double minStartPower, double maxPower) {
-  final double MAX_INCREASE = 0.05; // The fractional amount of maxPower we increase power each time
-  final double MAX_DECREASE = 0.2;  // The fractional amount of maxPower we decrease power each time
-  double speedDelta = targetPower-currentPower;
-  double maxIncrement = maxPower*MAX_INCREASE;
-  double absCurrentPower = Math.abs(currentPower); 
-  double absTargetPower  = Math.abs(targetPower);
-  boolean powerIsIncreasing = absTargetPower > absCurrentPower;
-  if (powerIsIncreasing) {
-    if (absCurrentPower < minStartPower) {
-      // if power is very low - below minStartPower, we jump to minStartPower
-      maxIncrement = minStartPower;
-    } else {
-      maxIncrement = maxPower*MAX_INCREASE;
-    }
-  } else {
-    // power is decreasing...
-    maxIncrement = maxPower*MAX_DECREASE;
-  }
 
-  // This makes sure we increment the right amount even if speedDelta is negative.
-  speedDelta = clipToRange(speedDelta, -maxIncrement, maxIncrement);
-
-  return speedDelta;
-}
-
-double calculatePowerIncrement2(double currentPower, double targetPower, double minStartPower, double maxPower) {
-  double speedDelta = targetPower-currentPower;
-  final double MAX_INCREASE = 0.2; // The fractional amount of maxPower we increase each time
-  final double MAX_LOWPOWER_INCREASE = 0.01; // When power is low, the fractional amount of maxPower we increase each time.
-  double maxIncrement = maxPower*MAX_INCREASE;
-  double absPower = Math.abs(currentPower);
-
-  if (absPower < minStartPower) {
-    // if power is very low - below minStartPower, we jump to minStartPower
-    maxIncrement = minStartPower;
-  } else if (absPower >= minStartPower && absPower < minStartPower + 0.1*maxPower) {
-    // if power is low - between minStartPower and minStartPower + 0.1 maxPower,
-    // we increment by at most a very small amount
-    maxIncrement = maxPower*MAX_LOWPOWER_INCREASE;
-  } else {
-    // increment by at most the normal amount
-    maxIncrement = maxPower*MAX_INCREASE;
-  }
-
-  // This makes sure we increment the right amount even if speedDelta is negative.
-  speedDelta = clipToRange(speedDelta, -maxIncrement, maxIncrement);
-
-  return speedDelta;
-}
 
 void drawDisk() {
   ellipse((float)x, (float)y, 30, 30);
