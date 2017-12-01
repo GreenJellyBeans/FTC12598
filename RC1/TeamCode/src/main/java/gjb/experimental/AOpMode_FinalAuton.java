@@ -76,9 +76,12 @@ public class AOpMode_FinalAuton extends LinearOpMode {
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
-    final double UP_SERVO = 0.25;
+    final double UP_SERVO = 0.3;
+    final double DOWN_SERVO = 0.7;
     // color sensor (add later)
-
+    final int UNKNOWN = 0;
+    final int RED = 1;
+    final int BLUE = 2;
     private LoggingInterface log;
 
     private ElapsedTime     runtime = new ElapsedTime();
@@ -92,14 +95,13 @@ public class AOpMode_FinalAuton extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final int    WAIT_TIME =  1000;
+    static final double     JEWEL_MOVEMENT = 2;
+    final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
 
-    /*public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {*/
     @Override
     public void runOpMode() {
         double timeoutS;
-        final double     DRIVE_SPEED             = 0.6;
         log = rt.startLogging(AOpMode_SimpleAuton.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
@@ -129,21 +131,35 @@ public class AOpMode_FinalAuton extends LinearOpMode {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
         // Step 1:  Drop the sorvor
-        color_sorcerer.setPosition(SubSysArm.MID_SERVO);
+        color_sorcerer.setPosition(DOWN_SERVO);
+        //Give some time for the color wand to descend
+        sleep(WAIT_TIME);
 
         // Step 2:  Detect the color of the jewel
+        //This code is for the red alliance
+        int color = RED;
+        double movement = 29;
 
         // Step 3:  Go back or forward depending on color of jewel
-            encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-            encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-
+        if (color == RED) {
+            encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+            movement = movement - JEWEL_MOVEMENT;
+        } else if (color == UNKNOWN) {
+            //There is no change in movement
+        } else {
+            encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            movement = movement + JEWEL_MOVEMENT;
+        }
 
         // Step 4: Lift up sorvor
         color_sorcerer.setPosition(UP_SERVO);
-        // Step 5: Go to safe zone
-        // Step 6: Stop
+
+        //Give some time for the color wand to ascend
+        sleep(WAIT_TIME);
+
+        // Step 5: Go to safe zone and stop
+        encoderDrive(DRIVE_SPEED, -movement, -movement, 5.0);
+
     }
 
 
