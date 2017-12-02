@@ -44,9 +44,6 @@ public class AOpMode_ColorTest extends OpMode {
     final int UNKNOWN = 0;
     final int RED = 1;
     final int BLUE = 2;
-    // sometimes it helps to multiply the raw RGB values with a scale factor
-    // to amplify/attentuate the measured values.
-    final double SCALE_FACTOR = 255;
 
     // values is a reference to the hsvValues array.
     //final float values[] = hsvValues;

@@ -29,9 +29,12 @@
 
 package gjb.experimental;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -63,7 +66,7 @@ import gjb.utils.AndroidRuntimeSupport;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Time", group="Pushbot")
+@Autonomous(name="AOpMode_FinalAuton_RED", group="Pushbot")
 //@Disabled
 public class AOpMode_FinalAuton extends LinearOpMode {
 
@@ -76,13 +79,17 @@ public class AOpMode_FinalAuton extends LinearOpMode {
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
-    final double UP_SERVO = 0.3;
-    final double DOWN_SERVO = 0.7;
+    final double UP_SERVO = 0.5;
+    final double DOWN_SERVO = 0.9;
     // color sensor (add later)
     final int UNKNOWN = 0;
     final int RED = 1;
     final int BLUE = 2;
     private LoggingInterface log;
+    // values is a reference to the hsvValues array.
+    //final float values[] = hsvValues;
+    float[] hsvValues = new float[3];
+    ColorSensor sensorColor;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -117,6 +124,7 @@ public class AOpMode_FinalAuton extends LinearOpMode {
         // Servo
         color_sorcerer = rt.hwLookup().getServo("color_sorcerer");
         // color sensors here...
+        sensorColor = rt.hwLookup().getColorSensor("sensorvor_color");
 
 
         // Send telemetry message to signify robot waiting;
@@ -130,28 +138,34 @@ public class AOpMode_FinalAuton extends LinearOpMode {
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
-        // Step 1:  Drop the sorvor
+        // Step 1:  Drop the servo
         color_sorcerer.setPosition(DOWN_SERVO);
         //Give some time for the color wand to descend
         sleep(WAIT_TIME);
 
         // Step 2:  Detect the color of the jewel
         //This code is for the red alliance
-        int color = RED;
+        int color = getColor();
         double movement = 29;
+        rt.telemetry().addData("COLOR", color);
+        telemetry.update();
 
         // Step 3:  Go back or forward depending on color of jewel
         if (color == RED) {
+            rt.telemetry().addData("Action", "got RED");
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+
             movement = movement - JEWEL_MOVEMENT;
         } else if (color == UNKNOWN) {
             //There is no change in movement
+            rt.telemetry().addData("Action", "got UNKNOWN");
         } else {
+            rt.telemetry().addData("Action", "got BLUE");
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
             movement = movement + JEWEL_MOVEMENT;
         }
 
-        // Step 4: Lift up sorvor
+        // Step 4: Lift up servo
         color_sorcerer.setPosition(UP_SERVO);
 
         //Give some time for the color wand to ascend
@@ -217,6 +231,38 @@ public class AOpMode_FinalAuton extends LinearOpMode {
 
             //  sleep(250);   // optional pause after each move
         }
+
+    }
+
+    public int getColor() {
+        final double SCALE_FACTOR = 255;
+        // convert the RGB values to HSV values.
+        // multiply by the SCALE_FACTOR.
+        // then cast it back to int (SCALE_FACTOR is a double)
+        int r = (int) (sensorColor.red() * SCALE_FACTOR); // between 0 and 255
+        int g = (int) (sensorColor.green() * SCALE_FACTOR); // between 0 and 255
+        int b = (int) (sensorColor.blue() * SCALE_FACTOR); // between 0 and 255
+        Color.RGBToHSV(r,g,b,hsvValues);
+        double h = hsvValues[0];
+        double s = hsvValues[1];
+        double v = hsvValues[2];
+
+        // send the info back to driver station using telemetry function.
+
+        telemetry.addData("Hue",h);
+        telemetry.addData("Saturation",s);
+        telemetry.addData("Value",v);
+
+
+        if ((h<20 || h>350) && s>0.3 && v>10 && v<200){
+            return RED;
+        } else if (h>170 && h<215 && s>0.3 && v>10 && v<200) {
+            return BLUE;
+        } else {
+            return UNKNOWN;
+        }
+
+
 
     }
 }
