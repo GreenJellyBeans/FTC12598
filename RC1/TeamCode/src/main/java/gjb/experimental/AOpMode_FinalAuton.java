@@ -79,8 +79,8 @@ public class AOpMode_FinalAuton extends LinearOpMode {
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
-    final double UP_SERVO = 0.5;
-    final double DOWN_SERVO = 0.9;
+    final double UP_SERVO = 0.4;
+    final double DOWN_SERVO = 1.0;
     // color sensor (add later)
     final int UNKNOWN = 0;
     final int RED = 1;
@@ -102,8 +102,8 @@ public class AOpMode_FinalAuton extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final int    WAIT_TIME =  1000;
-    static final double     JEWEL_MOVEMENT = 2;
+    static final int    WAIT_TIME =  3000;
+    static final double     JEWEL_MOVEMENT = 3;
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
 
     @Override
@@ -153,14 +153,17 @@ public class AOpMode_FinalAuton extends LinearOpMode {
         // Step 3:  Go back or forward depending on color of jewel
         if (color == RED) {
             rt.telemetry().addData("Action", "got RED");
+            telemetry.update();
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
 
             movement = movement - JEWEL_MOVEMENT;
         } else if (color == UNKNOWN) {
             //There is no change in movement
             rt.telemetry().addData("Action", "got UNKNOWN");
+            telemetry.update();
         } else {
             rt.telemetry().addData("Action", "got BLUE");
+            telemetry.update();
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
             movement = movement + JEWEL_MOVEMENT;
         }
@@ -252,7 +255,7 @@ public class AOpMode_FinalAuton extends LinearOpMode {
         telemetry.addData("Hue",h);
         telemetry.addData("Saturation",s);
         telemetry.addData("Value",v);
-
+        telemetry.update();
 
         if ((h<20 || h>350) && s>0.3 && v>10 && v<200){
             return RED;
