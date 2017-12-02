@@ -32,14 +32,11 @@ package gjb.experimental;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
@@ -66,9 +63,9 @@ import gjb.utils.AndroidRuntimeSupport;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AOpMode_FinalAuton_RED", group="Pushbot")
+@Autonomous(name="AOpMode_FinalAuton_BLUE", group="Pushbot")
 //@Disabled
-public class AOpMode_FinalAuton extends LinearOpMode {
+public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
 
     /* Declare OpMode members. */
     final String THIS_COMPONENT = "AOpMode_SimpleAuton";
@@ -146,13 +143,13 @@ public class AOpMode_FinalAuton extends LinearOpMode {
         // Step 2:  Detect the color of the jewel
         //This code is for the red alliance
         int color = getColor();
-        double movement = 29;
+        double movement = -29;//changed from pos to neg
         rt.telemetry().addData("COLOR", color);
         telemetry.update();
 
         // Step 3:  Go back or forward depending on color of jewel
-        if (color == RED) {
-            rt.telemetry().addData("Action", "got RED");
+        if (color == BLUE) { //change red to blue
+            rt.telemetry().addData("Action", "got BLUE"); //changed red to blue
             telemetry.update();
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
 
@@ -162,7 +159,7 @@ public class AOpMode_FinalAuton extends LinearOpMode {
             rt.telemetry().addData("Action", "got UNKNOWN");
             telemetry.update();
         } else {
-            rt.telemetry().addData("Action", "got BLUE");
+            rt.telemetry().addData("Action", "got RED"); //change blue to red
             telemetry.update();
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
             movement = movement + JEWEL_MOVEMENT;
