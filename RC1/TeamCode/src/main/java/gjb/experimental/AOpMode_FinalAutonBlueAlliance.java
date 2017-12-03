@@ -100,9 +100,10 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final int    WAIT_TIME =  3000;
+    static final int    SLIP_WAIT_TIME =  1000;
     static final double     JEWEL_MOVEMENT = 3;
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
-
+    final double     EXTRA_MOVEMENT = 8; //To get in the safe zone
     @Override
     public void runOpMode() {
         double timeoutS;
@@ -143,26 +144,30 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
         // Step 2:  Detect the color of the jewel
         //This code is for the red alliance
         int color = getColor();
-        double movement = -29;//changed from pos to neg
+        double movement = 29;//changed from neg to pos
         rt.telemetry().addData("COLOR", color);
         telemetry.update();
 
         // Step 3:  Go back or forward depending on color of jewel
         if (color == BLUE) { //change red to blue
+            //back then forward
             rt.telemetry().addData("Action", "got BLUE"); //changed red to blue
             telemetry.update();
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
-
-            movement = movement - JEWEL_MOVEMENT;
+            movement = movement + JEWEL_MOVEMENT + EXTRA_MOVEMENT;
+            //Give some time for the robot to slip
+            sleep(SLIP_WAIT_TIME);
         } else if (color == UNKNOWN) {
             //There is no change in movement
             rt.telemetry().addData("Action", "got UNKNOWN");
             telemetry.update();
+            sleep(10000);
         } else {
+            //forward then forward
             rt.telemetry().addData("Action", "got RED"); //change blue to red
             telemetry.update();
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
-            movement = movement + JEWEL_MOVEMENT;
+            movement = movement - JEWEL_MOVEMENT;
         }
 
         // Step 4: Lift up servo
@@ -172,7 +177,7 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
         sleep(WAIT_TIME);
 
         // Step 5: Go to safe zone and stop
-        encoderDrive(DRIVE_SPEED, -movement, -movement, 5.0);
+        encoderDrive(DRIVE_SPEED, movement,  movement, 5.0);
 
     }
 
@@ -252,17 +257,23 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
         telemetry.addData("Hue",h);
         telemetry.addData("Saturation",s);
         telemetry.addData("Value",v);
-        telemetry.update();
 
-        if ((h<20 || h>350) && s>0.3 && v>10 && v<200){
-            return RED;
-        } else if (h>170 && h<215 && s>0.3 && v>10 && v<200) {
-            return BLUE;
-        } else {
-            return UNKNOWN;
+        int ret = UNKNOWN;
+        //if ((h<20 || h>350) && s>0.3 && v>10 && v<200){
+        //    ret =  RED;
+        //} else if (h>170 && h<215 && s>0.3 && v>10 && v<200) {
+        //    ret =  BLUE;
+        //}
+        if ((h<30 || h>340) && s>0.3 && v > 6 && v<200){
+            ret =  RED;
+        } else if (h>160 && h<225 && s>0.3 && v > 6 && v<200) {
+            ret =  BLUE;
         }
 
+        String msg = "H=" + h + ", S=" + s + ", V=" + v + "RET:" + ret;
+        telemetry.log().add(msg);
+        telemetry.update();
 
-
+        return ret;
     }
 }
