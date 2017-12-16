@@ -105,7 +105,7 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
     static final double     JEWEL_MOVEMENT = 3;
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
     final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
-    final double     BACKUP_DISTANCE = 1;
+    final double     BACKUP_DISTANCE = 1.5;
     @Override
     public void runOpMode() {
         double timeoutS;
@@ -274,9 +274,9 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
         //} else if (h>170 && h<215 && s>0.3 && v>10 && v<200) {
         //    ret =  BLUE;
         //}
-        if ((h<30 || h>340) && s>0.15 && v > 6 && v<400){
+        if ((h<70 || h>340) && s>0.15 && v > 5 && v<400){
             ret =  RED;
-        } else if (h>160 && h<225 && s>0.15 && v > 4 && v<400) {
+        } else if (h>140 && h<225 && s>0.15 && v > 4 && v<400) {
             ret =  BLUE;
         }
 
