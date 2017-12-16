@@ -103,10 +103,11 @@ public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final int    WAIT_TIME =  3000;
-    static final int    SLIP_WAIT_TIME =  1000;
+    static final int    JEWEL_WAIT_TIME =  3000;
     static final double     JEWEL_MOVEMENT = 3;
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
     final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
+    final double     BACKUP_DISTANCE = 1;
     @Override
     public void runOpMode() {
         double timeoutS;
@@ -158,6 +159,7 @@ public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
             telemetry.update();
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
             movement = movement + JEWEL_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME);
         } else if (color == UNKNOWN) {
             //There is no change in movement
             rt.telemetry().addData("Action", "got UNKNOWN");
@@ -168,23 +170,27 @@ public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
             rt.telemetry().addData("Action", "got BLUE");
             telemetry.update();
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            sleep(JEWEL_WAIT_TIME ); //wait for the jewel to be knocked off
             movement = movement - JEWEL_MOVEMENT - EXTRA_MOVEMENT;
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
 
             //Give some time for the robot to slip
-            sleep(SLIP_WAIT_TIME);
+
+            //encoderDrive(0.7, -5.0, -5.0, 5.0); // HACK for getting back on stone
 
         }
 
 
         // Step 4: Lift up servo
-        color_sorcerer.setPosition(UP_SERVO);
+         color_sorcerer.setPosition(UP_SERVO);
 
         //Give some time for the color wand to ascend
         sleep(WAIT_TIME);
 
-        // Step 5: Go to safe zone and stop
+        // Step 5: Go to safe zone and stop and backup
         encoderDrive(DRIVE_SPEED, movement, movement, 10.0);
-
+        encoderDrive(DRIVE_SPEED, BACKUP_DISTANCE, BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
     }
 
 

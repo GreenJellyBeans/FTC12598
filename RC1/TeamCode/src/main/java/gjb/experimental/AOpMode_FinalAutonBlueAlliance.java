@@ -101,9 +101,11 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final int    WAIT_TIME =  3000;
     static final int    SLIP_WAIT_TIME =  1000;
+    static final int    JEWEL_WAIT_TIME =  3000;
     static final double     JEWEL_MOVEMENT = 3;
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
     final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
+    final double     BACKUP_DISTANCE = 1;
     @Override
     public void runOpMode() {
         double timeoutS;
@@ -150,13 +152,18 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
 
         // Step 3:  Go back or forward depending on color of jewel
         if (color == BLUE) { //change red to blue
-            //back then forward
+            //back then forward - drive wheels (rear) go off table!
             rt.telemetry().addData("Action", "got BLUE"); //changed red to blue
             telemetry.update();
             encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
             movement = movement + JEWEL_MOVEMENT + EXTRA_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
             //Give some time for the robot to slip
-            sleep(SLIP_WAIT_TIME);
+
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
+
+            encoderDrive(0.9, 10.0, 10.0, 5.0); // HACK for getting back on stone
         } else if (color == UNKNOWN) {
             //There is no change in movement
             rt.telemetry().addData("Action", "got UNKNOWN");
@@ -168,9 +175,10 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
             telemetry.update();
             encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
             movement = movement - JEWEL_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
         }
 
-        // Step 4: Lift up servo
+        // Step 4: Lift up servo 
         color_sorcerer.setPosition(UP_SERVO);
 
         //Give some time for the color wand to ascend
@@ -178,6 +186,8 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
 
         // Step 5: Go to safe zone and stop
         encoderDrive(DRIVE_SPEED, movement,  movement, 10.0);
+        encoderDrive(DRIVE_SPEED, -BACKUP_DISTANCE, -BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
+
 
     }
 
