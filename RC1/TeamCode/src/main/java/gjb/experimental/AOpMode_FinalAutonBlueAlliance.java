@@ -106,6 +106,9 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
     final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
     final double     BACKUP_DISTANCE = 1.5;
+    final double MIN_CLAW = -0.5;
+    public Servo left_dinosorvor   = null;
+    public Servo right_dinosorvor   = null;
     @Override
     public void runOpMode() {
         double timeoutS;
@@ -125,6 +128,11 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
         color_sorcerer = rt.hwLookup().getServo("color_sorcerer");
         // color sensors here...
         sensorColor = rt.hwLookup().getColorSensor("sensorvor_color");
+
+        left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
+        right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
+        left_dinosorvor.setPosition(MIN_CLAW); //To keep the servos back and lock them in place
+        right_dinosorvor.setPosition(MIN_CLAW);
 
 
         // Send telemetry message to signify robot waiting;
