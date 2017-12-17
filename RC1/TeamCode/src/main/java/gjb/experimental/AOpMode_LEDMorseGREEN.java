@@ -4,23 +4,22 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import gjb.interfaces.*;
-import gjb.utils.*;
+import gjb.interfaces.LoggingInterface;
+import gjb.interfaces.RuntimeSupportInterface;
+import gjb.utils.AndroidRuntimeSupport;
 
 
-@Autonomous(name="AOpMode_LEDMorse_CAT", group="Pushbot")
+@Autonomous(name="AOpMode_LEDMorse_GREEN", group="Pushbot")
 //@Disabled
 /*
  *  This Autonomous OpMode makes the LED lights play "CAT" in morse code.
  */
-public class AOpMode_LEDMorseCAT extends OpMode{
-    final String THIS_COMPONENT = "AOM_LEDMorseCAT"; // Replace EMPTY by short word identifying Op mode
+public class AOpMode_LEDMorseGREEN extends OpMode{
+    final String THIS_COMPONENT = "AOM_LEDMorse_Z"; // Replace EMPTY by short word identifying Op mode
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
-    final String MORSE_MESSAGE = "CAT";
+    final String MORSE_MESSAGE = "GREEN";
     final double START_DELAY = 1.0; // seconds
     final double DOT_TIME = 0.1; // Time for one Morse "dot"
 
@@ -33,7 +32,7 @@ public class AOpMode_LEDMorseCAT extends OpMode{
 
     @Override
     public void init() {
-        log = rt.startLogging(AOpMode_LEDMorseCAT.class.toString());
+        log = rt.startLogging(AOpMode_LEDMorseGREEN.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         lights = new SubSysLights(rt);
@@ -41,7 +40,7 @@ public class AOpMode_LEDMorseCAT extends OpMode{
         // Setup Lights task to display morse code.
         MorseGenerator mg  = new MorseGenerator();
         double[] delays = mg.generateDelays(MORSE_MESSAGE, DOT_TIME);
-        task = new ITask_Lights(rt, lights, delays, START_DELAY, 1.5);//1.0 == don't scale.
+        task = new ITask_Lights(rt, lights, delays, START_DELAY, 2.0);//1.0 == don't scale.
 
         // Initialize the hardware subsystem and associated task
         lights.init();

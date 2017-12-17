@@ -49,6 +49,7 @@ import gjb.utils.TimeChecker;
  *
  */
 @TeleOp(name="LabbotLEDMorseCAT.2", group="Iterative Opmode")
+//@Disabled
 public class LabbotLEDMorseCAT extends OpMode
 {
     /* Declare OpMode members. */
