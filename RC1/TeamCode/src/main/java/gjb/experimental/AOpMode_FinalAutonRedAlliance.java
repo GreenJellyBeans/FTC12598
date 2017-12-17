@@ -108,8 +108,8 @@ public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
     final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
     final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
     final double     BACKUP_DISTANCE = 1.5;
-    final double MIN_CLAW = -0.5;
-    final double MAX_CLAW = 0.0;
+    final double     LEFT_CLAW = 0;
+    final double     RIGHT_CLAW = 1;
     public Servo left_dinosorvor   = null;
     public Servo right_dinosorvor   = null;
     @Override
@@ -134,9 +134,8 @@ public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
 
         left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
         right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
-        left_dinosorvor.setPosition(MIN_CLAW); //To keep the servos back and lock them in place
-        right_dinosorvor.setPosition(MAX_CLAW);
-
+        left_dinosorvor.setPosition(LEFT_CLAW); //To keep the servos back and lock them in place
+        right_dinosorvor.setPosition(RIGHT_CLAW);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
