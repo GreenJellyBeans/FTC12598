@@ -90,9 +90,9 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
 
     private ElapsedTime     runtime = new ElapsedTime();
 
-    final double FORWARD_INCHES = 0;
-    final double SPEEDO = 0.2;
-    static final double     FORWARD_SPEED = 0.6;
+    //final double FORWARD_INCHES = 0;
+    //final double SPEEDO = 0.2;
+    //static final double     FORWARD_SPEED = 0.6;
     static final double     TURN_SPEED    = 0.5;
     static final double     COUNTS_PER_MOTOR_REV    = 1120; // 28*7 cycles per shaft rev. Tetrix:1440
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
