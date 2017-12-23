@@ -9,15 +9,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
+import gjb.utils.AndroidRuntimeSupport;
 
 /**
  * Created by josephj, keya, and aparna on 12/21/2017.
  */
 
 public class AutonWizard {
-    RuntimeSupportInterface rt;
+
+    final String THIS_COMPONENT = "AOpMode_SimpleAuton";
+    private final RuntimeSupportInterface rt;
+
+    // These are initialized during init()
     private  SubSysSimpleTwoMotorDrive drive;
+    // Put additional h/w objects here:
+    // servo
     public Servo color_sorcerer;
+    final double UP_SERVO = 0.4;
+    final double DOWN_SERVO = 1.0;
     // color sensor (add later)
     final int UNKNOWN = 0;
     final int RED = 1;
@@ -28,18 +37,173 @@ public class AutonWizard {
     float[] hsvValues = new float[3];
     ColorSensor sensorColor;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime     runtime = new ElapsedTime();
 
+    final double FORWARD_INCHES = 0;
+    final double SPEEDO = 0.2;
+    static final double     FORWARD_SPEED = 0.6;
+    static final double     TURN_SPEED    = 0.5;
     static final double     COUNTS_PER_MOTOR_REV    = 1120; // 28*7 cycles per shaft rev. Tetrix:1440
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final int    WAIT_TIME =  3000;
+    static final int    JEWEL_WAIT_TIME =  3000;
+    static final double     JEWEL_MOVEMENT = 3;
+    final double     DRIVE_SPEED             = 0.2; //Keep speed low so robot won't get damaged
+    final double     EXTRA_MOVEMENT = 3; //To get in the safe zone
+    final double     BACKUP_DISTANCE = 1.5;
+    final double     LEFT_CLAW = 0;
+    final double     RIGHT_CLAW = 1;
+    public Servo left_dinosorvor   = null;
+    public Servo right_dinosorvor   = null;
 
 
-    public AutonWizard(RuntimeSupportInterface rt, SubSysSimpleTwoMotorDrive d) {
+    public AutonWizard(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.drive = d;
+    }
+
+    public void init() {
+        double timeoutS;
+        log = rt.startLogging(AOpMode_SimpleAuton.class.toString());
+        log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
+        SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
+                .leftMotorName("left_drive")
+                .rightMotorName("right_drive");
+        drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
+
+
+        // Initialize the subsystem and associated task
+        drive.init();
+
+        // Create new objects and initialzie them for:
+        // Servo
+        color_sorcerer = rt.hwLookup().getServo("color_sorcerer");
+        // color sensors here...
+        sensorColor = rt.hwLookup().getColorSensor("sensorvor_color");
+
+        left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
+        right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
+        left_dinosorvor.setPosition(LEFT_CLAW); //To keep the servos back and lock them in place
+        right_dinosorvor.setPosition(RIGHT_CLAW);
+
+        // Send telemetry message to signify robot waiting;
+        rt.telemetry().addData("Status", "Ready to run");    //
+        rt.telemetry().update();
+
+        log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
+
+    }
+
+    public void getJewelRedAlliance  () {
+        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+
+        // Step 1:  Drop the servo
+        color_sorcerer.setPosition(DOWN_SERVO);
+        //Give some time for the color wand to descend
+        sleep(WAIT_TIME);
+
+        // Step 2:  Detect the color of the jewel
+        //This code is for the red alliance
+        int color = getColor();
+        double movement = -29;
+        rt.telemetry().addData("COLOR", color);
+        rt.telemetry().update();
+
+        // Step 3:  Go back or forward depending on color of jewel
+        if (color == RED) {
+            // back then back
+            rt.telemetry().addData("Action", "got RED");
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+            movement = movement + JEWEL_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME);
+        } else if (color == UNKNOWN) {
+            //There is no change in movement
+            rt.telemetry().addData("Action", "got UNKNOWN");
+            rt.telemetry().update();
+            sleep(10000);
+        } else {
+            //forward then back
+            rt.telemetry().addData("Action", "got BLUE");
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            sleep(JEWEL_WAIT_TIME ); //wait for the jewel to be knocked off
+            movement = movement - JEWEL_MOVEMENT - EXTRA_MOVEMENT;
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
+
+            //Give some time for the robot to slip
+
+            //encoderDrive(0.7, -5.0, -5.0, 5.0); // HACK for getting back on stone
+            // Step 5: Go to safe zone and stop and backup
+            encoderDrive(DRIVE_SPEED, movement, movement, 10.0);
+            encoderDrive(DRIVE_SPEED, BACKUP_DISTANCE, BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
+        }
+
+
+        // Step 4: Lift up servo
+        color_sorcerer.setPosition(UP_SERVO);
+
+        //Give some time for the color wand to ascend
+        sleep(WAIT_TIME);
+    }
+    public void getJewelBlueAlliance () {
+        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+
+        // Step 1:  Drop the servo
+        color_sorcerer.setPosition(DOWN_SERVO);
+        //Give some time for the color wand to descend
+        sleep(WAIT_TIME);
+
+        // Step 2:  Detect the color of the jewel
+        //This code is for the red alliance
+        int color = getColor();
+        double movement = 29;//changed from neg to pos
+        rt.telemetry().addData("COLOR", color);
+        rt.telemetry().update();
+
+        // Step 3:  Go back or forward depending on color of jewel
+        if (color == BLUE) { //change red to blue
+            //back then forward - drive wheels (rear) go off table!
+            rt.telemetry().addData("Action", "got BLUE"); //changed red to blue
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, -JEWEL_MOVEMENT, -JEWEL_MOVEMENT, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+            movement = movement + JEWEL_MOVEMENT + EXTRA_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
+            //Give some time for the robot to slip
+
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
+
+            encoderDrive(0.9, 10.0, 10.0, 5.0); // HACK for getting back on stone
+        } else if (color == UNKNOWN) {
+            //There is no change in movement
+            rt.telemetry().addData("Action", "got UNKNOWN");
+            rt.telemetry().update();
+            sleep(10000);
+        } else {
+            //forward then forward
+            rt.telemetry().addData("Action", "got RED"); //change blue to red
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, JEWEL_MOVEMENT, JEWEL_MOVEMENT, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            movement = movement - JEWEL_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
+        }
+
+        // Step 4: Lift up servo
+        color_sorcerer.setPosition(UP_SERVO);
+
+        //Give some time for the color wand to ascend
+        sleep(WAIT_TIME);
+
+        // Step 5: Go to safe zone and stop
+        encoderDrive(DRIVE_SPEED, movement,  movement, 10.0);
+        encoderDrive(DRIVE_SPEED, -BACKUP_DISTANCE, -BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
+
+
+
     }
 
     public int getColor() {
@@ -133,5 +297,13 @@ public class AutonWizard {
             //  sleep(250);   // optional pause after each move
         }
 
+    }
+
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
