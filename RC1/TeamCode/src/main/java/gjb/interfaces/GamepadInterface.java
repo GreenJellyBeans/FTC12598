@@ -13,6 +13,8 @@ public interface GamepadInterface {
     double right_stick_y();
     boolean left_bumper();
     boolean right_bumper();
+    float left_trigger();
+    float right_trigger();
     boolean y();
     boolean a();
 }

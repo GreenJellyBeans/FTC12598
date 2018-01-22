@@ -139,6 +139,16 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         }
 
         @Override
+        public float right_trigger() {
+            return gp.right_trigger;
+        }
+
+        @Override
+        public float left_trigger() {
+            return gp.left_trigger;
+        }
+
+        @Override
         public boolean right_bumper() {
             return gp.right_bumper;
         }
