@@ -133,6 +133,7 @@ public class AutonWizard {
             movement = movement - JEWEL_MOVEMENT - EXTRA_MOVEMENT;
             color_sorcerer.setPosition(UP_SERVO);
             sleep(WAIT_TIME);
+            encoderDrive(0.9, -10.0, -10.0, 5.0); // AAHHAHAHAHHHAHHHAHHAAHAAHAH
 
             //Give some time for the robot to slip
 
