@@ -21,13 +21,18 @@ public class SubSysArmWPusher implements SubSystemInterface {
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.225 ; //was .45
     public static final double ARM_DOWN_POWER  = -0.225 ; //was -.45
+    public static final double PUSHER_FORWARD_ENERGY = 0; // NEED TO SET ACTUAL VALUE
+    public static final double PUSHER_BACKWARD_ENERGY = 0; // NEED TO SET ACTUAL VALUE
 
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_Y;
     DigitalChannel limitswitch_A;
+    DigitalChannel limitswitch_B;
+    DigitalChannel limitswitch_X;
     public DcMotor armM;
     public Servo left_dinosorvor   = null;
     public Servo right_dinosorvor   = null;
+    public DcMotor CokieGPousher = null;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
@@ -46,19 +51,26 @@ public class SubSysArmWPusher implements SubSystemInterface {
         // Define and Initialize Motors
         armM = rt.hwLookup().getDcMotor("arm_motor");
         armM.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        CokieGPousher = rt.hwLookup().getDcMotor("glyph_motor");
+        CokieGPousher.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         limitswitch_A  = rt.hwLookup().getDigitalChannel("limit_switch_down");
         limitswitch_A.setMode(DigitalChannel.Mode.INPUT);
         limitswitch_Y  = rt.hwLookup().getDigitalChannel("limit_switch_up");
         limitswitch_Y.setMode(DigitalChannel.Mode.INPUT);
+        limitswitch_B  = rt.hwLookup().getDigitalChannel("limit_switch_black");
+        limitswitch_B.setMode(DigitalChannel.Mode.INPUT);
+        limitswitch_X  = rt.hwLookup().getDigitalChannel("limit_switch_white");
+        limitswitch_X.setMode(DigitalChannel.Mode.INPUT);
 
         // Set armM motor to zero power
         armM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armM.setPower(0);
+        CokieGPousher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        CokieGPousher.setPower(0);
 
 
         // Set armM motor to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        armM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set up the sorvors
         left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
@@ -76,6 +88,8 @@ public class SubSysArmWPusher implements SubSystemInterface {
         // after tasks & OpModes have stopped.
         armM.setPower(0);
         armM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        CokieGPousher.setPower(0);
+        CokieGPousher.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.log.pri1(LoggingInterface.DEINIT_END, "");
 
     }
