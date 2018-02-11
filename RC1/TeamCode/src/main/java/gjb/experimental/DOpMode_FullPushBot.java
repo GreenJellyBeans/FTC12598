@@ -43,6 +43,7 @@ public class DOpMode_FullPushBot extends OpMode{
         drive.init();
         driveTask.init();
 
+
         arm = new SubSysArm(rt);
 
         // Do any additional op-mode initialization here.
@@ -61,6 +62,7 @@ public class DOpMode_FullPushBot extends OpMode{
     public void init_loop() {
         armTask.init_loop();
         driveTask.init_loop();
+
     }
 
     @Override

@@ -12,7 +12,7 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOpMode_FinalAuton_BLUE", group="Pushbot")
+@Autonomous(name="AOpMode_FinalAuton_BLUE_ALLIANCE_NEW", group="Pushbot")
 //@Disabled
 public class AOpMode_FinalAutonBlueAllianceNew extends LinearOpMode {
 

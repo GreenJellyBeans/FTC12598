@@ -212,7 +212,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         // Lazy allocation of the gamepad - only when requested as gamepads are
         // not available during constructor time.
         if (gamepad2 == null) {
-            gamepad2 = new AndroidGamepad(om.gamepad2);
+            gamepad2 = new AndroidGamepad(om.gamepad2 );
         }
         return gamepad2;
     }

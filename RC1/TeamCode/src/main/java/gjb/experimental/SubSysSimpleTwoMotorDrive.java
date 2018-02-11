@@ -17,8 +17,8 @@ public class SubSysSimpleTwoMotorDrive implements SubSystemInterface {
     final public LoggingInterface log;
     final public Config config;
 
-    public DcMotor leftDrive   = null;
-    public DcMotor  rightDrive  = null;
+    public DcMotor leftDrive = null;
+    public DcMotor rightDrive = null;
 
     // Configuration parameters for this drive go here. Avoid hardcoded constants unless they are
     // unlikely to be changed even if there are changes to the drive details.

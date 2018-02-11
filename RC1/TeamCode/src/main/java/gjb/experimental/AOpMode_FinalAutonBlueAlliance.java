@@ -32,6 +32,7 @@ package gjb.experimental;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -64,7 +65,7 @@ import gjb.utils.AndroidRuntimeSupport;
  */
 
 @Autonomous(name="AOpMode_FinalAuton_BLUE", group="Pushbot")
-//@Disabled
+@Disabled
 public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -99,6 +100,7 @@ public class AOpMode_FinalAutonBlueAlliance extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+
     static final int    WAIT_TIME =  3000;
     static final int    SLIP_WAIT_TIME =  1000;
     static final int    JEWEL_WAIT_TIME =  3000;

@@ -56,7 +56,7 @@ public class ITask_simpleDrive implements TaskInterface {
         rt.telemetry().addData("left",  "%.2f", left);
         rt.telemetry().addData("right", "%.2f", right);
 
-    }
+     }
 
     private double adjustPower(double x) {
         double y = x;

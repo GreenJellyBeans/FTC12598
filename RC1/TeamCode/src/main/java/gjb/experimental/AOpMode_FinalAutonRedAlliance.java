@@ -67,7 +67,7 @@ import gjb.utils.AndroidRuntimeSupport;
  */
 
 @Autonomous(name="AOpMode_FinalAuton_RED", group="Pushbot")
-//@Disabled
+//AOpMode_FinalAutonRedAllianceAOpMode_FinalAutonRedAlliance@Disabled
 public class AOpMode_FinalAutonRedAlliance extends LinearOpMode {
 
     /* Declare OpMode members. */
