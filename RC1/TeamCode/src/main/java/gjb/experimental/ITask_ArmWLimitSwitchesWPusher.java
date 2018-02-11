@@ -75,53 +75,55 @@ public class ITask_ArmWLimitSwitchesWPusher implements TaskInterface {
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
 
-        double power = 0;
+        double arm_power = 0;
         if (armSP.limitswitch_Y.getState()) {
             rt.telemetry().addData("limitswitch_Y", "HIGH");
             if (rt.gamepad1().a())
-                power = armSP.ARM_DOWN_POWER;
+                arm_power = armSP.ARM_DOWN_POWER;
         } else if (rt.gamepad1().y()){
             rt.telemetry().addData("LimitSwitch_Y", "LOW");
-            power = armSP.ARM_UP_POWER;
+            arm_power = armSP.ARM_UP_POWER;
         }
 
         if (armSP.limitswitch_A.getState()) {
             rt.telemetry().addData("limitswitch_A", "HIGH");
-            power = 0;
+            arm_power = 0;
             if (rt.gamepad1().y())
-                power = armSP.ARM_UP_POWER;
+                arm_power = armSP.ARM_UP_POWER;
         } else if (rt.gamepad1().a()){
             rt.telemetry().addData("LimitSwitch_A", "LOW");
-            power = armSP.ARM_DOWN_POWER;
+            arm_power = armSP.ARM_DOWN_POWER;
         }
-        double energy = 0;
+
+        // Use gamepad buttons to move the pusher back and forth ( X and B)
+        double pusher_power = 0;
         if (armSP.limitswitch_X.getState()) {
             rt.telemetry().addData("limitswitch_X", "HIGH");
             if (rt.gamepad1().right_trigger()>0.1)
-                energy = armSP.PUSHER_BACKWARD_ENERGY;
+                pusher_power = armSP.PUSHER_BACKWARD_POWER;
         } else if (rt.gamepad1().left_trigger()>0.1){
             rt.telemetry().addData("LimitSwitch_X", "LOW");
-            energy = armSP.PUSHER_FORWARD_ENERGY;
+            pusher_power = armSP.PUSHER_FORWARD_POWER;
         }
 
         if (armSP.limitswitch_B.getState()) {
             rt.telemetry().addData("limitswitch_B", "HIGH");
-            energy = 0;
+            pusher_power = 0;
             if (rt.gamepad1().left_trigger()>0.1)
-                energy = armSP.PUSHER_FORWARD_ENERGY;
+                pusher_power = armSP.PUSHER_FORWARD_POWER;
         } else if (rt.gamepad1().right_trigger()>0.1){
             rt.telemetry().addData("LimitSwitch_B", "LOW");
-            energy = armSP.PUSHER_BACKWARD_ENERGY;
+            pusher_power = armSP.PUSHER_BACKWARD_POWER;
         }
 
-        armSP.armM.setPower(power);
-        rt.telemetry().addData("arm",  "power = %.2f", power);
+        armSP.armM.setPower(arm_power);
+        rt.telemetry().addData("arm",  "power = %.2f", arm_power);
 
         // Send telemetry message to signify robot running;
         rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
 
-        armSP.CokieGPousher.setPower(energy);
-        rt.telemetry().addData("pusher",  "power = %.2f", energy);
+        armSP.CokieGPousher.setPower(pusher_power);
+        rt.telemetry().addData("pusher",  "power = %.2f", pusher_power);
 
     }
 

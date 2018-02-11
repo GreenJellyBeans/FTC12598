@@ -14,15 +14,15 @@ import gjb.interfaces.TaskInterface;
 public class ITask_ArmWLimitSwitches implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
-    final double CLAW_SPEED = 0.005; //was 0.02
+    final double CLAW_SPEED = 0.01; //was 0.02 and was 0.005
     final double MIN_CLAW = -0.5;
-    final double MAX_CLAW = 0.0;
+    final double MAX_CLAW = 0.09;
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
     SubSysArm armS;
-    double clawOffset = 0.0;
+    double clawOffset = -0.5;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
