@@ -19,8 +19,8 @@ public class SubSysArm implements SubSystemInterface {
     final public LoggingInterface log;
 
     public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.225 ; //was .45
-    public static final double ARM_DOWN_POWER  = -0.225 ; //was -.45
+    public static final double ARM_UP_POWER    =  0.45 ; //was .225
+    public static final double ARM_DOWN_POWER  = -0.45 ; //was -.225
 
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_Y;
@@ -63,8 +63,8 @@ public class SubSysArm implements SubSystemInterface {
         // Set up the sorvors
         left_dinosorvor = rt.hwLookup().getServo("left_sorcerer");
         right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
-        left_dinosorvor.setPosition(MID_SERVO);
-        right_dinosorvor.setPosition(MID_SERVO);
+        left_dinosorvor.setPosition(0.0);
+        right_dinosorvor.setPosition(1.0);
         this.log.pri1(LoggingInterface.INIT_END, "");
     }
 
