@@ -27,7 +27,7 @@ import gjb.utils.AndroidRuntimeSupport;
 // NOTE: You can used this as the base for a TeleopMode - all that needs to be
 // done is to replace the @Autonomous annotation by @TeleOp below.
 @Autonomous(name="AOpMode_ColorTest", group="dummy")
-//@Disabled
+@Disabled
 /*
  *  This Autonomous OpMode makes initializes the Empty subsystem and starts the Empty task.
  *  ADD/REPLACE THIS COMMENT BASED ON THE WHEN THE NEW TASK WAS CREATED

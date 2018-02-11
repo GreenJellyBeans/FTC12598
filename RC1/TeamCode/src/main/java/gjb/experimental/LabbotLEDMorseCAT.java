@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package gjb.experimental;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
@@ -49,7 +50,7 @@ import gjb.utils.TimeChecker;
  *
  */
 @TeleOp(name="LabbotLEDMorseCAT.2", group="Iterative Opmode")
-//@Disabled
+@Disabled
 public class LabbotLEDMorseCAT extends OpMode
 {
     /* Declare OpMode members. */

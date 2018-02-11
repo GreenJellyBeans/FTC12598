@@ -4,6 +4,7 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import gjb.interfaces.LoggingInterface;
@@ -12,7 +13,7 @@ import gjb.utils.AndroidRuntimeSupport;
 
 
 @Autonomous(name="AOpMode_LEDMorse_GREEN", group="Pushbot")
-//@Disabled
+@Disabled
 /*
  *  This Autonomous OpMode makes the LED lights play "CAT" in morse code.
  */

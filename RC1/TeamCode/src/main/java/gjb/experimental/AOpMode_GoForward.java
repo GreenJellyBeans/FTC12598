@@ -32,6 +32,7 @@ package gjb.experimental;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -64,7 +65,8 @@ import gjb.utils.AndroidRuntimeSupport;
  */
 
 @Autonomous(name="AOpMode_GoForward", group="Pushbot")
-//AOpMode_FinalAutonRedAllianceAOpMode_FinalAutonRedAlliance@Disabled
+//AOpMode_FinalAutonRedAllianceAOpMode_FinalAutonRedAlliance
+@Disabled
 public class AOpMode_GoForward extends LinearOpMode {
 
     /* Declare OpMode members. */

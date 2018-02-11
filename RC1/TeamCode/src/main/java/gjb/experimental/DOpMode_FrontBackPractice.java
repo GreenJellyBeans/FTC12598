@@ -3,6 +3,7 @@
  */
 package gjb.experimental;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +14,7 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
 @TeleOp(name="DOpMode_FrontBackPractice", group="Pushbot")
-//@Disabled
+@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
