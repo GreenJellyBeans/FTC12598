@@ -19,10 +19,10 @@ public class SubSysArmWPusher implements SubSystemInterface {
     final public LoggingInterface log;
 
     public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.225 ; //was .45
-    public static final double ARM_DOWN_POWER  = -0.225 ; //was -.45
-    public static final double PUSHER_FORWARD_ENERGY = 0; // NEED TO SET ACTUAL VALUE
-    public static final double PUSHER_BACKWARD_ENERGY = 0; // NEED TO SET ACTUAL VALUE
+    public static final double ARM_UP_POWER    =  0.45 ; //was .225
+    public static final double ARM_DOWN_POWER  = -0.45 ; //was -.225
+    public static final double PUSHER_FORWARD_POWER = 0.3; // NEED TO SET ACTUAL VALUE
+    public static final double PUSHER_BACKWARD_POWER= -0.3; // NEED TO SET ACTUAL VALUE
 
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_Y;
