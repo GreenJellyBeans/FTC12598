@@ -7,6 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
@@ -55,6 +62,11 @@ public class AutonWizard {
     final double     BACKUP_DISTANCE = 1.5;
     final double     LEFT_CLAW = 0;
     final double     RIGHT_CLAW = 1;
+
+    // For Pictograph identification
+    VuforiaTrackable relicTemplate;
+    VuforiaLocalizer vuforia;
+
     public Servo left_dinosorvor   = null;
     public Servo right_dinosorvor   = null;
 
@@ -70,8 +82,6 @@ public class AutonWizard {
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
-
-
         // Initialize the subsystem and associated task
         drive.init();
 
@@ -85,6 +95,9 @@ public class AutonWizard {
         right_dinosorvor = rt.hwLookup().getServo("right_sorcerer");
         left_dinosorvor.setPosition(LEFT_CLAW); //To keep the servos back and lock them in place
         right_dinosorvor.setPosition(RIGHT_CLAW);
+
+        // initialize vuforia
+        initVuforia();
 
         // Send telemetry message to signify robot waiting;
         rt.telemetry().addData("Status", "Ready to run");    //
@@ -147,6 +160,10 @@ public class AutonWizard {
 
     }
     public void getJewelBlueAlliance () {
+
+        // Step 0: Get and print vumark.
+        RelicRecoveryVuMark vuMark = readVuMark();
+        rt.telemetry().addData(  "vuMark", vuMark);
 
 
         // Step 1:  Drop the servo
@@ -302,5 +319,23 @@ public class AutonWizard {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    // got this code from ftc sample code ConceptVuMarkIdentification
+    void initVuforia () {
+        VuforiaLocalizer vuforia;
+        int cameraMonitorViewId = rt.hwLookup().getVuforiaCameraId("id");
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "AfKUJbb/////AAAAGctPfIQOyUOTpOViHe+MNKVmmSjCa2+xkiGz+OCiRCBg/W6+sagONZgiClhl9XDEoK8StYYY43E9i7SZ23fhXaUQ97M4tnryQi8a9be7vAH0V7fKUNAzkIlr9I+5j4JwydZmgtMBm7Piqhw1znMsx61vQ0WmZYBYP1veoEIg3wBHEkQV9kdFNb/0ClgWlX4VY5jdlmrhP6atmmZm7bCEi0xsvV4B403VJ2hrH35qfjIoEwBoM2Jend5kRgwt3ATTvBzMTOJLPT3oczsq+OUfXedofqJ0ScyKtnlEGlj/zHGxjmkps7waFiJmOlGK8jPxdYyfo3eAIOhnFqiLnENk2aEObNvjAwG8H9KuDIraakyh";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        this.relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+
+    }
+    RelicRecoveryVuMark  readVuMark() {
+        return  RelicRecoveryVuMark.from(relicTemplate);
     }
 }
