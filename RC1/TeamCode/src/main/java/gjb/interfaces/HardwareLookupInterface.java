@@ -45,4 +45,5 @@ public interface HardwareLookupInterface {
     DcMotor getDcMotor(String name);
     DigitalChannel getDigitalChannel(String name);
     Servo getServo(String name);
+    int getVuforiaCameraId(String id);
 }

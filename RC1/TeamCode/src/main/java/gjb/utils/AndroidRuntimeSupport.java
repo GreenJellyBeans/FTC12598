@@ -42,7 +42,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public void dsPrintln(String s) {
-            om.telemetry.log().add(s);
+            /*om.telemetry.log().add(s);*/
         }
 
         @Override
@@ -113,6 +113,12 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         @Override
         public Servo getServo(String name) {
             return om.hardwareMap.get(Servo.class, name);
+        }
+
+
+        @Override
+        public int getVuforiaCameraId(String id) {
+            return getIdentifierFromPackage("cameraMonitorViewId", "id");
         }
     }
 
@@ -258,4 +264,5 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         LinearOpMode linOm = (LinearOpMode) om;
         return linOm.opModeIsActive();
     }
+
 }

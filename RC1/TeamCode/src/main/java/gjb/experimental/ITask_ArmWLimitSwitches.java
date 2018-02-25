@@ -64,10 +64,10 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         //armM.leftDrive.setPower(1);
         // Set the red led on the DIM based on the input digital channel state.
         if (armS.limitswitch_Y.getState()) {
-            rt.telemetry().addData("limitswitch", "HIGH");
+           // rt.telemetry().addData("limitswitch", "HIGH");
             armS.armM.setPower(0);
         } else {
-            rt.telemetry().addData("LimitSwitch", "LOW");
+          //  rt.telemetry().addData("LimitSwitch", "LOW");
             armS.armM.setPower(0.5);
         }
     }
@@ -91,29 +91,29 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
 
         double power = 0;
         if (armS.limitswitch_Y.getState()) {
-            rt.telemetry().addData("limitswitch_Y", "HIGH");
+           // rt.telemetry().addData("limitswitch_Y", "HIGH");
             if (rt.gamepad1().a())
                 power = armS.ARM_DOWN_POWER;
         } else if (rt.gamepad1().y()){
-            rt.telemetry().addData("LimitSwitch_Y", "LOW");
+           // rt.telemetry().addData("LimitSwitch_Y", "LOW");
             power = armS.ARM_UP_POWER;
         }
 
         if (armS.limitswitch_A.getState()) {
-            rt.telemetry().addData("limitswitch_A", "HIGH");
+           // rt.telemetry().addData("limitswitch_A", "HIGH");
             power = 0;
             if (rt.gamepad1().y())
                 power = armS.ARM_UP_POWER;
         } else if (rt.gamepad1().a()){
-            rt.telemetry().addData("LimitSwitch_A", "LOW");
+            //rt.telemetry().addData("LimitSwitch_A", "LOW");
             power = armS.ARM_DOWN_POWER;
         }
 
         armS.armM.setPower(power);
-        rt.telemetry().addData("arm",  "power = %.2f", power);
+       // rt.telemetry().addData("arm",  "power = %.2f", power);
 
         // Send telemetry message to signify robot running;
-        rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
+       // rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
     }
 
     @Override
