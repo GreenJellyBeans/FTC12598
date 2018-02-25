@@ -10,18 +10,18 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
-@TeleOp(name="DOpMode_FullPushBot_v1", group="Pushbot")
+@TeleOp(name="DOpMode_FullPushBot_v2", group="Pushbot")
 //@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
-public class DOpMode_FullPushBot extends OpMode{
+public class DOpMode_FullPushBot2NotForDrivePractice extends OpMode{
     final String THIS_COMPONENT = "DOM_driveOnlyPushBot";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during init()
     private  SubSysSimpleTwoMotorDrive drive;
-    private ITask_simpleDrive driveTask;
+    private ITask_notSoSimpleDrive driveTask;
     SubSysArm arm;
     ITask_ArmWLimitSwitches armTask;
     private LoggingInterface log;
@@ -30,14 +30,14 @@ public class DOpMode_FullPushBot extends OpMode{
 
     @Override
     public void init() {
-        log = rt.startLogging(DOpMode_FullPushBot.class.toString());
+        log = rt.startLogging(DOpMode_FullPushBot2NotForDrivePractice.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
-        driveTask = new ITask_simpleDrive(rt, drive);
+        driveTask = new ITask_notSoSimpleDrive(rt, drive);
 
         // Initialize the subsystem and associa ted task
         drive.init();
