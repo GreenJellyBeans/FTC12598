@@ -10,7 +10,7 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
-@TeleOp(name="DOpMode_FullPushBot_v1", group="Pushbot")
+@TeleOp(name="DOpMode_FullPushBot_v2", group="Pushbot")
 //@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.

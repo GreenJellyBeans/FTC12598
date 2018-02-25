@@ -44,11 +44,9 @@ public class DOpMode_ShiftLeftDrive extends OpMode{
         // Initialize the subsystem and associated task
         drive.init();
         drive.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        drive.leftDrive.setPower(0);
         drive.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         drive.rightDrive.setPower(0);
-
-
+        drive.leftDrive.setPower(0);
 
     }
 
