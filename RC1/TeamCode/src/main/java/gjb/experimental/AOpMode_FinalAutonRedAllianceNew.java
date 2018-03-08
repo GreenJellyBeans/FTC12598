@@ -40,6 +40,7 @@ public class AOpMode_FinalAutonRedAllianceNew extends LinearOpMode {
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the RED alliance
         apu.getJewelRedAlliance();
+        apu.deinit();
     }
 
 }
