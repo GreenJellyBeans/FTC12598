@@ -114,7 +114,7 @@ public class AutonWizard {
 
     }
 
-    public void getJewelRedAlliance  () {
+    public void getJewelRedAllianceWSpin  () {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
         // Step 0: Get and print vumark.
         RelicRecoveryVuMark vuMark = readVuMark();
@@ -171,6 +171,126 @@ public class AutonWizard {
             encoderDrive(DRIVE_SPEED, movement, movement, 10.0);
             encoderDrive(DRIVE_SPEED, BACKUP_DISTANCE, BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
 
+
+
+
+    }
+    public void getJewelRedAlliance () {
+        // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
+        // Step 0: Get and print vumark.
+        RelicRecoveryVuMark vuMark = readVuMark();
+        rt.telemetry().log().add("Vumark: " + vuMark);
+
+        // Step 1:  Drop the servo
+        color_sorcerer.setPosition(DOWN_SERVO);
+        //Give some time for the color wand to descend
+        sleep(WAIT_TIME);
+
+        // Step 2:  Detect the color of the jewel
+        //This code is for the red alliance
+        int color = getColor();
+        double movement = -29;
+        rt.telemetry().log().add("Got color " + color);
+
+        // Step 3:  Go back or forward depending on color of jewel
+        if (color == RED) {
+            // back then back
+            encoderDrive(DRIVE_SPEED, -LReturn, RReturn, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+            //left and right drive was -JEWEL_MOVEMENT, -JEWEL_MOVEMENT
+            movement = movement;// + JEWEL_MOVEMENT;
+            LReturn = LSPIN_MOVEMENT;
+            RReturn = RSPIN_MOVEMENT *(-1);
+            sleep(JEWEL_WAIT_TIME);
+        } else if (color == UNKNOWN) {
+            //There is no change in movement
+            rt.telemetry().addData("Action", "got UNKNOWN");
+            rt.telemetry().update();
+            sleep(10000);
+        } else {
+            //forward then back
+            rt.telemetry().addData("Action", "got BLUE");
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, LReturn, -RReturn, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            //left and right drive was JEWEL_MOVEMENT, JEWEL_MOVEMENT
+            sleep(JEWEL_WAIT_TIME); //wait for the jewel to be knocked off
+            movement = movement;//- JEWEL_MOVEMENT - EXTRA_MOVEMENT;
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
+            //encoderDrive(0.9, -10.0, -10.0, 5.0); // AAHHAHAHAHHHAHHHAHHAAHAAHA
+            LReturn = LSPIN_MOVEMENT * (-1);
+            RReturn = RSPIN_MOVEMENT;
+        }
+        //Give some time for the robot to slip
+        // Step 4: Lift up servo
+        color_sorcerer.setPosition(UP_SERVO);
+
+        //Give some time for the color wand to ascend
+        sleep(WAIT_TIME);
+        //encoderDrive(0.7, -5.0, -5.0, 5.0); // HACK for getting back on stone
+        // Step 5: Go to safe zone and stop and backup
+        encoderDrive(DRIVE_SPEED, LReturn, RReturn, 5.0);
+        encoderDrive(DRIVE_SPEED, movement, movement, 10.0);
+        encoderDrive(DRIVE_SPEED, BACKUP_DISTANCE, BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
+
+
+
+
+    }
+    public void getJewelBlueAllianceWSpin () {
+
+
+        // Step 1:  Drop the servo
+        color_sorcerer.setPosition(DOWN_SERVO);
+        //Give some time for the color wand to descend
+        sleep(WAIT_TIME);
+
+        // Step 2:  Detect the color of the jewel
+        //This code is for the blue alliance
+        int color = getColor();
+        double movement = 29;//changed from neg to pos
+        rt.telemetry().addData("COLOR", color);
+
+        // Step 3:  Go back or forward depending on color of jewel
+        if (color == BLUE) {
+            //back then forward - drive wheels (rear) go off table!
+            rt.telemetry().addData("Action", "got BLUE");
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, -LReturn, RReturn, 5.0);  // S1: Reverse 2 Inches with 5 Sec timeout
+            //movement = movement + JEWEL_MOVEMENT + EXTRA_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
+            //Give some time for the robot to slip
+            LReturn = LSPIN_MOVEMENT;
+            RReturn = RSPIN_MOVEMENT * (-1);
+            color_sorcerer.setPosition(UP_SERVO);
+            sleep(WAIT_TIME);
+
+            encoderDrive(0.9, 10.0, 10.0, 5.0); // HACK for getting back on stone
+        } else if (color == UNKNOWN) {
+            //There is no change in movement
+            rt.telemetry().addData("Action", "got UNKNOWN");
+            rt.telemetry().update();
+            sleep(10000);
+        } else {
+            //forward then forward
+            rt.telemetry().addData("Action", "got RED"); //change blue to red
+            rt.telemetry().update();
+            encoderDrive(DRIVE_SPEED, LReturn, -RReturn, 5.0);  // S1: Forward 2 Inches with 5 Sec timeout
+            //movement = movement - JEWEL_MOVEMENT;
+            sleep(JEWEL_WAIT_TIME); //Give time for wand to knock of jewel
+            LReturn = LSPIN_MOVEMENT*(-1);
+            RReturn = RSPIN_MOVEMENT;
+        }
+
+        // Step 4: Lift up servo
+        color_sorcerer.setPosition(UP_SERVO);
+
+        //Give some time for the color wand to ascend
+        sleep(WAIT_TIME);
+
+        // Step 5: Go to safe zone and stop
+        encoderDrive(DRIVE_SPEED, LReturn, RReturn, 4.0);
+        encoderDrive(DRIVE_SPEED, movement,  movement, 10.0);
+        encoderDrive(DRIVE_SPEED, -BACKUP_DISTANCE, -BACKUP_DISTANCE, 5.0); //To make sure robot is not touching glyph
 
 
 

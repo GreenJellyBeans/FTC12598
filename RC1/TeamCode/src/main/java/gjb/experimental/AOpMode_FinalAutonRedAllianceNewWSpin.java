@@ -12,7 +12,7 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOpMode_FinalAuton_RED_ALLIANCE_NEW", group="Pushbot")
+@Autonomous(name="AOpMode_FinalAuton_RED_ALLIANCE_WSpin", group="Pushbot")
 //@Disabled
 public class AOpMode_FinalAutonRedAllianceNewWSpin extends LinearOpMode {
 
@@ -35,7 +35,7 @@ public class AOpMode_FinalAutonRedAllianceNewWSpin extends LinearOpMode {
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the RED alliance
-        apu.getJewelRedAlliance();
+        apu.getJewelRedAllianceWSpin();
         apu.deinit();
     }
 
