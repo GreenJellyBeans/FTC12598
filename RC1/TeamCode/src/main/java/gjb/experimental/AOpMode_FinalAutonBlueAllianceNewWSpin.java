@@ -3,11 +3,7 @@ package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
@@ -16,9 +12,9 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOpMode_FinalAuton_RED_ALLIANCE_NEW", group="Pushbot")
+@Autonomous(name="AOpMode_FinalAuton_BLUE_ALLIANCE_WSpin", group="Pushbot")
 //@Disabled
-public class AOpMode_FinalAutonRedAllianceNew extends LinearOpMode {
+public class AOpMode_FinalAutonBlueAllianceNewWSpin extends LinearOpMode {
 
     /* Declare OpMode members. */
     final String THIS_COMPONENT = "AOpMode_SimpleAuton";
@@ -38,9 +34,8 @@ public class AOpMode_FinalAutonRedAllianceNew extends LinearOpMode {
         waitForStart();
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
-        // the jewel - this is code specific to the RED alliance
-        apu.getJewelRedAlliance();
-        apu.deinit();
+        // the jewel - this is code specific to the BLUE alliance
+        apu.getJewelBlueAllianceWSpin();
     }
 
 }
