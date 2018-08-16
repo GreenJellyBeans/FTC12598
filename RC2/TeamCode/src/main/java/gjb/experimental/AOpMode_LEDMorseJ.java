@@ -4,7 +4,6 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import gjb.interfaces.LoggingInterface;
@@ -12,15 +11,15 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
 
-@Autonomous(name="AOpMode_LEDMorse_G", group="Pushbot")
+@Autonomous(name="AOpMode_LEDMorse_J", group="Pushbot")
 //@Disabled
 /*
- *  This Autonomous OpMode makes the LED lights play "G" in morse code.
+ *  This Autonomous OpMode makes the LED lights play "J" in morse code.
  */
-public class AOpMode_LEDMorseG extends OpMode{
-    final String THIS_COMPONENT = "AOM_LEDMorse_G"; // Replace EMPTY by short word identifying Op mode
+public class AOpMode_LEDMorseJ extends OpMode{
+    final String THIS_COMPONENT = "AOM_LEDMorseJ"; // Replace EMPTY by short word identifying Op mode
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
-    final String MORSE_MESSAGE = "G";
+    final String MORSE_MESSAGE = "J";
     final double START_DELAY = 1.0; // seconds
     final double DOT_TIME = 0.1; // Time for one Morse "dot"
 
@@ -33,7 +32,7 @@ public class AOpMode_LEDMorseG extends OpMode{
 
     @Override
     public void init() {
-        log = rt.startLogging(AOpMode_LEDMorseG.class.toString());
+        log = rt.startLogging(AOpMode_LEDMorseJ.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         lights = new SubSysLights(rt);

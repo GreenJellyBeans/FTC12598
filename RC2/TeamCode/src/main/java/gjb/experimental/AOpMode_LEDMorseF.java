@@ -13,9 +13,9 @@ import gjb.utils.AndroidRuntimeSupport;
 
 
 @Autonomous(name="AOpMode_LEDMorse_F", group="Pushbot")
-@Disabled
+//@Disabled
 /*
- *  This Autonomous OpMode makes the LED lights play "CAT" in morse code.
+ *  This Autonomous OpMode makes the LED lights play "F" morse code.
  */
 public class AOpMode_LEDMorseF extends OpMode{
     final String THIS_COMPONENT = "AOM_LEDMorse_F"; // Replace EMPTY by short word identifying Op mode

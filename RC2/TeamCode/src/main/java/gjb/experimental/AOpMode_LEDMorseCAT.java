@@ -13,7 +13,7 @@ import gjb.utils.*;
 
 
 @Autonomous(name="AOpMode_LEDMorse_CAT", group="Pushbot")
-@Disabled
+//@Disabled
 /*
  *  This Autonomous OpMode makes the LED lights play "CAT" in morse code.
  */
