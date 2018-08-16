@@ -11,6 +11,7 @@ public interface GamepadInterface {
     // TODO: GamepadCallback callback - passed in as a constructor in the FTC GamepadInterface.
     double left_stick_y();
     double right_stick_y();
+    double right_stick_x();
     boolean left_bumper();
     boolean right_bumper();
     float left_trigger();
