@@ -13,7 +13,7 @@ import gjb.utils.AndroidRuntimeSupport;
 import gjb.utils.Logger;
 
 @TeleOp(name="DOpMode_driveOnlyPushBot-v1", group="Pushbot")
-@Disabled
+//@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
@@ -33,9 +33,9 @@ public class DOpMode_driveOnlyPushBot extends OpMode{
         log = rt.startLogging(DOpMode_driveOnlyPushBot.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
-        SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config()
-                .leftMotorName("left_drive")
-                .rightMotorName("right_drive");
+        SubSysSimpleTwoMotorDrive.Config driveConfig = new SubSysSimpleTwoMotorDrive.Config();
+        driveConfig.leftMotorName("left_drive");
+        driveConfig.rightMotorName("right_drive");
         drive = new SubSysSimpleTwoMotorDrive(rt, driveConfig);
         driveTask = new ITask_simpleDrive(rt, drive);
 
