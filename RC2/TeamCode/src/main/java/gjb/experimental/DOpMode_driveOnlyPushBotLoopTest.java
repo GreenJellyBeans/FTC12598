@@ -10,7 +10,7 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
-@TeleOp(name="DOpMode_driveOnlyPushBot-v1", group="Pushbot")
+@TeleOp(name="DOpMode_driveOnlyPushBot-LoopTest", group="Pushbot")
 //@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
@@ -59,6 +59,7 @@ public class DOpMode_driveOnlyPushBotLoopTest extends OpMode{
     @Override
     public void loop() {
         rt.telemetry().addData("loop counter",this.loopCounter );
+        
         driveTask.loop();
         loopCounter++;
     }
