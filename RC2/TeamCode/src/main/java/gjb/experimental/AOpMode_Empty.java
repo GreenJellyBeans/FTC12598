@@ -17,7 +17,7 @@ import gjb.utils.*;
  *  This Autonomous OpMode makes initializes the Empty subsystem and starts the Empty task.
  *  ADD/REPLACE THIS COMMENT BASED ON THE WHEN THE NEW TASK WAS CREATED
  */
-public class AOpMode_Empty extends OpMode{
+public class  AOpMode_Empty extends OpMode{
     final String THIS_COMPONENT = "AOM_EMPTY"; // Replace EMPTY by short word identifying Op mode
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
