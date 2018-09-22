@@ -19,6 +19,11 @@ public class DOpMode_driveOnlyPushBotLoopTest extends OpMode{
     final String THIS_COMPONENT = "DOM_driveOnlyPushBot";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
     int loopCounter = 0;
+    int wackyLoopCounter = 0;
+    final long MAX_LOOP_TIME = 5; //in tenths of a millisecond, used to be 1, but loop often took more than 2, so increased it to 5
+    int lateLoopsCounter = 0;
+    final long MAX_LATE_TIME = 70;
+    long previousTime = 0;
 
     // These are initialized during init()
     private  SubSysSimpleTwoMotorDrive drive;
@@ -58,10 +63,27 @@ public class DOpMode_driveOnlyPushBotLoopTest extends OpMode{
 
     @Override
     public void loop() {
+        long startTime = System.nanoTime();
         rt.telemetry().addData("loop counter",this.loopCounter );
-        
         driveTask.loop();
+        long timeDifference = (startTime - previousTime)/100000;
+        if (timeDifference > MAX_LATE_TIME) {
+            lateLoopsCounter++;
+        }
         loopCounter++;
+        long endTime = System.nanoTime();
+        long totalTime = endTime - startTime;
+        totalTime = totalTime/100000;
+
+        if(totalTime>MAX_LOOP_TIME) {
+            wackyLoopCounter++;
+        }
+
+        rt.telemetry().addData("wackyLoopCounter",this.wackyLoopCounter );
+        rt.telemetry().addData("loop duration",totalTime);
+        rt.telemetry().addData("late loops",this.lateLoopsCounter);
+        rt.telemetry().addData("loop difference",timeDifference);
+        previousTime = startTime;
     }
 
     @Override
