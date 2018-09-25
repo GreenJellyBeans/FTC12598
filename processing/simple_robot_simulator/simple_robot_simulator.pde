@@ -1,5 +1,5 @@
 //
-/ Very simple physics-based robot simulator.
+// Very simple physics-based robot simulator.
 // It's purpose is for basic experimentation and validation
 // of robot drive control algorithms.
 // Author: Joseph M. Joy, FTC12598 mentor.
@@ -10,6 +10,7 @@ void settings() {
 MeccanumRobot robot;
 
 void setup() {
+  rectMode(CENTER);
   robot = new MeccanumRobot(height/2, width/2, 0);
 }
 

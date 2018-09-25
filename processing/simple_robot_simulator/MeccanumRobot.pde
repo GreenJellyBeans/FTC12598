@@ -1,9 +1,12 @@
 class MeccanumRobot {
+  // Only metric units allowed.
+  //
+  final double FIELD_WIDTH = 12*12*0.0254; // field width in meters (12 ft).
   final double mass = 1; // In kg
   final double rotInertia = 1; // Rotational inertia in kg-m^2
   final double staticFriction = 1; // Coef. of static friction - unitless
   final double dynamicFriction = 1; // Coef. of dynamic friction - unitless
-  final int side = 20; // side of the square robot
+  final double side = 0.5; // side of the square robot, m.
   double x;
   double y;
   double a;
@@ -52,12 +55,22 @@ class MeccanumRobot {
   // assumed to be {dT} seconds have elapsed
   // since previous call
   void simloop(double dT) {
-    // Calculated updated velocities
-    double vxNew = vx;
-    double vyNew = vy;
-    double vaNew = va;
+    // Calculate linear force and torque;
+    double fx = calcFx();
+    double fy = calcFy();
+    double torque = calcTorque();
+    
+    // Calculated updated velocities - we assume, for simplicity,
+    // constant force and torque for the whole previous period of duration dT.
+    // We could assume a ramped force, but that would change the equations by adding
+    // nonlinear elements that would tend to 0 as dT goes to 0, so we assume dT is sufficiently
+    // small to make the simulation valid enough.
+    double vxNew = vx + (fx/mass)*dT;
+    double vyNew = vy + (fy/mass)*dT;
+    double vaNew = va + (torque/rotInertia)*dT;
 
-    // Compute displacements, asumming linear change in between simulation steps
+    // Compute displacements, asumming linear change in between simulation steps (which 
+    // follows from the assumption of constant forces and torques during this period).
     x += (vx + vxNew)/2;
     y += (vy + vyNew)/2;
     a += (va + vaNew)/2;   
@@ -69,10 +82,11 @@ class MeccanumRobot {
   }
 
   void draw() {
+    float pixSide = (float) (side*width/FIELD_WIDTH);
     pushMatrix();
     translate((float)x, (float)y);
     rotate((float) a);
-    rect(0, 0, (float)side, (float)side);  
+    rect(0, 0, pixSide, pixSide);  
     popMatrix();
   }
 
@@ -80,4 +94,17 @@ class MeccanumRobot {
   private double clipPower(double in) {
     return Math.min(Math.max(in, -1), 1);
   }
+  
+  private  double calcFx() { 
+    return 0;
+  }
+  
+  private  double calcFy() {
+    return 0;
+  }
+  
+  private  double calcTorque() {
+    return 0;
+  }
+
 }
