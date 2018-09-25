@@ -12,31 +12,33 @@
 class MeccanumRobot {
   // Only metric units allowed.
   //
-  final double FIELD_WIDTH = 12*12*0.0254; // field width in meters (12 ft).
-  final double mass = 1; // In kg
+  final double mass = 42/2.2; // In kg
   final double weight = mass * 9.8; // In N.
   final double rotInertia = 1; // Rotational inertia in kg-m^2
-  final double staticLinFriction = 1; // Coef. of static friction - unitless
-  final double dynamicLinFriction = 1; // Coef. of dynamic friction - unitless
-  final double staticRotFriction = 1;
-  final double dynamicRotFriction = 1;
+  final double staticLinFriction = 0.001; // Coef. of static friction - unitless
+  final double dynamicLinFriction = 0.001; // Coef. of dynamic friction - unitless
+  final double staticRotFriction = 0.001;
+  final double dynamicRotFriction = 0.001;
   final double side = 0.5; // side of the square robot, m.
-  final double P_TO_F_SCALE = 3; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
+  final double P_TO_F_SCALE = 0.5; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
   final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
   // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
+  final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
+  final double ANGULAR_SPEED_ZERO = Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
+ 
   // These adjust and set the direction for each wheel
   // Typically they are set to +1 or -1, but they could be
   // individually tweaked to generate various unbalanced conditions.
-  final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
-  final double ANGULAR_SPEED_ZERO = Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
   final double powerAdjustFL = 1.0;
   final double powerAdjustFR = 1.0;
   final double powerAdjustBL = 1.0;
   final double powerAdjustBR = 1.0;
 
+  // Current position and orientation
   double x;
   double y;
   double a;
+  
   double vx = 0; // velocity in x-direction, m/s
   double vy = 0; // velocity in y-direction  m/s
   double va = 0; // angular velocity along z-axis, rad/s
@@ -75,12 +77,12 @@ class MeccanumRobot {
 
   void setPowerBL(double p) {
     pBL = clipPower(p);
-    fMagBL = pFR * P_TO_F_SCALE * powerAdjustBL;
+    fMagBL = pBL * P_TO_F_SCALE * powerAdjustBL;
   }
 
   void setPowerBR(double p) {
     pBR = clipPower(p);
-    fMagBR = pFR * P_TO_F_SCALE * powerAdjustFR;
+    fMagBR = pBR * P_TO_F_SCALE * powerAdjustFR;
   }
 
   void stop() {
@@ -121,9 +123,13 @@ class MeccanumRobot {
   }
 
   void draw() {
-    float pixSide = (float) (side*width/FIELD_WIDTH);
+    
+    double x_to_px = (float) (width / FIELD_WIDTH);
+    float pixSide = (float) (side * x_to_px);
+    float px = (float) (x * x_to_px);
+    float py = (float) (height - y * x_to_px); // y grows upwards, py grows downwards
     pushMatrix();
-    translate((float)x, (float)y);
+    translate(px, py);
     rotate((float) a);
     rect(0, 0, pixSide, pixSide);  
     popMatrix();
@@ -133,14 +139,7 @@ class MeccanumRobot {
   private double clipPower(double in) {
     return Math.min(Math.max(in, -1), 1);
   }
-
-
-
-  // Friction forces impat
-  /*if (isMoving()) {
-   // Friction always acts against the force
-   double frictionForce = weight * dynamicFriction*-1*Math.signum(rawFL);
-   }*/
+  
 
   // Remember the direction of forces on the wheels:
   //    /\
@@ -165,6 +164,8 @@ class MeccanumRobot {
     // We assume +ve torque will make the robot rotate counterclockwise. 
     double dist = this.side * FORCE_FRAC;
     double rawTorque = dist * (-fMagFL + fMagFR - fMagBL + fMagBR);
+    
+    // TODO: for now we generate 0 torque - while we debug
     return calcNetForce(rawTorque, dist*staticRotFriction, dist*dynamicRotFriction, angularDirection(va));
 
   }

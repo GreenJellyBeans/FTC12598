@@ -7,22 +7,31 @@
 void settings() {
   size(800, 800);
 }
+final double FIELD_WIDTH = 12*12*0.0254; // field width in meters (12 ft).
 MeccanumRobot g_robot;
+long prevTimeMs  = 0;
 
 void setup() {
   rectMode(CENTER);
-  g_robot = new MeccanumRobot(height/2, width/2, 0);
+  g_robot = new MeccanumRobot(FIELD_WIDTH/2, FIELD_WIDTH/2, 0);
   setStartingPower(g_robot);
 }
 
 void draw() {
-  g_robot.simloop(0.1); // 0.1 simulated seconds have elapsed
+  if (prevTimeMs == 0) {
+    prevTimeMs = millis();
+  }
+  long now = millis();
+  double dT = (now - prevTimeMs)/1000.0;
+  prevTimeMs = now;
+  g_robot.simloop(dT); // 0.1 simulated seconds have elapsed
   
   background(128);
   g_robot.draw();
 }
 
 void setStartingPower(MeccanumRobot r) {
-  r.setPowerFL(0.4);
-  r.setPowerBL(0.5);
+  //r.stop();
+  r.setPowerFR(-0.3);
+  r.setPowerBR(0.2);
 }
