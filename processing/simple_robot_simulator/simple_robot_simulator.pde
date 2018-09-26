@@ -31,7 +31,7 @@ void draw() {
   g_field.draw();
   g_robot.draw();
   
-  if (frameCount == 200) {
+  if (frameCount == 2000) {
     g_robot.markSpot();
     g_robot.stop();
   }
@@ -40,11 +40,11 @@ void draw() {
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
   double pFwd = 0.5;
-  double pStrafe = 0;
+  double pStrafe = 0.5;
   double pTurn = 0.1;
   
   r.setPowerFL(pFwd + pStrafe + pTurn);
-  r.setPowerFR(pFwd + pStrafe - pTurn);
+  r.setPowerFR(pFwd - pStrafe - pTurn);
   r.setPowerBL(pFwd - pStrafe + pTurn);
-  r.setPowerBR(pFwd - pStrafe - pTurn);
+  r.setPowerBR(pFwd + pStrafe - pTurn);
 }

@@ -12,9 +12,17 @@ class Field {
   
   public void draw() {
     // Boundary
-    float pixWidth = pixLen(WIDTH);
     fill(128);
-    rect(FIELD_OFFSET_PIXELS+pixWidth/2, FIELD_OFFSET_PIXELS+pixWidth/2, pixWidth, pixWidth);
+    strokeWeight(4);
+    drawRect(WIDTH/2, WIDTH/2, WIDTH, WIDTH);
+    
+    // Draw foam markers.
+    strokeWeight(1);
+    for (int i = 1; i <= 3; i++) {
+      double offset = i * WIDTH/4;
+      drawLine(offset, 0, offset, WIDTH);
+      drawLine(0, offset, WIDTH, offset);
+    }
   }
 
   // Screen coordinates (in pixels) of field cordinate {x} (in meters)
@@ -24,11 +32,19 @@ class Field {
 
   // Screen coordinates (in pixels) of field cordinate {y} (in meters)
   float screenY(double y) {
-    return (float) (FIELD_OFFSET_PIXELS + height - y * PIX_PER_M); // y grows upwards, py grows downwards
+    return (float) (-FIELD_OFFSET_PIXELS + height - y * PIX_PER_M); // y grows upwards, py grows downwards
   }
 
   // Length (in pixels) of field distance {len} (in meters)
   float pixLen(double len) {
     return (float) (len * PIX_PER_M);
+  }
+  
+  void drawRect(double x, double y, double w, double h) {
+     rect(screenX(x), screenY(y), pixLen(w), pixLen(h));
+  }
+  
+  void drawLine(double x1, double y1, double x2, double y2) {
+    line(screenX(x1), screenY(y1), screenX(x2), screenY(y2));
   }
 }

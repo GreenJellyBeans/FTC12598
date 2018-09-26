@@ -181,6 +181,7 @@ class MeccanumRobot {
     translate(sx, sy);
     rotate((float) -a);
     fill(255);
+    strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  
     popMatrix();
 
