@@ -14,7 +14,7 @@ class MeccanumRobot {
   //
   final double mass = 42/2.2; // In kg
   final double weight = mass * 9.8; // In N.
-  final double rotInertia = 1; // Rotational inertia in kg-m^2
+  final double rotInertia = 3; // Rotational inertia in kg-m^2
   final double staticLinFriction = 0.001; // Coef. of static friction - unitless
   final double dynamicLinFriction = 0.001; // Coef. of dynamic friction - unitless
   final double staticRotFriction = 0.001;
@@ -97,10 +97,16 @@ class MeccanumRobot {
   // since previous call
   void simloop(double dT) {
     // Calculate linear force and torque;
-    double fx = calcFx();
-    double fy = calcFy();
+    // The "r" and "R" prefixes indicate that these forces are with respect
+    // to the robot's own frame of reference!
+    double rfx = calcRFx();
+    double rfy = calcRFy();
     double torque = calcTorque();
-
+    
+    // Convert forces to the field's frame of reference...
+    double fx = rfx*Math.cos(a) - rfy*Math.sin(a);
+    double fy = rfx*Math.sin(a) + rfy*Math.cos(a);
+    
     // Calculated updated velocities - we assume, for simplicity,
     // constant force and torque for the whole previous period of duration dT.
     // We could assume a ramped force, but that would change the equations by adding
@@ -145,13 +151,14 @@ class MeccanumRobot {
   //    /\
   //    \/
 
-  // Net force along x-axis, including friction effects
-  private  double calcFx() { 
+  // Net force along the *robot's* x-axis (side-to-side), including friction effects
+  private  double calcRFx() { 
     double rawForce =  FORCE_FRAC*(fMagFL - fMagFR - fMagBL + fMagBR);
     return calcNetForce(rawForce, weight*staticLinFriction, weight*dynamicLinFriction, linearDirection(vx));
   }
 
-  private  double calcFy() {
+  // Net force along the *robot's* y-axis (front-to-back), including friction effects
+  private  double calcRFy() {
     double rawForce =  FORCE_FRAC*(fMagFL + fMagFR + fMagBL + fMagBR);
     return calcNetForce(rawForce, weight*staticLinFriction, weight*dynamicLinFriction, linearDirection(vy));
   }

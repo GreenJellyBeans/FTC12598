@@ -33,5 +33,7 @@ void draw() {
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
   r.setPowerFR(-0.3);
-  r.setPowerBR(0.2);
+  r.setPowerFL(0.3);
+  r.setPowerBR(0.3);
+  r.setPowerBL(-0.3);
 }
