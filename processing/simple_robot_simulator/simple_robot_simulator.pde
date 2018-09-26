@@ -22,22 +22,23 @@ void draw() {
     prevTimeMs = millis();
   }
   long now = millis();
-  double dT = (now - prevTimeMs)/1000.0;
+  double dT = (now - prevTimeMs)/1000.0; // In seconds
   prevTimeMs = now;
-  g_robot.simloop(dT); // 0.1 simulated seconds have elapsed
+  g_robot.simloop(dT);
   
   background(128);
   g_robot.draw();
   
   if (frameCount > 100) {
-    //g_robot.stop();
+    g_robot.stop();
   }
 }
 
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
-  r.setPowerFL(-0.3);
- // r.setPowerFR(0.31);
-  //r.setPowerBL(0.3);
-  //r.setPowerBR(-0.3);
+  double p = 1;
+  r.setPowerFL(p);
+  r.setPowerFR(p);
+  r.setPowerBL(p);
+  r.setPowerBR(p);
 }
