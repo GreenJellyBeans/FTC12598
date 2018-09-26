@@ -22,6 +22,8 @@ class MeccanumRobot {
   final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
   final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
   // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
+  
+  final double DISTANCE_ZERO = 0.001; // 1mm is considered close enough to be the same length/distance/position
   final double POWER_ZERO = 0.05; // Unit-less motor power. Values less than this are considered to be no power.
   final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
   final double ANGULAR_SPEED_ZERO = Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
@@ -60,10 +62,14 @@ class MeccanumRobot {
   boolean spotMarked = false;
   double markX = 0;
   double markY = 0;
+  
+  // Shows where we've been
+  Trail trail;
 
   // Create a robot at the specified position
   public MeccanumRobot(Field field, double x, double y, double a) {
     this.field = field;
+    this.trail = new Trail(field, color(0, 255, 0));
     this.x = x;
     this.y = y;
     this.a = a;
@@ -95,7 +101,7 @@ class MeccanumRobot {
   // Updates the simulation,
   // assumed to be {dT} seconds have elapsed
   // since previous call
-  void simloop(double dT) {
+  void simloop(double t, double dT) {
 
     // Calculate motive linear forces. These are do not include friction - just motor power,
     // and are in the robot's frame of reference, not the field's frame of reference.
@@ -149,9 +155,17 @@ class MeccanumRobot {
 
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).
+    double oldX = x;
+    double oldY = y;
     x += dT * (vx + vxNew)/2;
     y += dT * (vy + vyNew)/2;
-    a += dT * (va + vaNew)/2;   
+    a += dT * (va + vaNew)/2;// % 2*Math.PI;
+
+    // Conditionally add to the trail
+    if (!samePoint(oldX, oldY, x, y)) {
+      trail.addPoint(x, y);
+    }
+    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, x, y, a));
 
     // Update velocities
     vx = vxNew;
@@ -173,6 +187,8 @@ class MeccanumRobot {
       noLoop();
       println("done");
     }
+    
+    trail.draw();
 
     float pixSide = field.pixLen(side);
     float sx = field.screenX(x);
@@ -181,6 +197,7 @@ class MeccanumRobot {
     translate(sx, sy);
     rotate((float) -a);
     fill(255);
+    stroke(0);
     strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  
     popMatrix();
@@ -365,5 +382,10 @@ class MeccanumRobot {
   // Effectively no force  - {f} in N
   private boolean noForce(double f) {
     return Math.abs(f) < FORCE_MAG_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
+  }
+  
+  // Points are close enough to be considered the same
+  private boolean samePoint(double x1, double y1, double x2, double y2) {
+    return (Math.abs(x1-x2) + Math.abs(y1-y2)) < DISTANCE_ZERO;
   }
 }
