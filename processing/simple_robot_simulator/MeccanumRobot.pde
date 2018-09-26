@@ -16,7 +16,7 @@ class MeccanumRobot {
   final double weight = mass * 9.8; // In N.
   final double staticLinFriction = 0.02; // Coef. of static friction - unitless
   final double dynamicLinFriction = 0.02; // Coef. of dynamic friction - unitless
-  final double dampingTorqueAdjustment = 0.2; // Factor applied when converting max damping force to torque
+  final double dampingTorqueAdjustment = 0.45; // Factor applied when converting max damping force to torque
   final double side = 17*0.0254; // side of the square robot, m. (17 inches).
   final double rotInertia = mass * side * side / 6; // Rotational inertia in kg-m^2 - rect prism of uniform density
   final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
@@ -38,6 +38,7 @@ class MeccanumRobot {
   final double powerAdjustBL = 1.0;
   final double powerAdjustBR = 1.0;
 
+  final Field field;
   // Current position and orientation
   double x;
   double y;
@@ -61,7 +62,8 @@ class MeccanumRobot {
   double markY = 0;
 
   // Create a robot at the specified position
-  public MeccanumRobot(double x, double y, double a) {
+  public MeccanumRobot(Field field, double x, double y, double a) {
+    this.field = field;
     this.x = x;
     this.y = y;
     this.a = a;
@@ -166,19 +168,19 @@ class MeccanumRobot {
 
   void draw() {
 
-    if (x < 0 || x > FIELD_WIDTH || y < 0 || y > FIELD_WIDTH) {
+    if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
       fill(255, 0, 0);
       noLoop();
       println("done");
     }
 
-    double x_to_px = (float) (width / FIELD_WIDTH);
-    float pixSide = (float) (side * x_to_px);
-    float px = (float) (x * x_to_px);
-    float py = (float) (height - y * x_to_px); // y grows upwards, py grows downwards
+    float pixSide = field.pixLen(side);
+    float sx = field.screenX(x);
+    float sy = field.screenY(y);
     pushMatrix();
-    translate(px, py);
-    rotate((float) a);
+    translate(sx, sy);
+    rotate((float) -a);
+    fill(255);
     rect(0, 0, pixSide, pixSide);  
     popMatrix();
 
@@ -188,10 +190,7 @@ class MeccanumRobot {
   }
 
   void renderMark() {
-    double x_to_px = (float) (width / FIELD_WIDTH);
-    float px = (float) (markX * x_to_px);
-    float py = (float) (height - markY * x_to_px); // y grows upwards, py grows downwards
-    ellipse(px, py, 10, 10);
+     ellipse(field.screenX(markX),field.screenY(markY), 10, 10);
   }
 
   // Clips to lie within [-1,1]

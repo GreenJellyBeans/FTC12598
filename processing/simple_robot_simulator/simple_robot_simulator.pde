@@ -5,15 +5,17 @@
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
 void settings() {
-  size(800, 800);
+  size(1000, 1000);
 }
-final double FIELD_WIDTH = 12*12*0.0254; // field width in meters (12 ft).
+
+Field g_field;
 MeccanumRobot g_robot;
 long prevTimeMs  = 0;
 
 void setup() {
   rectMode(CENTER);
-  g_robot = new MeccanumRobot(FIELD_WIDTH/2, FIELD_WIDTH/2, 0);
+  g_field = new Field();
+  g_robot = new MeccanumRobot(g_field, g_field.WIDTH/2, g_field.WIDTH/2, 0);
   setStartingPower(g_robot);
 }
 
@@ -26,10 +28,10 @@ void draw() {
   prevTimeMs = now;
   g_robot.simloop(dT);
   
- // background(128);
+  g_field.draw();
   g_robot.draw();
   
-  if (frameCount == 1000) {
+  if (frameCount == 200) {
     g_robot.markSpot();
     g_robot.stop();
   }
@@ -37,9 +39,12 @@ void draw() {
 
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
-  double p = 0.3;
-  r.setPowerFL(p);
-  r.setPowerFR(p);
-  r.setPowerBL(p);
-  r.setPowerBR(0);
+  double pFwd = 0.5;
+  double pStrafe = 0;
+  double pTurn = 0.1;
+  
+  r.setPowerFL(pFwd + pStrafe + pTurn);
+  r.setPowerFR(pFwd + pStrafe - pTurn);
+  r.setPowerBL(pFwd - pStrafe + pTurn);
+  r.setPowerBR(pFwd - pStrafe - pTurn);
 }
