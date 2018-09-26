@@ -28,12 +28,16 @@ void draw() {
   
   background(128);
   g_robot.draw();
+  
+  if (frameCount > 100) {
+    //g_robot.stop();
+  }
 }
 
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
-  r.setPowerFR(-0.3);
-  r.setPowerFL(0.3);
-  r.setPowerBR(0.3);
-  r.setPowerBL(-0.3);
+  r.setPowerFL(-0.3);
+ // r.setPowerFR(0.31);
+  //r.setPowerBL(0.3);
+  //r.setPowerBR(-0.3);
 }
