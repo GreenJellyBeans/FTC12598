@@ -26,19 +26,20 @@ void draw() {
   prevTimeMs = now;
   g_robot.simloop(dT);
   
-  background(128);
+ // background(128);
   g_robot.draw();
   
-  if (frameCount > 100) {
+  if (frameCount == 1000) {
+    g_robot.markSpot();
     g_robot.stop();
   }
 }
 
 void setStartingPower(MeccanumRobot r) {
   //r.stop();
-  double p = 1;
+  double p = 0.3;
   r.setPowerFL(p);
   r.setPowerFR(p);
   r.setPowerBL(p);
-  r.setPowerBR(p);
+  r.setPowerBR(0);
 }

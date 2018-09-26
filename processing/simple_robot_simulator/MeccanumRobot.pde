@@ -14,9 +14,9 @@ class MeccanumRobot {
   //
   final double mass = 42/2.2; // In kg
   final double weight = mass * 9.8; // In N.
-  final double staticLinFriction = 0.001; // Coef. of static friction - unitless
-  final double dynamicLinFriction = 0.001; // Coef. of dynamic friction - unitless
-  final double dampingTorqueAdjustment = 1; // Factor applied when converting max damping force to torque
+  final double staticLinFriction = 0.02; // Coef. of static friction - unitless
+  final double dynamicLinFriction = 0.02; // Coef. of dynamic friction - unitless
+  final double dampingTorqueAdjustment = 0.2; // Factor applied when converting max damping force to torque
   final double side = 17*0.0254; // side of the square robot, m. (17 inches).
   final double rotInertia = mass * side * side / 6; // Rotational inertia in kg-m^2 - rect prism of uniform density
   final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
@@ -26,7 +26,7 @@ class MeccanumRobot {
   final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
   final double ANGULAR_SPEED_ZERO = Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
   final double FORCE_MAG_ZERO = weight/10000; // Forces < 0.01% of the weight of the robot are considered effectively no force 
-  final double MOTOR_DRAG_FORCE = P_TO_F_SCALE; // N. A simple approximation of the impact of the drag of an unpowered motor.
+  final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*4; // N. A simple approximation of the impact of the drag of an unpowered motor.
 
   // In reality this depends on orientation of the wheels, but we just assume it is
   // isotropic against the prevailing direction of motion of the robot.
@@ -56,6 +56,10 @@ class MeccanumRobot {
   double pBL = 0;
   double pBR = 0;
 
+  boolean spotMarked = false;
+  double markX = 0;
+  double markY = 0;
+
   // Create a robot at the specified position
   public MeccanumRobot(double x, double y, double a) {
     this.x = x;
@@ -69,7 +73,7 @@ class MeccanumRobot {
 
   void setPowerFR(double p) {
     pFR = clipPower(p)  * powerAdjustFR;
-   }
+  }
 
   void setPowerBL(double p) {
     pBL = clipPower(p) * powerAdjustBL;
@@ -77,7 +81,7 @@ class MeccanumRobot {
 
   void setPowerBR(double p) {
     pBR = clipPower(p) * powerAdjustBR;
-   }
+  }
 
   void stop() {
     setPowerFL(0);
@@ -153,6 +157,13 @@ class MeccanumRobot {
     va = vaNew;
   }
 
+  // Mark the current spot - shows up in future renderings.
+  void markSpot() {
+    spotMarked = true;
+    markX = x;
+    markY = y;
+  }
+
   void draw() {
 
     if (x < 0 || x > FIELD_WIDTH || y < 0 || y > FIELD_WIDTH) {
@@ -160,6 +171,7 @@ class MeccanumRobot {
       noLoop();
       println("done");
     }
+
     double x_to_px = (float) (width / FIELD_WIDTH);
     float pixSide = (float) (side * x_to_px);
     float px = (float) (x * x_to_px);
@@ -169,13 +181,24 @@ class MeccanumRobot {
     rotate((float) a);
     rect(0, 0, pixSide, pixSide);  
     popMatrix();
+
+    if (spotMarked) {
+      renderMark();
+    }
+  }
+
+  void renderMark() {
+    double x_to_px = (float) (width / FIELD_WIDTH);
+    float px = (float) (markX * x_to_px);
+    float py = (float) (height - markY * x_to_px); // y grows upwards, py grows downwards
+    ellipse(px, py, 10, 10);
   }
 
   // Clips to lie within [-1,1]
   private double clipPower(double in) {
     return Math.min(Math.max(in, -1), 1);
   }
-  
+
   // Calculates the motive force in N of a single motor, given input unitless power, that ranges
   // within [-1, 1]. If we assume constant-power across different RPM, the motive force
   // would be inversely proportional to velocity. We can at best be very approximate here, because
@@ -193,7 +216,7 @@ class MeccanumRobot {
     if (noSpeed(vTot)) {
       force = MAX_MOTIVE_FORCE_PER_WHEEL;
     } else {
-      force = Math.min(MAX_MOTIVE_FORCE_PER_WHEEL, Math.abs(0.1*power/vTot)); 
+      force = Math.min(MAX_MOTIVE_FORCE_PER_WHEEL, Math.abs(power/vTot));
     }
     return force * Math.signum(power);
   }
@@ -225,14 +248,12 @@ class MeccanumRobot {
   // Max resistive force - a combination of friction and resistive effects of any powered-down motors
   // Return value is positive.
   double maxDampingForce() {
-    // TODO 0
-    return 0*weight*(isMoving() ? dynamicLinFriction : staticLinFriction) + motorDragForce();
+    return weight*(isMoving() ? dynamicLinFriction : staticLinFriction) + motorDragForce();
   }
 
   double maxDampingTorque() {
     double dist = this.side * FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
-    // TODO 0
-    return 0*dist*maxDampingForce()*dampingTorqueAdjustment;
+    return dist*maxDampingForce()*dampingTorqueAdjustment;
   }
 
   // Resistive force in N produced by any motors that are powered off
@@ -242,8 +263,7 @@ class MeccanumRobot {
     if (noPower(pFR)) numPoweredOff++;
     if (noPower(pBL)) numPoweredOff++;
     if (noPower(pBR)) numPoweredOff++;
-    // TODO 0
-    return 0*numPoweredOff*MOTOR_DRAG_FORCE;
+    return numPoweredOff*MOTOR_DRAG_FORCE;
   } 
 
   // Returns the updated linear OR angular speed, subject to both motive force/torque and dampening force/torque,
@@ -276,7 +296,7 @@ class MeccanumRobot {
     }
     return newSpeed;
   }
-  
+
   // Returns the updated angular speed, subject to both motive torque and dampening torque,
   // assuming these  act constantly over a period of dT.
   // IMPNOTE: This method is SUBSTANTIALLY the same as newSpeed(). The only differences are
