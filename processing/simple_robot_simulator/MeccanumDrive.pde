@@ -171,7 +171,6 @@ class MeccanumDrive {
     if (!samePoint(oldX, oldY, x, y)) {
       trail.addPoint(x, y);
     }
-    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, x, y, a));
 
     // Update velocities
     vx = vxNew;

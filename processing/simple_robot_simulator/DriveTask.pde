@@ -48,7 +48,7 @@ class DriveTask {
 
   void driveTaskLoop1() {
     if (robot.gamepad.right_bumper()) {         //right bumper makes the robot spin clockwise
-      setPowerAll(0.5, -0.5, -0.5, 0.5); // FL FR BL BR
+      setPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
     } else if (robot.gamepad.left_bumper()) {    //left bumper makes the robot spin counterclockwise
       setPowerAll(-0.5, 0.5, -0.5, 0.5);
     }
