@@ -50,6 +50,23 @@ class Robot {
 
 
   public void draw() {
+    displayGamepadStatus();
     drive.draw();
+  }
+
+  // Shows state of gamepad controls in the field's extended status area
+  void displayGamepadStatus() {
+    GamepadInterface gp = gamepad;
+    field.addExtendedStatus(String.format("STICKS LSx: %5.2f  LSy: %5.2f  RSx: %5.2f  RSy: %5.2f", 
+      gp.left_stick_x(), gp.left_stick_y(), gp.right_stick_x(), gp.right_stick_y()
+      ));
+
+    String buttons =  
+      (gp.left_bumper()? " LB" : "") + 
+      (gp.right_bumper()? " RB" : "") + 
+      (gp.a()? " A" : "") + 
+      (gp.y()? " Y" : "");
+    String buttonStatus = (buttons.length() == 0) ? "BUTTONS: none" : "BUTTONS: " + buttons;
+    field.addExtendedStatus(buttonStatus);
   }
 };

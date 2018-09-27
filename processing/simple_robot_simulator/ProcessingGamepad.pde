@@ -111,7 +111,7 @@ public class ProcessingGamepad implements GamepadInterface {
 
   @Override
     public boolean y() {
-    return y.pressed(); // TODO
+    return y.pressed();
   }
 
 

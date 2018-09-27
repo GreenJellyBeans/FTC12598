@@ -93,7 +93,7 @@ class DriveTask {
       pFR *= scale;
       pBL *= scale;
       pBR *= scale;
-      setPowerAll(0, 0, 0, 0);
+      setPowerAll(pFL, pFR, pBL, pBR);
     }
   }
 

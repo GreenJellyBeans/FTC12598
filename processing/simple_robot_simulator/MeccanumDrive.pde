@@ -125,7 +125,7 @@ class MeccanumDrive {
     // free-wheeling meccanum wheel segments.
     double dampForce  = maxDampingForce();
     double hyp = Math.sqrt(vx*vx + vy*vy);
-    println("hyp: " + hyp + "; force: " + Math.sqrt(rightForce*rightForce + frontForce*frontForce));
+    field.addExtendedStatus(String.format("force: %5.2f", Math.sqrt(rightForce*rightForce + frontForce*frontForce)));
     double dampFx, dampFy;
     if (!noSpeed(hyp)) {
       // Nonzero current velocity
@@ -192,7 +192,7 @@ class MeccanumDrive {
     if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
       fill(255, 0, 0);
       noLoop();
-      println("done");
+      field.addExtendedStatus("done");
     }
 
     trail.draw();

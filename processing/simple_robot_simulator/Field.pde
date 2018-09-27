@@ -6,10 +6,10 @@ class Field {
   public final double WIDTH = 12*12*0.0254; // field width in meters (12 ft).; // in meters
 
   final int FIELD_OFFSET_PIXELS = 50; // Offset from origin (top-left)
-  final int FIELD_WIDTH_PIXELS = width - 2 * FIELD_OFFSET_PIXELS;
+  final int FIELD_WIDTH_PIXELS = height - 2 * FIELD_OFFSET_PIXELS;
   final double PIX_PER_M = FIELD_WIDTH_PIXELS / WIDTH; // pixels per meter
-  String status = "NOTHING";
-
+  String status = "NOTHING"; // Single line of status printed below the field.
+  String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
 
   public void draw() {
     // Boundary
@@ -30,6 +30,8 @@ class Field {
     // Status
     fill(0);
     text(status, screenX(0), screenY(0) + 20);
+    text(extendedStatus, screenX(WIDTH) + 20, screenY(WIDTH));
+    extendedStatus = "";
   }
 
 
@@ -68,5 +70,9 @@ class Field {
 
   void updateStatus(String s) {
     status = s;
+  }
+  
+  void addExtendedStatus(String s) {
+    extendedStatus += s + "\n";
   }
 }
