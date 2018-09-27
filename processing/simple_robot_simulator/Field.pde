@@ -20,8 +20,8 @@ class Field {
     // Draw foam tile boundaries.
     strokeWeight(1);
     stroke(100);
-    for (int i = 1; i <= 3; i++) {
-      double offset = i * WIDTH/4;
+    for (int i = 1; i <= 5; i++) {
+      double offset = i * WIDTH/6;
       drawLine(offset, 0, offset, WIDTH);
       drawLine(0, offset, WIDTH, offset);
     }

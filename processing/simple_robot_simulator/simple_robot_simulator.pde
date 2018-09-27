@@ -12,11 +12,15 @@ Field g_field;
 MeccanumRobot g_robot;
 long startTimeMs;
 long prevTimeMs  = 0;
+ProcessingGamepad g_gamepad;
+PApplet pa = this;
 
 void setup() {
   rectMode(CENTER);
   g_field = new Field();
   g_robot = new MeccanumRobot(g_field, g_field.WIDTH/2, g_field.WIDTH/2, 0);
+  g_gamepad  = new ProcessingGamepad("Gamepad-F310");
+  g_gamepad.init();
   setStartingPower(g_robot);
   startTimeMs = millis();
 }
@@ -30,11 +34,14 @@ void draw() {
   double t = (startTimeMs - now)/1000.0; // In seconds
   double dT = (now - prevTimeMs)/1000.0; // In seconds
   prevTimeMs = now;
+  if (frameCount > 10) {
+    driveTask();
+  }
   g_robot.simloop(t, dT);
-  
+
   g_field.draw();
   g_robot.draw();
-  
+
   if (frameCount == 2000) {
     g_robot.markSpot();
     g_robot.stop();
@@ -46,9 +53,25 @@ void setStartingPower(MeccanumRobot r) {
   double pFwd = 0.5;
   double pStrafe = 0.5;
   double pTurn = 0.2;
-  
+
   r.setPowerFL(pFwd + pStrafe + pTurn);
   r.setPowerFR(pFwd - pStrafe - pTurn);
   r.setPowerBL(pFwd - pStrafe + pTurn);
   r.setPowerBR(pFwd + pStrafe - pTurn);
+}
+
+void driveTask() {
+  MeccanumRobot r = g_robot;
+  GamepadInterface gp = g_gamepad;
+  if (gp.right_bumper()) {         //right bumper makes the robot spin clockwise
+    r.setPowerFL(0.5);
+    r.setPowerFR(-0.5);
+    r.setPowerBR(-0.5);
+    r.setPowerBL(0.5);
+  } else if (gp.left_bumper()) {    //left bumper makes the robot spin counterclockwise
+    r.setPowerFL(-0.5);
+    r.setPowerFR(0.5);
+    r.setPowerBR(-0.5);
+    r.setPowerBL(0.5);
+  }
 }
