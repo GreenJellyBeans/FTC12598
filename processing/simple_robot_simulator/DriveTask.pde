@@ -75,7 +75,10 @@ class DriveTask {
     // Let's clip anyways, incase we get faulty input
     fwd = clipInput(fwd);
     turn = clipInput(turn);
-    strafe = clipInput(turn);
+    strafe = clipInput(strafe);
+    
+    Field f = robot.field;
+    f.addExtendedStatus(String.format("HPOWER  fwd:%5.2f  turn:%5.2f  strafe:%5.2f", fwd, turn, strafe));
 
     double pFL = fwd + strafe + turn;
     double pFR = fwd - strafe - turn;
