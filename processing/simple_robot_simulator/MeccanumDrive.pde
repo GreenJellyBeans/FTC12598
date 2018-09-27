@@ -203,7 +203,7 @@ class MeccanumDrive {
     pushMatrix();
     translate(sx, sy);
     rotate((float) -a);
-    fill(255);
+    fill(255, 200);
     stroke(0);
     strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  

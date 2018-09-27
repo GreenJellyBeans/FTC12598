@@ -45,7 +45,7 @@ class Robot {
 
   public void simloop(double t, double dT) {
     drive.simloop(t, dT);
-    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f LB:%s RB:%s", t, drive.x, drive.y, drive.a, gamepad.left_bumper(), gamepad.right_bumper()));
+    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, drive.a));
   }
 
 
