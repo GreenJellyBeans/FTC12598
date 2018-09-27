@@ -1,6 +1,4 @@
-//
-// The Trail class implements rendering of a robot trail, showing where the robot has been
-// Author: Joseph M. Joy, FTC12598 mentor.
+// The Trail class implements rendering of a robot trail, showing where the robot has been.
 //
 class Trail {
 
@@ -23,6 +21,7 @@ class Trail {
     this.c = c;
     this.f = f;
   }
+
 
   public void addPoint(double x, double y) {
 

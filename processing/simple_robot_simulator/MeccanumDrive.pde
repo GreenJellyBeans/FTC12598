@@ -1,5 +1,5 @@
-// //<>//
-// The MeccanumRobot class implements a very simple physics-based robot simulator
+//
+// The MeccanumDrive class implements a very simple physics-based robot simulator
 // of a 4-wheel meccanum-based holonomic drive. The physics is stripped down to 4 diagonal
 // forces on the 4 corners of a square robot producing linear and angular velocities.
 // Composite static and dynamic linear and rotational friction, specified as constants, provide
@@ -9,7 +9,7 @@
 // of robot drive control algorithms.
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
-class MeccanumRobot {
+class MeccanumDrive {
   // Only metric units allowed.
   //
   final double mass = 42/2.2; // In kg
@@ -22,7 +22,7 @@ class MeccanumRobot {
   final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
   final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
   // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
-  
+
   final double DISTANCE_ZERO = 0.001; // 1mm is considered close enough to be the same length/distance/position
   final double POWER_ZERO = 0.05; // Unit-less motor power. Values less than this are considered to be no power.
   final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
@@ -62,12 +62,13 @@ class MeccanumRobot {
   boolean spotMarked = false;
   double markX = 0;
   double markY = 0;
-  
+
   // Shows where we've been
   Trail trail;
 
+
   // Create a robot at the specified position
-  public MeccanumRobot(Field field, double x, double y, double a) {
+  public MeccanumDrive(Field field, double x, double y, double a) {
     this.field = field;
     this.trail = new Trail(field, color(0, 255, 0));
     this.x = x;
@@ -75,21 +76,26 @@ class MeccanumRobot {
     this.a = a;
   }
 
+
   void setPowerFL(double p) {
     pFL = clipPower(p) * powerAdjustFL;
   }
+
 
   void setPowerFR(double p) {
     pFR = clipPower(p)  * powerAdjustFR;
   }
 
+
   void setPowerBL(double p) {
     pBL = clipPower(p) * powerAdjustBL;
   }
 
+
   void setPowerBR(double p) {
     pBR = clipPower(p) * powerAdjustBR;
   }
+
 
   void stop() {
     setPowerFL(0);
@@ -97,6 +103,7 @@ class MeccanumRobot {
     setPowerBL(0);
     setPowerBR(0);
   }
+
 
   // Updates the simulation,
   // assumed to be {dT} seconds have elapsed
@@ -143,7 +150,6 @@ class MeccanumRobot {
     double motiveTorque = motiveTorque();
     double dampTorque = maxDampingTorque();
 
-
     // Calculated updated velocities - we assume, for simplicity,
     // constant force and torque for the whole previous period of duration dT.
     // We could assume a ramped force, but that would change the equations by adding
@@ -173,12 +179,14 @@ class MeccanumRobot {
     va = vaNew;
   }
 
+
   // Mark the current spot - shows up in future renderings.
   void markSpot() {
     spotMarked = true;
     markX = x;
     markY = y;
   }
+
 
   void draw() {
 
@@ -187,7 +195,7 @@ class MeccanumRobot {
       noLoop();
       println("done");
     }
-    
+
     trail.draw();
 
     float pixSide = field.pixLen(side);
@@ -207,14 +215,17 @@ class MeccanumRobot {
     }
   }
 
+
   void renderMark() {
-     ellipse(field.screenX(markX),field.screenY(markY), 10, 10);
+    ellipse(field.screenX(markX), field.screenY(markY), 10, 10);
   }
+
 
   // Clips to lie within [-1,1]
   private double clipPower(double in) {
     return Math.min(Math.max(in, -1), 1);
   }
+
 
   // Calculates the motive force in N of a single motor, given input unitless power, that ranges
   // within [-1, 1]. If we assume constant-power across different RPM, the motive force
@@ -238,19 +249,23 @@ class MeccanumRobot {
     return force * Math.signum(power);
   }
 
+
   // Remember the direction of forces on the wheels:
   //    /\
   //    \/
+
 
   // Motive force along the *robot's* x-axis (side-to-side), NOT including friction effects
   private  double rightMotiveForce() { 
     return FORCE_FRAC*(motiveForce(pFL) - motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
   }
 
+
   // Motive force along the *robot's* y-axis (front-to-back), NOT including friction effects
   private  double frontMotiveForce() {
     return FORCE_FRAC*(motiveForce(pFL) + motiveForce(pFR) + motiveForce(pBL) + motiveForce(pBR));
   }
+
 
   private  double motiveTorque() {
     // We assume points of contact are on the 4 corners of the square of size {this.side},
@@ -262,16 +277,19 @@ class MeccanumRobot {
     return dist * (-motiveForce(pFL) + motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
   }
 
+
   // Max resistive force - a combination of friction and resistive effects of any powered-down motors
   // Return value is positive.
   double maxDampingForce() {
     return weight*(isMoving() ? dynamicLinFriction : staticLinFriction) + motorDragForce();
   }
 
+
   double maxDampingTorque() {
     double dist = this.side * FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
     return dist*maxDampingForce()*dampingTorqueAdjustment;
   }
+
 
   // Resistive force in N produced by any motors that are powered off
   private double motorDragForce() {
@@ -282,6 +300,7 @@ class MeccanumRobot {
     if (noPower(pBR)) numPoweredOff++;
     return numPoweredOff*MOTOR_DRAG_FORCE;
   } 
+
 
   // Returns the updated linear OR angular speed, subject to both motive force/torque and dampening force/torque,
   // assuming these forces act constantly over a period of {dT}.
@@ -313,6 +332,7 @@ class MeccanumRobot {
     }
     return newSpeed;
   }
+
 
   // Returns the updated angular speed, subject to both motive torque and dampening torque,
   // assuming these  act constantly over a period of dT.
@@ -352,11 +372,13 @@ class MeccanumRobot {
     return Math.max(Math.abs(vx), Math.abs(vy)) > LIN_SPEED_ZERO;
   }
 
+
   // Returns -1 | 0 | 1 depending on whether speed (in m/sec) is -ve, 0 or +ve
   //
   private int linearDirection(double speed) {
     return (speed < -LIN_SPEED_ZERO) ? -1 : ((speed > LIN_SPEED_ZERO) ? 1 : 0);
   }
+
 
   // Returns -1 | 0 | 1 depending on whether speed (in m/sec) is -ve, 0 or +ve
   //
@@ -364,26 +386,31 @@ class MeccanumRobot {
     return (omega < -ANGULAR_SPEED_ZERO) ? -1 : ((omega > ANGULAR_SPEED_ZERO) ? 1 : 0);
   }
 
+
   // Effectively no power  - this is the unitless power used to control the motor (setPower)
   private boolean noPower(double p) {
     return Math.abs(p) < POWER_ZERO;
   }
+
 
   // Effectively no speed  - {s} in m/sec
   private boolean noSpeed(double s) {
     return Math.abs(s) < LIN_SPEED_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
   }
 
+
   // Effectively no angular velocity  - {a} in rad / sec
   private boolean noRotation(double a) {
     return Math.abs(a) < ANGULAR_SPEED_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
   }
 
+
   // Effectively no force  - {f} in N
   private boolean noForce(double f) {
     return Math.abs(f) < FORCE_MAG_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
   }
-  
+
+
   // Points are close enough to be considered the same
   private boolean samePoint(double x1, double y1, double x2, double y2) {
     return (Math.abs(x1-x2) + Math.abs(y1-y2)) < DISTANCE_ZERO;

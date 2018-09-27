@@ -2,28 +2,28 @@
 // Very simple physics-based robot simulator.
 // It's purpose is for basic experimentation and validation
 // of robot drive control algorithms.
-// Author: Joseph M. Joy, FTC12598 mentor.
 //
 void settings() {
   size(1000, 1000);
 }
 
+
 Field g_field;
-MeccanumRobot g_robot;
+Robot g_robot;
 long startTimeMs;
 long prevTimeMs  = 0;
-ProcessingGamepad g_gamepad;
-PApplet pa = this;
+PApplet g_pa = this;
+
 
 void setup() {
   rectMode(CENTER);
   g_field = new Field();
-  g_robot = new MeccanumRobot(g_field, g_field.WIDTH/2, g_field.WIDTH/2, 0);
-  g_gamepad  = new ProcessingGamepad("Gamepad-F310");
-  g_gamepad.init();
-  setStartingPower(g_robot);
+  g_robot = new Robot(g_field);  
   startTimeMs = millis();
+  g_robot.init();
+  g_robot.start();
 }
+
 
 void draw() {
   background(200);
@@ -34,44 +34,12 @@ void draw() {
   double t = (startTimeMs - now)/1000.0; // In seconds
   double dT = (now - prevTimeMs)/1000.0; // In seconds
   prevTimeMs = now;
-  if (frameCount > 10) {
-    driveTask();
-  }
+  g_robot.loop(t, dT);
   g_robot.simloop(t, dT);
-
   g_field.draw();
   g_robot.draw();
 
   if (frameCount == 2000) {
-    g_robot.markSpot();
     g_robot.stop();
-  }
-}
-
-void setStartingPower(MeccanumRobot r) {
-  //r.stop();
-  double pFwd = 0.5;
-  double pStrafe = 0.5;
-  double pTurn = 0.2;
-
-  r.setPowerFL(pFwd + pStrafe + pTurn);
-  r.setPowerFR(pFwd - pStrafe - pTurn);
-  r.setPowerBL(pFwd - pStrafe + pTurn);
-  r.setPowerBR(pFwd + pStrafe - pTurn);
-}
-
-void driveTask() {
-  MeccanumRobot r = g_robot;
-  GamepadInterface gp = g_gamepad;
-  if (gp.right_bumper()) {         //right bumper makes the robot spin clockwise
-    r.setPowerFL(0.5);
-    r.setPowerFR(-0.5);
-    r.setPowerBR(-0.5);
-    r.setPowerBL(0.5);
-  } else if (gp.left_bumper()) {    //left bumper makes the robot spin counterclockwise
-    r.setPowerFL(-0.5);
-    r.setPowerFR(0.5);
-    r.setPowerBR(-0.5);
-    r.setPowerBL(0.5);
   }
 }

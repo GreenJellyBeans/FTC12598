@@ -8,10 +8,7 @@
 // of robot drive control algorithms, and potentially augment drive practice.
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
-
 import org.gamecontrolplus.*;
-
-
 
 public class ProcessingGamepad implements GamepadInterface {
   private final String configName;
@@ -36,9 +33,10 @@ public class ProcessingGamepad implements GamepadInterface {
     this.configName = configName;
   }
 
+
   public void init() {
     // Initialise the ControlIO
-    control = ControlIO.getInstance(pa);
+    control = ControlIO.getInstance(g_pa);
 
     // Find a device that matches the configuration file
     device = control.getMatchedDevice(configName); // Under .\data
@@ -54,13 +52,16 @@ public class ProcessingGamepad implements GamepadInterface {
     dpad = device.getHat("dpad");
   }
 
+
   public void deinit() {
   }
+
 
   @Override
     public double left_stick_x() {
     return left_stick_x.getValue();
   }
+
 
   @Override
     public double left_stick_y() {
@@ -73,15 +74,18 @@ public class ProcessingGamepad implements GamepadInterface {
     return right_stick_x.getValue();
   }
 
+
   @Override
     public double right_stick_y() {
     return right_stick_y.getValue();
   }
 
+
   @Override
     public boolean left_bumper() {
     return left_bumper.pressed();
   }
+
 
   @Override
     public boolean right_bumper() {
@@ -94,6 +98,7 @@ public class ProcessingGamepad implements GamepadInterface {
     return 0; // TODO
   }
 
+
   @Override
     public float left_trigger() {
     return 0; // TODO
@@ -104,6 +109,7 @@ public class ProcessingGamepad implements GamepadInterface {
     public boolean y() {
     return false; // TODO
   }
+
 
   @Override
     public boolean a() {
