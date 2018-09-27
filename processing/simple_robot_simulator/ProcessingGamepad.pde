@@ -18,6 +18,8 @@ public class ProcessingGamepad implements GamepadInterface {
   // Buttons, Sliders and Hats
   private ControlButton left_bumper;
   private ControlButton right_bumper;
+  private ControlButton a;
+  private ControlButton y;
   private ControlHat dpad;
   private ControlSlider left_stick_x;
   private ControlSlider left_stick_y;
@@ -49,6 +51,8 @@ public class ProcessingGamepad implements GamepadInterface {
     right_stick_y = device.getSlider("right_stick_y");
     left_bumper = device.getButton("left_bumper");
     right_bumper = device.getButton("right_bumper");
+    a = device.getButton("a");
+    y = device.getButton("y");
     dpad = device.getHat("dpad");
   }
 
@@ -107,12 +111,12 @@ public class ProcessingGamepad implements GamepadInterface {
 
   @Override
     public boolean y() {
-    return false; // TODO
+    return y.pressed(); // TODO
   }
 
 
   @Override
     public boolean a() {
-    return false; // TODO
+    return a.pressed();
   }
 }

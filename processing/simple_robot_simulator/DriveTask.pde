@@ -2,7 +2,7 @@
 class DriveTask {
 
   final Robot robot;
-
+  boolean gamepadEnabled = false; // Stays disabled until "A" button is pressed
 
   public DriveTask(Robot r) {
     robot = r;
@@ -47,10 +47,21 @@ class DriveTask {
 
 
   void driveTaskLoop1() {
+    GamepadInterface gp = robot.gamepad;
+    if (!gamepadEnabled && gp.a()) {
+      gamepadEnabled = true;
+    }
+
+    if (!gamepadEnabled) {
+      return; // ***** EARLY RETURN ******
+    }
+    
     if (robot.gamepad.right_bumper()) {         //right bumper makes the robot spin clockwise
       setPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
     } else if (robot.gamepad.left_bumper()) {    //left bumper makes the robot spin counterclockwise
       setPowerAll(-0.5, 0.5, -0.5, 0.5);
+    } else {
+      setPowerAll(0, 0, 0, 0);
     }
   }
 
