@@ -17,6 +17,7 @@ PApplet g_pa = this;
 
 void setup() {
   rectMode(CENTER);
+  setFont();
   g_field = new Field();
   g_robot = new Robot(g_field);  
   startTimeMs = millis();
@@ -24,6 +25,13 @@ void setup() {
   g_robot.start();
 }
 
+
+void setFont() {
+  // The font "andalemo.ttf" must be located in the 
+  // current sketch's "data" directory to load successfully
+  PFont font = createFont("Consolas", 14);
+  textFont(font);
+}
 
 void draw() {
   background(200);

@@ -26,8 +26,9 @@ class MeccanumDrive {
   final double DISTANCE_ZERO = 0.001; // 1mm is considered close enough to be the same length/distance/position
   final double POWER_ZERO = 0.05; // Unit-less motor power. Values less than this are considered to be no power.
   final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
-  final double ANGULAR_SPEED_ZERO = Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
+  final double ANGULAR_SPEED_ZERO = 0.1*Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
   final double FORCE_MAG_ZERO = weight/10000; // Forces < 0.01% of the weight of the robot are considered effectively no force 
+  final double TORQUE_MAG_ZERO = FORCE_MAG_ZERO*side; // Base it off the zero force and side of the robot
   final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*4; // N. A simple approximation of the impact of the drag of an unpowered motor.
 
   // In reality this depends on orientation of the wheels, but we just assume it is
@@ -125,7 +126,6 @@ class MeccanumDrive {
     // free-wheeling meccanum wheel segments.
     double dampForce  = maxDampingForce();
     double hyp = Math.sqrt(vx*vx + vy*vy);
-    field.addExtendedStatus(String.format("force: %5.2f", Math.sqrt(rightForce*rightForce + frontForce*frontForce)));
     double dampFx, dampFy;
     if (!noSpeed(hyp)) {
       // Nonzero current velocity
@@ -150,6 +150,7 @@ class MeccanumDrive {
     double motiveTorque = motiveTorque();
     double dampTorque = maxDampingTorque();
 
+
     // Calculated updated velocities - we assume, for simplicity,
     // constant force and torque for the whole previous period of duration dT.
     // We could assume a ramped force, but that would change the equations by adding
@@ -158,6 +159,11 @@ class MeccanumDrive {
     double vxNew = newLinearSpeed(vx, motiveFx, dampFx, dT);
     double vyNew = newLinearSpeed(vy, motiveFy, dampFy, dT);
     double vaNew = newAngularSpeed(va, motiveTorque, dampTorque, dT);
+
+    field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", pFL, pFR, pBL, pBR));
+    field.addExtendedStatus(String.format("MOTIVE  MFx:%5.2f  MFy:%5.2f  MT:%5.2f", motiveFx, motiveFy, motiveTorque));
+    field.addExtendedStatus(String.format("DAMPEN  DFx:%5.2f  DFy:%5.2f  DT:%5.2f", dampFx, dampFy, dampTorque));
+    field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vxNew, vyNew, vaNew));
 
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).
@@ -286,7 +292,7 @@ class MeccanumDrive {
 
   double maxDampingTorque() {
     double dist = this.side * FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
-    return dist*maxDampingForce()*dampingTorqueAdjustment;
+    return noRotation(va) ? 0 : dist*maxDampingForce()*dampingTorqueAdjustment;
   }
 
 
@@ -400,16 +406,22 @@ class MeccanumDrive {
 
   // Effectively no angular velocity  - {a} in rad / sec
   private boolean noRotation(double a) {
-    return Math.abs(a) < ANGULAR_SPEED_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
+    return Math.abs(a) < ANGULAR_SPEED_ZERO;
   }
 
 
   // Effectively no force  - {f} in N
   private boolean noForce(double f) {
-    return Math.abs(f) < FORCE_MAG_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
+    return Math.abs(f) < FORCE_MAG_ZERO;
   }
 
 
+  // Effectively no torque  - {t} in Nm
+  private boolean noTorque(double t) {
+    return Math.abs(t) < TORQUE_MAG_ZERO;
+  }
+  
+  
   // Points are close enough to be considered the same
   private boolean samePoint(double x1, double y1, double x2, double y2) {
     return (Math.abs(x1-x2) + Math.abs(y1-y2)) < DISTANCE_ZERO;
