@@ -14,6 +14,7 @@ public class ProcessingGamepad implements GamepadInterface {
   private final String configName;
   private ControlIO control;
   private ControlDevice device; // Representing the controller/gamepad
+  boolean disabled = true; // set to true on successful init.
 
   // Buttons, Sliders and Hats
   private ControlButton left_bumper;
@@ -43,7 +44,8 @@ public class ProcessingGamepad implements GamepadInterface {
     // Find a device that matches the configuration file
     device = control.getMatchedDevice(configName); // Under .\data
     if (device == null) {
-      throw new RuntimeException("Could not find gamepad device");
+      System.err.println("Could not find gamepad device [" + configName + "]");
+      return; // *****  EARLY RETURN
     }
     left_stick_x = device.getSlider("left_stick_x");
     left_stick_y = device.getSlider("left_stick_y");
@@ -54,6 +56,7 @@ public class ProcessingGamepad implements GamepadInterface {
     a = device.getButton("a");
     y = device.getButton("y");
     dpad = device.getHat("dpad");
+    disabled = false;
   }
 
 
@@ -63,37 +66,37 @@ public class ProcessingGamepad implements GamepadInterface {
 
   @Override
     public double left_stick_x() {
-    return left_stick_x.getValue();
+    return disabled ? 0: left_stick_x.getValue();
   }
 
 
   @Override
     public double left_stick_y() {
-    return left_stick_y.getValue();
+    return disabled ? 0: left_stick_y.getValue();
   }
 
 
   @Override
     public double right_stick_x() { 
-    return right_stick_x.getValue();
+    return disabled ? 0: right_stick_x.getValue();
   }
 
 
   @Override
     public double right_stick_y() {
-    return right_stick_y.getValue();
+    return disabled ? 0: right_stick_y.getValue();
   }
 
 
   @Override
     public boolean left_bumper() {
-    return left_bumper.pressed();
+    return disabled ? false: left_bumper.pressed();
   }
 
 
   @Override
     public boolean right_bumper() {
-    return right_bumper.pressed();
+    return disabled ? false: right_bumper.pressed();
   }
 
 
@@ -111,12 +114,12 @@ public class ProcessingGamepad implements GamepadInterface {
 
   @Override
     public boolean y() {
-    return y.pressed();
+    return disabled ? false : y.pressed();
   }
 
 
   @Override
     public boolean a() {
-    return a.pressed();
+    return disabled ? false : a.pressed();
   }
 }
