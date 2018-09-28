@@ -33,10 +33,9 @@ class DriveTask {
 
 
   void setStartingPower() {
-    //r.stop();
-    double pFwd = 0.5;
-    double pStrafe = 0.5;
-    double pTurn = 0.2;
+    double pFwd = 0;//0.5;
+    double pStrafe = 0;//0.5;
+    double pTurn = 0.1;
     MeccanumDrive d = robot.drive;
 
     d.setPowerFL(pFwd + pStrafe + pTurn);
