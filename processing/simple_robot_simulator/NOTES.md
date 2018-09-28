@@ -2,7 +2,16 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
-## September 28, 2018B JMJ Thoughts on providing feedback to the robot on position, color, etc
+## September 28, 2018-C JMJ Thoughts on collision with the field walls and other elements
+Track collision of the 4 corners of the robot. If they collide, assume frictionless contact - so the 
+impact force is acting on the corner, and perpendicular to the wall (or other object surface). The impact
+force is calculated to be high enough to bring the robot to a stop in (say) 1cm. This force is included
+in simulation calculations - both net force and net torque. This *should* result in the robot swinging
+so that another corner will also collide - at which point we have two forces that will cancel out torque,
+and the robot should come to a hard stop - unless aton or user backs away. Fairly straightforward in principle,
+but requires collision detection and vector calculations.
+
+## September 28, 2018-B JMJ Thoughts on providing feedback to the robot on position, color, etc
 It would be nice to provide simulated sensor inputs to be able to more comprehensively test autonomous
 code. Absolute position and bearing can of course be reported with perfect accuracy, and in fact some errors
 will need to be added to simulate real-life issues. Color and IR, bump or range sensors are much trickier, and one
@@ -16,7 +25,7 @@ real-world situations under different lighting conditions.
 
 
 More thought needs to be given to this subject, and probably any implementation should be driven by a very specific need.
-## September 28, 2018A JMJ Thoughts on adding tape and annotations to the field
+## September 28, 2018-A JMJ Thoughts on adding tape and annotations to the field
 It would be nice to be able to apply field elements, especially the red and blue tape, but also to be able
 to load arbitrary annotations marking potential paths and destinations for different stages of autonomous
 driving, or to set up challenges for driver practice.

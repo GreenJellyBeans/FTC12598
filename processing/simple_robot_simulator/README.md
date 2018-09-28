@@ -3,7 +3,7 @@ This is a Processing-based simulator for FTC robots. It is a very simple 2D simu
 for any purpose without attribution.
 
 The NOTES.md file is a set of dated informal design and implementation notes that chart the development course of this
-project.
+project. The TIDO.md file contains a list of open issues.
 
 Processing is a wonderful interactive programming environment - see www.processing.org. This program uses
 the standard Processing environment - v3 or later, with the following standard libraries loaded:
