@@ -193,6 +193,7 @@ class MeccanumDrive {
   }
 
 
+  // Render the robot - TODO: should move this to Robot class.
   void draw() {
 
     if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
@@ -213,6 +214,14 @@ class MeccanumDrive {
     stroke(0);
     strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  
+    fill(0);
+    
+    // Render L and R labels on the front left and right corners
+    // of the robot. Note that these are in screen coordinates, where
+    // y grows downwards!
+    final int adj = 12; // adjustment for text size
+    text("L", -pixSide/2, adj - pixSide/2);
+    text("R", pixSide/2 - adj, adj - pixSide/2);
     popMatrix();
 
     if (spotMarked) {
@@ -420,8 +429,8 @@ class MeccanumDrive {
   private boolean noTorque(double t) {
     return Math.abs(t) < TORQUE_MAG_ZERO;
   }
-  
-  
+
+
   // Points are close enough to be considered the same
   private boolean samePoint(double x1, double y1, double x2, double y2) {
     return (Math.abs(x1-x2) + Math.abs(y1-y2)) < DISTANCE_ZERO;
