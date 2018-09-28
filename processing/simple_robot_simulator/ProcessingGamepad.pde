@@ -38,6 +38,12 @@ public class ProcessingGamepad implements GamepadInterface {
 
 
   public void init() {
+    
+    if (configName == null) {
+      // No gamepad!
+      return; // *********** EARLY RETURN
+    }
+    
     // Initialise the ControlIO
     control = ControlIO.getInstance(g_pa);
 
@@ -63,7 +69,7 @@ public class ProcessingGamepad implements GamepadInterface {
   public void deinit() {
   }
 
-
+ 
   @Override
     public double left_stick_x() {
     return disabled ? 0: left_stick_x.getValue();

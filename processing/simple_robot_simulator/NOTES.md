@@ -2,6 +2,15 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## September 28, 2018-D JMJ Added a config.txt file, and ability to disable gamepad
+The file ./data/config.txt is read and used to set various global variables.
+The only one so far is g_noGamepad, which is false by default, but set to
+true if the config file contains the line `noGamepad`. The config file
+can contain  the # comment character.
+
+Even if the gamepad is enabled, if it can't load (typically because it can't find a compatible gamepad) the program can run but with the gamepad functionality
+not available.
+
 ## September 28, 2018-C JMJ Thoughts on collision with the field walls and other elements
 Track collision of the 4 corners of the robot. If they collide, assume frictionless contact - so the 
 impact force is acting on the corner, and perpendicular to the wall (or other object surface). The impact

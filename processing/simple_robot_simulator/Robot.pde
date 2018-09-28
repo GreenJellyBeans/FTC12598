@@ -5,20 +5,19 @@
 class Robot {
 
   final Field field; // Passed in during constructor - the field the robot operates within
-  final ProcessingGamepad gamepad;
+  final GamepadInterface gamepad;
   final MeccanumDrive drive;
   final DriveTask driveTask;
 
-  public Robot(Field f) {
+  public Robot(Field f, GamepadInterface gamepad) {
     field = f;
-    gamepad  = new ProcessingGamepad("Gamepad-F310");
+    this.gamepad  = gamepad;
     driveTask = new DriveTask(this);
     drive = new MeccanumDrive(field, field.WIDTH/2, field.WIDTH/2, 0);
   }
 
 
   public void init() {
-    gamepad.init();
     driveTask.init();
   }
 
@@ -56,6 +55,10 @@ class Robot {
 
   // Shows state of gamepad controls in the field's extended status area
   void displayGamepadStatus() {
+    if (g_noGamepad) {
+      field.addExtendedStatus("GAMEPAD OFF");
+      return; // ******* EARLY RETURN
+    }
     GamepadInterface gp = gamepad;
     field.addExtendedStatus(String.format("STICKS LSx: %5.2f  LSy: %5.2f  RSx: %5.2f  RSy: %5.2f", 
       gp.left_stick_x(), gp.left_stick_y(), gp.right_stick_x(), gp.right_stick_y()
