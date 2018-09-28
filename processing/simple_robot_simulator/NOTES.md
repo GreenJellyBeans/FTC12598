@@ -8,19 +8,19 @@ impact force is acting on the corner, and perpendicular to the wall (or other ob
 force is calculated to be high enough to bring the robot to a stop in (say) 1cm. This force is included
 in simulation calculations - both net force and net torque. This *should* result in the robot swinging
 so that another corner will also collide - at which point we have two forces that will cancel out torque,
-and the robot should come to a hard stop - unless aton or user backs away. Fairly straightforward in principle,
+and the robot should come to a hard stop - unless autonomous code or user backs away. Fairly straightforward in principle,
 but requires collision detection and vector calculations.
 
 ## September 28, 2018-B JMJ Thoughts on providing feedback to the robot on position, color, etc
 It would be nice to provide simulated sensor inputs to be able to more comprehensively test autonomous
 code. Absolute position and bearing can of course be reported with perfect accuracy, and in fact some errors
 will need to be added to simulate real-life issues. Color and IR, bump or range sensors are much trickier, and one
-needs to decide what is the right level of investement  - bang for the buck so to speak. One idea is to support
+needs to decide what is the right level of investment  - bang for the buck so to speak. One idea is to support
 querying the field color at a specific point relative to the robot. This can be done by interrogating the list of
 field elements and seeing if any of them intersect at that point. A graded value can be provided if they only
 partly overlap the query region. Similarly, one can ask if a specified point relative to the robot is inside or 
 outside the field, providing a kinda-sorta simulation of distance and bump sensors. Potentially one can also
-query distances to specific labeled anotation markers. In all cases, simulated errors should be added to emulate
+query distances to specific labeled annotation markers. In all cases, simulated errors should be added to emulate
 real-world situations under different lighting conditions.
 
 
@@ -35,7 +35,7 @@ It would be nice if this can be done using external data files, rather hardcodin
    `color-name r g b [alpha]`
    For example:
    `blue 50 100 255` #approximately the color of the FIRST blue gaffer tape
-- File shapes.txt gaves names to shapes. Each line has the form:
+- File shapes.txt gives names to shapes. Each line has the form:
    `shape-name color shape-type width`
    For example:
    `blue_tape blue tape 2` # 2"-wide tape of color 'blue'
@@ -63,7 +63,7 @@ more deeply and hopefully make changes themselves. I don't use any sophisticated
 any HS student with AP-CS type background and standard HS physics classes should be able to understand and modify
 the code.
 
-A secondary objective was to enable simple drive practice. This is contengent on the the simulation at least 
+A secondary objective was to enable simple drive practice. This is contingent on the simulation at least 
 vaguely approaching the experience of driving the real robot. This remains to be seen. There are many
 constants (such as friction forces, motor power and weight) that can be tweaked, so I am hopeful that it will
 serve as at least a starting point for driver practice.
@@ -80,15 +80,15 @@ acting diagonally on the 4 corners of the robot, like so:
 ```
 These 4 forces are coupled with friction forces to generate a net force and torque. The torque is assume to be acting
 about the center of the robot. The net force determines the linear acceleration of the center of the robot,
-and on top of that, the net torque is used to compute angular acceleration about the center. These accelearations
+and on top of that, the net torque is used to compute angular acceleration about the center. These accelerations
 are used in the simulation loop to update linear (x,y) and angular (bearing) positions on the field.
 
 Here are some of the biggest simplifications:
 1. Friction forces are not calculated and applied at each wheel. Rather an aggregate friction force is computed,
-using a combination of weight and number of stopped motors, and this force is applied in a directon opposite
+using a combination of weight and number of stopped motors, and this force is applied in a direction opposite
 to the direction of motion of the *center* of the robot.
 A resistive/dampening torque is similarly applied, that is proportional
-to this aggregate friction force. This is a vast simplication, because in reality, each wheel has it's unique
+to this aggregate friction force. This is a vast simplification, because in reality, each wheel has it's unique
 contribution to drag, taking into account it's direction (remember that these are meccanum wheels) and also
 the relative speed of the wheels and the ground - is there slipping? If not, is the speed matching what the
 motor would have it do? So this is a very ham-handed approximation.

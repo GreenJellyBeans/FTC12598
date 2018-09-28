@@ -7,7 +7,7 @@ project. The TIDO.md file contains a list of open issues.
 
 Processing is a wonderful interactive programming environment - see www.processing.org. This program uses
 the standard Processing environment - v3 or later, with the following standard libraries loaded:
- G4P and Game Conrtrol Plus - these are just for gamepad integration.
+ G4P and Game Control Plus - these are just for gamepad integration.
 Libraries are loaded from the Tools > Add Tool menu, and then selecting the Libraries tab.
 
 Currently the only Gamepad controller supported is the Logitec Gamepad F310 - though it seems easy to
