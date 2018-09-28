@@ -1,0 +1,98 @@
+# Design and Implementation Notes
+This document contains an informal log of design and implementation decisions for this project,
+the "Simple Robot Simulator."
+
+## September 28, 2018B JMJ Thoughts on providing feedback to the robot on position, color, etc
+It would be nice to provide simulated sensor inputs to be able to more comprehensively test autonomous
+code. Absolute position and bearing can of course be reported with perfect accuracy, and in fact some errors
+will need to be added to simulate real-life issues. Color and IR, bump or range sensors are much trickier, and one
+needs to decide what is the right level of investement  - bang for the buck so to speak. One idea is to support
+querying the field color at a specific point relative to the robot. This can be done by interrogating the list of
+field elements and seeing if any of them intersect at that point. A graded value can be provided if they only
+partly overlap the query region. Similarly, one can ask if a specified point relative to the robot is inside or 
+outside the field, providing a kinda-sorta simulation of distance and bump sensors. Potentially one can also
+query distances to specific labeled anotation markers. In all cases, simulated errors should be added to emulate
+real-world situations under different lighting conditions.
+
+
+More thought needs to be given to this subject, and probably any implementation should be driven by a very specific need.
+## September 28, 2018A JMJ Thoughts on adding tape and annotations to the field
+It would be nice to be able to apply field elements, especially the red and blue tape, but also to be able
+to load arbitrary annotations marking potential paths and destinations for different stages of autonomous
+driving, or to set up challenges for driver practice.
+
+It would be nice if this can be done using external data files, rather hardcoding in the code. Here's the proposal:
+- File colors.txt gives names to colors. Each line has the form:
+   `color-name r g b [alpha]`
+   For example:
+   `blue 50 100 255` #approximately the color of the FIRST blue gaffer tape
+- File shapes.txt gaves names to shapes. Each line has the form:
+   `shape-name color shape-type width`
+   For example:
+   `blue_tape blue tape 2` # 2"-wide tape of color 'blue'
+- For now, we will have the following shape types built into the code:
+  - tape - tape on the ground of any thickness and color
+  - mark - an annotated mark - this will not be a field element but rather an annotation
+- File field.txt contains specific shapes that make up the field. Each line has the form:
+   `shape-name x0 y0 followed by shape-specific information`
+   For example:
+   `blue_tape 12 12 > 0 1 > 1 0 > 0 0 # Start at (12, 12) and them relative to that point, go to subsequent points.`
+- File annotations.txt contain annotations that are not part of the field. This file has the same format.
+   For example:
+   `mark 10 6 P1` Defines a mark at (12, 12) with label "P1"
+  Annotations are like field elements, except they do not feature in sensor input, which is a topic of
+  a forthcoming note.
+
+## September 27, 2018 JMJ Looking back at original motivations and progress
+The original motivation was and remains to allow our FTC team, and potentially other FTC teams, to do
+early prototyping and testing of autonomous programs. Since our team is trying out a meccanum-wheel based
+holonomic drive this season (2018-2019), I decided to implement a very simple 2D physics-based model of a meccanum-
+drive based robot
+that is integrated into an FTC field animation. I wanted to write this from scratch rather than using an existing
+2D or 3D physics library because I hoped (and still hope) for the team members to understand its inner workings
+more deeply and hopefully make changes themselves. I don't use any sophisticated physics or Java constructs. In theory
+any HS student with AP-CS type background and standard HS physics classes should be able to understand and modify
+the code.
+
+A secondary objective was to enable simple drive practice. This is contengent on the the simulation at least 
+vaguely approaching the experience of driving the real robot. This remains to be seen. There are many
+constants (such as friction forces, motor power and weight) that can be tweaked, so I am hopeful that it will
+serve as at least a starting point for driver practice.
+
+### The Physics Model
+The heart of the meccanum drive simulation is in the class MeccanumDrive. It models the drive as 4 "motive" forces
+acting diagonally on the 4 corners of the robot, like so:
+
+```
+/-----\
+|     |
+|     |
+\-----/
+```
+These 4 forces are coupled with friction forces to generate a net force and torque. The torque is assume to be acting
+about the center of the robot. The net force determines the linear acceleration of the center of the robot,
+and on top of that, the net torque is used to compute angular acceleration about the center. These accelearations
+are used in the simulation loop to update linear (x,y) and angular (bearing) positions on the field.
+
+Here are some of the biggest simplifications:
+1. Friction forces are not calculated and applied at each wheel. Rather an aggregate friction force is computed,
+using a combination of weight and number of stopped motors, and this force is applied in a directon opposite
+to the direction of motion of the *center* of the robot.
+A resistive/dampening torque is similarly applied, that is proportional
+to this aggregate friction force. This is a vast simplication, because in reality, each wheel has it's unique
+contribution to drag, taking into account it's direction (remember that these are meccanum wheels) and also
+the relative speed of the wheels and the ground - is there slipping? If not, is the speed matching what the
+motor would have it do? So this is a very ham-handed approximation.
+2. The wheels are assumed to be perfectly located and oriented at the corners of a square.
+However deviations from the perfect can be approximated by adjusting a constant factor applied to each
+motor to attenuate that motor's power - these are the following constants:
+
+```
+  final double powerAdjustFL = 1.0;
+  final double powerAdjustFR = 1.0;
+  final double powerAdjustBL = 1.0;
+  final double powerAdjustBR = 1.0;
+```
+
+Setting the first constant to 0, for example, effectively disables sending power to the front-left motor.
+
