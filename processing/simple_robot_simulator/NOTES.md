@@ -2,6 +2,47 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## September 29, 2018-C JMJ Thoughts on colliding with walls
+After much thought, here's the plan. This strategy is shown here for a single case - a robot corner's x-coordinate (in field coordinates) gets close to zero or goes negative, meaning that it is
+just breaching the left wall (which is the x-axis). In this case, different physics equations
+take over, with the robot pivoting about this corner. Calculate the torque and angular momentum
+about this point of contact and rotate the robot appropriately about this point.
+
+The strategy can be easily applied to the 3
+other walls, and potentially to other solidly anchored surfaces. 
+
+However, It will be complex to calculate the net torque, so in the interim, looking for a simpler
+solution that doesn't try to be based on physics - basically, fudge it....
+
+Another strategy: if a corner's x coordinate is < 0, add an Fx force acting at that point,
+and that goes into the existing equations. The Fx force grows exponentially as x gets
+more negative. This is calculated for all four corners, though typically only 1 will hit
+first. This can be generalized to other rigidly anchored surfaces - need to apply the force 
+normal to that surface.
+
+## September 29, 2018-B JMJ Thoughts on supporting multiple robots
+Keep an array list of robots. Each robot has a unique number and color. The number is
+rendered on the robot. Each robot is initialized with two gamepads (see below) representing
+gamepad1 and gamepad2, though they may or may not be mapped to actual gamepads.
+
+Each robot displays its internal extended status, starting with it's number - these occupy the space
+to the right of the field - there should be enough space to display the internal state of 4 robots.
+
+## September 29, 2018-A JMJ Thoughts on Multiple Gamepad mapping to multiple robots
+Each gamepad self-selects which robot it goes to - robots are numbered from 1 to 4. 
+By pressing start+dpad(N) the gamepad selects the robot. dpad(N) is 1 for North, 2 for East,
+3 for South and 4 for West. The last gamepad to select a particular robot wins. Pressing start+A or start+B selects the particular gamepad (gamepad1 or gamepad2 in FTC terms) for that robot. 
+
+I don't know how to query and load all compatible gamepads without bring up any UX. That's to be figured out. 
+
+From the robot's perspective, it's given 2 gamepads, these are (implementation wise) special
+re-mapping gamepad implementations that dynamically route the control query requests
+to the currently mapped real gamepad for that role on that robot. I suspect that there may
+be some nuances with collisions and default assignments but I don't they will be blocking.
+
+Also, it should be possible to control multiple robots with a single joystick that timeslices across the robots - painful but possible.
+
+
 ## September 28, 2018-E JMJ Added ability to read and display field elements
 See September 28, 2018-A note below. What I've implemented are a few hardcoded shapes:
 redTape, blueTape, path and marker. The code reads a single file, called "field.txt" that 
@@ -14,7 +55,7 @@ path 8 8 > 1 0 > 1 1 > 0 1 > 0 0
 mark.p1 9 9
 mark.p2 2 2
 ```
-The first pair of numbers is an absolute positon. Remaining numbers are relative to that
+The first pair of numbers is an absolute position. Remaining numbers are relative to that
 first point. Units are in feet. They are converted appropriately.
 The text after the "." in "park.p1" is considered a label of that mark. Other objects
 can also have labels, but currently we only display labels on marks.
