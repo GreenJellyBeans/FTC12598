@@ -3,6 +3,7 @@
  */
 package gjb.utils;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -119,6 +120,11 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         @Override
         public int getVuforiaCameraId(String id) {
             return getIdentifierFromPackage("cameraMonitorViewId", "id");
+        }
+
+        @Override
+        public BNO055IMU getIMU(String id) {
+            return om.hardwareMap.get(BNO055IMU.class, id);
         }
     }
 
