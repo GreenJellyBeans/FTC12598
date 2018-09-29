@@ -10,6 +10,12 @@ class Field {
   final double PIX_PER_M = FIELD_WIDTH_PIXELS / WIDTH; // pixels per meter
   String status = "NOTHING"; // Single line of status printed below the field.
   String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
+  final FieldElements elements = new FieldElements(this);
+
+  void init() {
+    elements.load();
+  }
+
 
   public void draw() {
     // Boundary
@@ -27,10 +33,13 @@ class Field {
       drawLine(0, offset, WIDTH, offset);
     }
 
+    // draw field elements
+    elements.draw();
+
     // Status
     fill(0);
-    text(status, screenX(0), screenY(0) + 20);
-    text(extendedStatus, screenX(WIDTH) + 20, screenY(WIDTH));
+    drawText(status, 0, 0, 0, 20);
+    drawText(extendedStatus, WIDTH, WIDTH, 20, 0);
     extendedStatus = "";
   }
 
@@ -62,17 +71,30 @@ class Field {
     rect(screenX(x), screenY(y), pixLen(w), pixLen(h));
   }
 
+  void drawCircle(double x, double y, double r) {
+    float sr = pixLen(r);
+    ellipse(screenX(x), screenY(y), sr, sr);
+  }
+
+
 
   void drawLine(double x1, double y1, double x2, double y2) {
     line(screenX(x1), screenY(y1), screenX(x2), screenY(y2));
+  }
+  
+  // ({xPix}, {yPix}) in pixels is added before rendering text
+  void drawText(String txt, double x1, double y1, int xPix, int yPix) {
+    text(txt, screenX(x1)+xPix, screenY(y1)+yPix);
   }
 
 
   void updateStatus(String s) {
     status = s;
   }
-  
+
   void addExtendedStatus(String s) {
     extendedStatus += s + "\n";
   }
+
+
 }
