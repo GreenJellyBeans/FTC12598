@@ -4,6 +4,7 @@
 package gjb.utils;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.*;
@@ -99,6 +100,16 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         public ColorSensor getColorSensor(String name) {
 
             return om.hardwareMap.get(ColorSensor.class, name);
+        }
+
+        @Override
+        public DistanceSensor getDistanceSensor(String name) {
+            return om.hardwareMap.get(DistanceSensor.class, name);
+        }
+
+        @Override
+        public RevBlinkinLedDriver getBlinkinDriver(String name) {
+            return om.hardwareMap.get(RevBlinkinLedDriver.class, name);
         }
 
         @Override
