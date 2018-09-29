@@ -2,6 +2,28 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## September 28, 2018-E JMJ Added ability to read and display field elements
+See September 28, 2018-A note below. What I've implemented are a few hardcoded shapes:
+redTape, blueTape, path and marker. The code reads a single file, called "field.txt" that 
+contains the layout. For example...
+
+```
+blueTape 6 6 > 1 0 > 1 1 > 0 1 > 0 0
+redTape 7 7 > 1 0 > 1 1 > 0 1 > 0 0
+path 8 8 > 1 0 > 1 1 > 0 1 > 0 0 
+mark.p1 9 9
+mark.p2 2 2
+```
+The first pair of numbers is an absolute positon. Remaining numbers are relative to that
+first point. Units are in feet. They are converted appropriately.
+The text after the "." in "park.p1" is considered a label of that mark. Other objects
+can also have labels, but currently we only display labels on marks.
+Most of the functionality is implemented in class FieldElements and its contained classes.
+
+There is limited error checking, so a badly formatted field.txt file will probably throw
+an exception.
+
+
 ## September 28, 2018-D JMJ Added a config.txt file, and ability to disable gamepad
 The file ./data/config.txt is read and used to set various global variables.
 The only one so far is g_noGamepad, which is false by default, but set to
