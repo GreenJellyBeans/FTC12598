@@ -2,6 +2,8 @@
  * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 9/26/2017.
  */
 package gjb.interfaces;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogInputController;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -42,8 +45,11 @@ public interface HardwareLookupInterface {
     AnalogOutput getAnalogOutput(String name);
     AnalogOutputController getAnalogOutputController(String name);
     ColorSensor getColorSensor(String name);
+    DistanceSensor getDistanceSensor(String name);
+    RevBlinkinLedDriver getBlinkinDriver(String name);
     DcMotor getDcMotor(String name);
     DigitalChannel getDigitalChannel(String name);
     Servo getServo(String name);
     int getVuforiaCameraId(String id);
+    BNO055IMU getIMU(String id);
 }
