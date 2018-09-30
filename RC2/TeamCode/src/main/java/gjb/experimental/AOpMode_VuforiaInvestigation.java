@@ -116,7 +116,7 @@ public class AOpMode_VuforiaInvestigation extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code on the next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+        parameters.vuforiaLicenseKey = "AfKUJbb/////AAAAGctPfIQOyUOTpOViHe+MNKVmmSjCa2+xkiGz+OCiRCBg/W6+sagONZgiClhl9XDEoK8StYYY43E9i7SZ23fhXaUQ97M4tnryQi8a9be7vAH0V7fKUNAzkIlr9I+5j4JwydZmgtMBm7Piqhw1znMsx61vQ0WmZYBYP1veoEIg3wBHEkQV9kdFNb/0ClgWlX4VY5jdlmrhP6atmmZm7bCEi0xsvV4B403VJ2hrH35qfjIoEwBoM2Jend5kRgwt3ATTvBzMTOJLPT3oczsq+OUfXedofqJ0ScyKtnlEGlj/zHGxjmkps7waFiJmOlGK8jPxdYyfo3eAIOhnFqiLnENk2aEObNvjAwG8H9KuDIraakyh";
 
 
         /**
