@@ -96,5 +96,11 @@ class Field {
     extendedStatus += s + "\n";
   }
 
+  // Sense the flor color looking downards with a sensor of radius {sensorRadius}
+  // at field location ({x}, {y}). All units in meters. Returns a composite color value 
+  color senseFloorColor(double x, double y, double sensorRadius) {
+    return color(0, 0, 255);
+  }
+  
 
 }

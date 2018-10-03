@@ -15,14 +15,6 @@ enum ElementType {
 class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
-  class Point {
-    final double x;
-    final double y;
-    Point(double x, double y) {
-      this.x = x;
-      this.y = y;
-    }
-  }
 
 
   class Element {
@@ -162,7 +154,7 @@ class FieldElements {
     double yFirst = 0;
     double xPrev = 0;
     double yPrev = 0;
-    for (FieldElements.Point p : e.path) {
+    for (Point p : e.path) {
       // The first point is absolute; rest are relative
       if (first) {
         xFirst = xPrev = p.x;
@@ -181,7 +173,7 @@ class FieldElements {
 
   void renderMarkElement(FieldElements.Element e) {
     // Draw a circle with a cross, and add label.
-    FieldElements.Point p = e.path.get(0);
+    Point p = e.path.get(0);
     fill(e.c);
     stroke(0);
     strokeWeight(2);

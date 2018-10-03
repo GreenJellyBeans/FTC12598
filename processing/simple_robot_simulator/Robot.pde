@@ -72,4 +72,6 @@ class Robot {
     String buttonStatus = (buttons.length() == 0) ? "BUTTONS: none" : "BUTTONS: " + buttons;
     field.addExtendedStatus(buttonStatus);
   }
+  
+  
 };

@@ -2,6 +2,20 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 1, 2018-A JMJ  More details on simulating downward-pointing color sensors
+Building on "September 28, 2018-B" note. Plan is for class Field to implement method `color senseFloorColor(double x, double y, double sensorRadius)` - this returns a color (composite
+(r, g, b)) value of a simulated sensor looking downwards over a uniform region of radius r. All units in meters. A robot method can take local robot coordinates and translate it to
+field coordinates and call the `senseFloorColor` method. The `senseFloorColor` method has to add all the colors of elements (including floor) that fall within the specified sensor radius. Thus
+as a sensor moves over a piece of tape, the reported will gradually transition.
+
+Implementation: simplest implementation is for `Field` to keep a single array of field elements. Each of these elements is composed of one or more segments or other primitives. It has to
+intersect the sensor disk with each of these segments and compute the areas of overlap. Then factor in that element's color. A more sophisticated implementation keeps a 2D array of cells,
+and each cell keeps segments that overlap with that cell. The query checks which cells overlap with the sensor disk and only checks the segments in the overlapping cells.
+
+The first implementation will be the simpler one - that is probably all that is needed as there are not many field elements or complex elements with many segments.
+
+Class `RawSensorModule` will collect all the sensor data made available to the robot, and will also be where simulated sensor errors are added. 
+
 ## September 29, 2018-C JMJ Thoughts on colliding with walls
 After much thought, here's the plan. This strategy is shown here for a single case - a robot corner's x-coordinate (in field coordinates) gets close to zero or goes negative, meaning that it is
 just breaching the left wall (which is the x-axis). In this case, different physics equations
