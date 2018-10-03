@@ -50,7 +50,11 @@ class RawSensorModule {
 
     // Update color values
     for (int i = 0; i < currentColors.length; i++) {
-      currentColors[i] = color(redNoise(), greenNoise(), blueNoise());
+      Point p = colorSensorLocations[i];
+      double fx = r.drive.fieldX(p.x, p.y);
+      double fy = r.drive.fieldY(p.x, p.y);
+      color c = f.senseFloorColor(fx, fy, colorSensorDiameter);
+      currentColors[i] = c; //color(redNoise(), greenNoise(), blueNoise());
       f.addExtendedStatus(String.format("Color[%d].red(): %f", i, redNoise()));
     }
   }

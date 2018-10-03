@@ -184,6 +184,16 @@ class MeccanumDrive {
     va = vaNew;
   }
 
+    // Convert robot coordinate to field coordinate - x component
+    double fieldX(double rx, double ry) {
+      return x + rx*Math.cos(a) - ry*Math.sin(a);
+    }
+    
+    // Convert robot coordinate to field coordinate - x component
+    double fieldY(double rx, double ry) {
+      return y + rx*Math.sin(a) + ry*Math.cos(a);
+    }
+
 
   // Mark the current spot - shows up in future renderings.
   void markSpot() {
