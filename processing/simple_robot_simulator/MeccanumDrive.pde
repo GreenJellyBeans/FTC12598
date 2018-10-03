@@ -107,7 +107,7 @@ class MeccanumDrive {
 
 
   // Updates the simulation,
-  // assumed to be {dT} seconds have elapsed
+  // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed
   // since previous call
   void simloop(double t, double dT) {
 

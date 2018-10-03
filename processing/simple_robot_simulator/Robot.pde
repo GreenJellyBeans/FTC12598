@@ -8,12 +8,14 @@ class Robot {
   final GamepadInterface gamepad;
   final MeccanumDrive drive;
   final DriveTask driveTask;
+  final RawSensorModule sensors;
 
   public Robot(Field f, GamepadInterface gamepad) {
     field = f;
     this.gamepad  = gamepad;
     driveTask = new DriveTask(this);
     drive = new MeccanumDrive(field, field.WIDTH/2, field.WIDTH/2, 0);
+    sensors = new RawSensorModule(f, this);
   }
 
 
@@ -41,9 +43,12 @@ class Robot {
     driveTask.loop();
   }
 
-
+  // Updates the simulation,
+  // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed
+  // since previous call
   public void simloop(double t, double dT) {
     drive.simloop(t, dT);
+    sensors.simloop(t, dT);
     field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, drive.a));
   }
 
@@ -51,6 +56,7 @@ class Robot {
   public void draw() {
     displayGamepadStatus();
     drive.draw();
+    visualizeSensorData();
   }
 
   // Shows state of gamepad controls in the field's extended status area
@@ -72,6 +78,12 @@ class Robot {
     String buttonStatus = (buttons.length() == 0) ? "BUTTONS: none" : "BUTTONS: " + buttons;
     field.addExtendedStatus(buttonStatus);
   }
-  
-  
+
+  // Display/print the raw state of the sensors
+  void visualizeSensorData() {
+    if (sensors.numColorSensors()>0) {
+      fill(sensors.red(0), sensors.green(0), sensors.blue(0));
+      rect(width-50, height-50, 50, 50);
+    }
+  }
 };

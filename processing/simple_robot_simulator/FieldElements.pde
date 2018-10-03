@@ -146,7 +146,6 @@ class FieldElements {
   // These consist of multiple line-segments
   void renderLinearElement(FieldElements.Element e) {
     float weight = Math.max(field.pixLen(e.size), 1);
-    println(weight);
     stroke(e.c);
     strokeWeight(weight);
     boolean first = true;
