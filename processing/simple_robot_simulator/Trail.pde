@@ -14,7 +14,7 @@ class Trail {
   }
   color c;
   Field f;
-  ArrayList<Point> pointList = new ArrayList<Point>();
+  List<Point> pointList = new ArrayList<Point>();
 
 
   public Trail(Field f, color c) {

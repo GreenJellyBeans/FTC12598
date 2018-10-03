@@ -100,7 +100,9 @@ class Field {
   // of diameter {sensorDiameter}
   // at field location ({x}, {y}). All units in meters. Returns a composite color value 
   color senseFloorColor(double x, double y, double sensorDiameter) {
-    return color(0, 0, 255);
+    float r = (float) (255*x/WIDTH);
+    float g = (float) (255*y/WIDTH);
+    return color(r, g, 0);
   }
   
 

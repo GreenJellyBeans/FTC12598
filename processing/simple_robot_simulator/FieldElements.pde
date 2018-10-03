@@ -2,14 +2,15 @@
 // Class FieldElements loads and applies additional user-proved elements to the field.
 //
 import java.util.Scanner;
+import java.util.List;
 
 enum ElementType {
   // Elements visible to sensors on robot
   TAPE, 
-  
-  // Virtual elements, invisible to robot
-  MARK, // Marks a position
-  PATH  // Marks a path
+
+    // Virtual elements, invisible to robot
+    MARK, // Marks a position
+    PATH  // Marks a path
 };
 
 class FieldElements {
@@ -23,7 +24,7 @@ class FieldElements {
     String label;
     color c;
     double size;
-    ArrayList<Point> path;
+    Point[] path;
 
 
     Element(ElementType type, boolean virtual, String label, color c, double size) {
@@ -32,20 +33,20 @@ class FieldElements {
       this.label = label;
       this.c = c;
       this.size = size;
-      path = new ArrayList<Point>();
+      path = null;
     }
   }
 
 
   Field field;
-  ArrayList<Element> fieldElements = new ArrayList<Element>();
+  Element[] fieldElements = new Element[0];
 
 
   FieldElements(Field f) {
     field = f;
   }
 
-  
+
   // Loads all field elements
   void load() {
     // Input are in feet and inches
@@ -56,6 +57,7 @@ class FieldElements {
     final double MARK_SIZE = 4*INCHES_TO_METERS;
 
     String[] fieldObjects = g_pa.loadStrings(FILE_NAME);
+    List<Element> elementList = new ArrayList<Element>();
 
     // Process elements
     for (String s : fieldObjects) {
@@ -94,9 +96,11 @@ class FieldElements {
         e = new Element(ElementType.MARK, true, label, color(255, 255, 50), MARK_SIZE);
       }
       if (e != null && loadElementDetails(e, s)) {
-        fieldElements.add(e);
+        elementList.add(e);
       }
-    }
+    }  
+    
+    fieldElements = elementList.toArray(new Element[elementList.size()]);
   }
 
 
@@ -105,11 +109,12 @@ class FieldElements {
     // 1 2 > 3 4 > 5 6
     Scanner s = new Scanner(in);
     int i = 0;
+    List<Point> path = new ArrayList<Point>();
     while (s.hasNext()) {
       double x = s.nextDouble(); 
       double y = s.nextDouble();
       //println ("(x,y) = " + x + " " + y);
-      e.path.add(new Point(x*0.3048, y*0.3048));
+      path.add(new Point(x*0.3048, y*0.3048));
       if (s.hasNext()) {
         String t = s.next();
         if (!t.equals(">")) {
@@ -121,17 +126,19 @@ class FieldElements {
     }
 
     // We expect at least one point.
-    if (e.path.size()<1) {
+    if (path.size()<1) {
       println("shape " + e.type + " has no points");
       return false;
     }
+
+    e.path = path.toArray(new Point[path.size()]);
     return true;
   }
 
 
   // Render all field elements
   void draw() {
-    for (FieldElements.Element e : fieldElements) {
+    for (Element e : fieldElements) {
       if (e.type == ElementType.TAPE) {
         renderLinearElement(e);
       } else if (e.type == ElementType.MARK) {
@@ -143,8 +150,24 @@ class FieldElements {
   }
 
 
+  // Calculate and return the area of overlap between Element {e} and a disk
+  // of diameter {dia} centered at ({x}, {y})
+  double getOverlapArea(Element e, double x, double y, double dia) {
+
+    // Virtual elements like paths do not overlap with anything
+    if (e.virtual) {
+      return 0; // ******* EARLY RETURN *********
+    }
+
+    // For now, we handle only tape.
+    assert(e.type == ElementType.TAPE);
+
+
+    return 0;
+  }
+
   // These consist of multiple line-segments
-  void renderLinearElement(FieldElements.Element e) {
+  void renderLinearElement(Element e) {
     float weight = Math.max(field.pixLen(e.size), 1);
     stroke(e.c);
     strokeWeight(weight);
@@ -170,9 +193,9 @@ class FieldElements {
   }
 
 
-  void renderMarkElement(FieldElements.Element e) {
+  void renderMarkElement(Element e) {
     // Draw a circle with a cross, and add label.
-    Point p = e.path.get(0);
+    Point p = e.path[0];
     fill(e.c);
     stroke(0);
     strokeWeight(2);

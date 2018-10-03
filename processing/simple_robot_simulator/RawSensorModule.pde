@@ -55,7 +55,7 @@ class RawSensorModule {
       double fy = r.drive.fieldY(p.x, p.y);
       color c = f.senseFloorColor(fx, fy, colorSensorDiameter);
       currentColors[i] = c; //color(redNoise(), greenNoise(), blueNoise());
-      f.addExtendedStatus(String.format("Color[%d].red(): %f", i, redNoise()));
+      f.addExtendedStatus(String.format("Color[%d].red(): %d", i, red(c)));
     }
   }
 
