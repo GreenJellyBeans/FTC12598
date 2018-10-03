@@ -13,6 +13,12 @@ enum ElementType {
     PATH  // Marks a path
 };
 
+// Passed in as a parameter to method processLinearSegment
+interface SegmentProcessor {
+  void process(double xPrev, double yPrev, double x, double y);
+};
+
+
 class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
@@ -41,9 +47,22 @@ class FieldElements {
   Field field;
   Element[] fieldElements = new Element[0];
 
+  //
+  // Visible floor elements are also rendered to a FLOOR_PIXEL_SIZE * FLOOR_PIXEL_SIZE
+  // array of pixels that is accessable to the robot's simulated sensors.
+  // The resolution of this pixel array is different from the screen, so we
+  // need separate scaling and drawing functions, typically beginning with "floor".
+  //
+  final int FLOOR_PIXEL_SIZE  = 1000; // This is the size of the PGraphics buffer into which the floor and field elements
+  // are rendered
+  final double FLOORPIX_PER_M; // Floor pixels per meter
+  PixelHelper floorPixels = null; // initialized in load()
+
+
 
   FieldElements(Field f) {
     field = f;
+    FLOORPIX_PER_M = FLOOR_PIXEL_SIZE / f.WIDTH; // floor pixels per meter
   }
 
 
@@ -99,12 +118,28 @@ class FieldElements {
         elementList.add(e);
       }
     }  
-    
+
     fieldElements = elementList.toArray(new Element[elementList.size()]);
+    floorPixels = renderFloorPixels();
   }
 
 
-  boolean loadElementDetails(Element e, String in) {
+  // Render all field elements
+  void draw() {
+
+    for (Element e : fieldElements) {
+      if (e.type == ElementType.TAPE) {
+        renderLinearElement(e);
+      } else if (e.type == ElementType.MARK) {
+        renderMarkElement(e);
+      } else if (e.type == ElementType.PATH) {
+        renderLinearElement(e);
+      }
+    }
+  }
+
+
+  private boolean loadElementDetails(Element e, String in) {
     // We expect somehing like this:
     // 1 2 > 3 4 > 5 6
     Scanner s = new Scanner(in);
@@ -124,6 +159,7 @@ class FieldElements {
       }
       i++;
     }
+    s.close();
 
     // We expect at least one point.
     if (path.size()<1) {
@@ -135,42 +171,66 @@ class FieldElements {
     return true;
   }
 
+  // Render the mat background and just the floor elements.
+  // this is for input to any color sensor simulation
+  private PixelHelper renderFloorPixels() {
+    PGraphics floorPG = createGraphics(FLOOR_PIXEL_SIZE, FLOOR_PIXEL_SIZE);
+    floorPG.beginDraw();
+    floorPG.background(field.MAT_COLOR);
+    renderVisibleFloorElements(floorPG);
+    floorPG.endDraw();
+    floorPG.loadPixels();
+    return  new PixelHelper(floorPG.pixels, FLOOR_PIXEL_SIZE, FLOOR_PIXEL_SIZE);
+  }
 
-  // Render all field elements
-  void draw() {
+  // Render just the elements that are visible to
+  // floor-looking sensors
+  private void renderVisibleFloorElements(PGraphics pg) {
+    // For now we just render TAPE, which we assert is not virtual, i.e., is visible
     for (Element e : fieldElements) {
       if (e.type == ElementType.TAPE) {
-        renderLinearElement(e);
-      } else if (e.type == ElementType.MARK) {
-        renderMarkElement(e);
-      } else if (e.type == ElementType.PATH) {
-        renderLinearElement(e);
+        assert(!e.virtual);
+        renderFloorLinearElement(pg, e);
       }
     }
   }
 
 
-  // Calculate and return the area of overlap between Element {e} and a disk
-  // of diameter {dia} centered at ({x}, {y})
-  double getOverlapArea(Element e, double x, double y, double dia) {
-
-    // Virtual elements like paths do not overlap with anything
-    if (e.virtual) {
-      return 0; // ******* EARLY RETURN *********
-    }
-
-    // For now, we handle only tape.
-    assert(e.type == ElementType.TAPE);
-
-
-    return 0;
-  }
-
   // These consist of multiple line-segments
-  void renderLinearElement(Element e) {
+  private void renderLinearElement(Element e) {
     float weight = Math.max(field.pixLen(e.size), 1);
     stroke(e.c);
     strokeWeight(weight);
+    // Note: Processing does not support Lambda expressions.
+    // See https://github.com/processing/processing/wiki/Supported-Platforms#java-versions
+    processLinearSegment(e, 
+      new SegmentProcessor() {
+      public void process(double xPrev, double yPrev, double x, double y) {
+        field.drawLine(xPrev, yPrev, x, y);
+      }
+    }
+    );
+  }
+
+
+  private void renderMarkElement(Element e) {
+    // Draw a circle with a cross, and add label.
+    Point p = e.path[0];
+    fill(e.c);
+    stroke(0);
+    strokeWeight(2);
+    field.drawCircle(p.x, p.y, e.size/2);
+    stroke(2);
+    field.drawPoint(p.x, p.y);
+    fill(0);
+    if (e.label.length()>0) {
+      field.drawText(e.label, p.x, p.y, 10, 0);
+    }
+  }
+
+
+  // Apply the {sp.process} method to each segment of Element {e}.
+  private void processLinearSegment(Element e, SegmentProcessor sp) {
     boolean first = true;
     double xFirst = 0;
     double yFirst = 0;
@@ -185,7 +245,7 @@ class FieldElements {
       } else {
         double x  = xFirst + p.x;
         double y  = yFirst + p.y;
-        field.drawLine(xPrev, yPrev, x, y);
+        sp.process(xPrev, yPrev, x, y);
         xPrev = x;
         yPrev = y;
       }
@@ -193,18 +253,44 @@ class FieldElements {
   }
 
 
-  void renderMarkElement(Element e) {
-    // Draw a circle with a cross, and add label.
-    Point p = e.path[0];
-    fill(e.c);
-    stroke(0);
-    strokeWeight(2);
-    field.drawCircle(p.x, p.y, e.size/2);
-    stroke(2);
-    field.drawPoint(p.x, p.y);
-    fill(0);
-    if (e.label.length()>0) {
-      field.drawText(e.label, p.x, p.y, 10, 0);
+  // Version of renderFloorLinearElement that renders to the floor
+  // PGraphics, which has different units than the scren, so we use
+  // the floorXX methods.
+  private void renderFloorLinearElement(final PGraphics pg, Element e) {
+    float weight = Math.max(floorPixLen(e.size), 1);
+    pg.stroke(e.c);
+    pg.strokeWeight(weight);
+    // Note: Processing does not support Lambda expressions.
+    // See https://github.com/processing/processing/wiki/Supported-Platforms#java-versions
+    processLinearSegment(e, 
+      new SegmentProcessor() {
+      public void process(double xPrev, double yPrev, double x, double y) {
+        floorDrawLine(pg, xPrev, yPrev, x, y);
+      }
     }
+    );
+  }
+
+  // Converts the length in field units (meters) to floor pixels (not screen pixels)
+  private float floorPixLen(double len) {
+    return (float) (len * FLOORPIX_PER_M);
+  }
+
+  // Draws a line onto the floor PGraphics.
+  // These are in field coordinate, so units are in meters.
+  private void floorDrawLine(PGraphics pg, double x1, double y1, double x2, double y2) {
+    pg.line(floorX(x1), floorY(y1), floorX(x2), floorY(y2));
+  }
+
+
+  // Floor coordinates (in pixels) of field cordinate {x} (in meters)
+  private float floorX(double x) {
+    return (float) (x * FLOORPIX_PER_M);
+  }
+
+
+  // Floor coordinates (in pixels) of field cordinate {y} (in meters)
+  private float floorY(double y) {
+    return (float) (FLOOR_PIXEL_SIZE - y * FLOORPIX_PER_M); // y grows upwards, py grows downwards
   }
 }

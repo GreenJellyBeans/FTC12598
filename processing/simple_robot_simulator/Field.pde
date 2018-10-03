@@ -4,7 +4,7 @@
 class Field {
 
   public final double WIDTH = 12*12*0.0254; // field width in meters (12 ft).; // in meters
-
+  public final color MAT_COLOR = 128; // Color of the mat.
   final int FIELD_OFFSET_PIXELS = 50; // Offset from origin (top-left)
   final int FIELD_WIDTH_PIXELS = height - 2 * FIELD_OFFSET_PIXELS;
   final double PIX_PER_M = FIELD_WIDTH_PIXELS / WIDTH; // pixels per meter
@@ -18,8 +18,9 @@ class Field {
 
 
   public void draw() {
-    // Boundary
-    fill(128);
+    
+    // Boundary and mat
+    fill(MAT_COLOR);
     stroke(0);
     strokeWeight(4);
     drawRect(WIDTH/2, WIDTH/2, WIDTH, WIDTH);
@@ -70,6 +71,7 @@ class Field {
   void drawRect(double x, double y, double w, double h) {
     rect(screenX(x), screenY(y), pixLen(w), pixLen(h));
   }
+  
 
   void drawCircle(double x, double y, double r) {
     float sr = pixLen(r);
@@ -81,7 +83,8 @@ class Field {
   void drawLine(double x1, double y1, double x2, double y2) {
     line(screenX(x1), screenY(y1), screenX(x2), screenY(y2));
   }
-  
+
+
   // ({xPix}, {yPix}) in pixels is added before rendering text
   void drawText(String txt, double x1, double y1, int xPix, int yPix) {
     text(txt, screenX(x1)+xPix, screenY(y1)+yPix);
@@ -92,18 +95,9 @@ class Field {
     status = s;
   }
 
+
   void addExtendedStatus(String s) {
     extendedStatus += s + "\n";
   }
-
-  // Sense the flor color looking downards with a sensor that scans a region
-  // of diameter {sensorDiameter}
-  // at field location ({x}, {y}). All units in meters. Returns a composite color value 
-  color senseFloorColor(double x, double y, double sensorDiameter) {
-    float r = (float) (255*x/WIDTH);
-    float g = (float) (255*y/WIDTH);
-    return color(r, g, 0);
-  }
-  
 
 }

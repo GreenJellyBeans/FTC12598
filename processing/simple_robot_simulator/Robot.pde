@@ -20,6 +20,7 @@ class Robot {
 
 
   public void init() {
+    sensors.init();
     driveTask.init();
   }
 
@@ -82,7 +83,7 @@ class Robot {
   // Display/print the raw state of the sensors
   void visualizeSensorData() {
     if (sensors.numColorSensors()>0) {
-      fill(sensors.red(0), sensors.green(0), sensors.blue(0));
+      fill(sensors.sred(0), sensors.sgreen(0), sensors.sblue(0));
       rect(width-50, height-50, 50, 50);
     }
   }

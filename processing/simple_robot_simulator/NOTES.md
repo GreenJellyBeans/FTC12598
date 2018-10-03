@@ -2,6 +2,15 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 3, 2018-A JMJ  Finished first cut of implementation of simulated color sensors!
+`PixelHelper`: new class to manage a pixel array represented in row-major form - same as Processing's `PGraphics.pixels` field, and also to created a blurred version.
+`FieldElements`: added `PixelHelper floorPixels` field that contains pre-rendered pixels (packed in row-major order) of visible floor field elements.
+   This is computed on a separate buffer of size FLOOR_PIXEL_SIZE x FLOOR_PIXEL_SIZE, to which only the visible floor elements (currently only TAPE) are rendered.
+`RawSensorModule`: Added init-only code that retrieves the floor pixels and creates a smoothed version of the same. This is looked up when determining color sensor values. 
+
+Currently the process of creating the blurred version takes many seconds - so this needs to be addressed by saving a cashed version as a file, as the field elements
+don't typically change.
+
 ## October 1, 2018-A JMJ  More details on simulating downward-pointing color sensors
 Building on "September 28, 2018-B" note. Plan is for class Field to implement method `color senseFloorColor(double x, double y, double sensorRadius)` - this returns a color (composite
 (r, g, b)) value of a simulated sensor looking downwards over a uniform region of radius r. All units in meters. A robot method can take local robot coordinates and translate it to
@@ -12,7 +21,11 @@ Implementation: simplest implementation is for `Field` to keep a single array of
 intersect the sensor disk with each of these segments and compute the areas of overlap. Then factor in that element's color. A more sophisticated implementation keeps a 2D array of cells,
 and each cell keeps segments that overlap with that cell. The query checks which cells overlap with the sensor disk and only checks the segments in the overlapping cells.
 
-The first implementation will be the simpler one - that is probably all that is needed as there are not many field elements or complex elements with many segments.
+ALTERNATE implementation: Keep an off-screen buffer that consists of the rendered NON-virtual field elements (which never change once loaded) with a smoothing filter applied
+to simulate the sensor field of view - this assumes a single sensor field of view diameter, which is fine. This buffer is computed on load. During the simulation, all that one needs
+to lookup at each location is the pixel value! We can render however many of however complex shapes  needed, using Processing's built-in rendering functions. 
+The downside is loss of resolution - limited to the resolution of the buffer. If we keep a 1000x1000 buffer, the spatial resolution is 144/1000, or 0.144 inch for a 12" field.
+That's plenty for now, especially given that the sensor senses over an area that is probably an inch or so wide. If necessary, we can keep a higher resolution buffer.
 
 Class `RawSensorModule` will collect all the sensor data made available to the robot, and will also be where simulated sensor errors are added. 
 
