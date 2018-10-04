@@ -22,7 +22,7 @@ interface SegmentProcessor {
 class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
-
+  final String VERSION = "1.0"; // Increment to invalidate cache
 
   class Element {
     ElementType type;
@@ -41,6 +41,29 @@ class FieldElements {
       this.size = size;
       path = null;
     }
+
+    // Append a compact text representation to {sb}.
+    void appendTo(StringBuilder sb) {
+      char sp = ' ';
+      sb.append("ELEMENT");
+      sb.append(sp);
+      sb.append(type);
+      sb.append(sp);
+      sb.append(virtual);
+      sb.append(sp);
+      sb.append(label);
+      sb.append(sp);
+      sb.append(c);
+      sb.append(sp);
+      sb.append(String.format("%5.3f", size));
+      
+      // Append linear elements
+      for (Point p : path) {
+        sb.append(String.format("(%5.3f,%5.3f)",p.x, p.y)); 
+      }
+      sb.append("\n");
+    }
+
   }
 
 
@@ -56,8 +79,6 @@ class FieldElements {
   final int FLOOR_PIXEL_SIZE  = 1000; // This is the size of the PGraphics buffer into which the floor and field elements
   // are rendered
   final double FLOORPIX_PER_M; // Floor pixels per meter
-  PixelHelper floorPixels = null; // initialized in load()
-
 
 
   FieldElements(Field f) {
@@ -120,7 +141,16 @@ class FieldElements {
     }  
 
     fieldElements = elementList.toArray(new Element[elementList.size()]);
-    floorPixels = renderFloorPixels();
+  }
+
+
+  // Adds a text signature of the state of the floor elements - this is to facilitate caching 
+  // of the blurred pixel array, which takes a while
+  void appendFloorSignature(StringBuilder sb) {
+    sb.append("Version: " + VERSION);
+    for (Element e: fieldElements) {
+      e.appendTo(sb);
+    }
   }
 
 
@@ -171,9 +201,9 @@ class FieldElements {
     return true;
   }
 
-  // Render the mat background and just the floor elements.
-  // this is for input to any color sensor simulation
-  private PixelHelper renderFloorPixels() {
+  // Generate a pixel array that represents the the mat background and visible floor elements.
+  // This is for input to any color sensor simulation
+  PixelHelper generateFloorPixels() {
     PGraphics floorPG = createGraphics(FLOOR_PIXEL_SIZE, FLOOR_PIXEL_SIZE);
     floorPG.beginDraw();
     floorPG.background(field.MAT_COLOR);

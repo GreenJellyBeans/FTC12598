@@ -42,7 +42,7 @@ class PixelHelper {
   final int w;
   final int h;
   final color outOfBoundColor;
-  private color pix[];
+  final color pix[];
 
   // Constructs a PixelHelper that works with 
   // packed array {pix}, assumed to be row-major, with

@@ -2,6 +2,16 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 3, 2018-B JMJ  Finished implementing caching the blurred floor pixels
+The code was added to classes `FieldElements` and `RawSensorModule`. `FieldElements` is responsible for rendering visible floor elements to a pixel array - on demand, in the 
+method `generateFloorPixels`. `RawSensorModule` calls `generateFloorPixels` and creates a blurred version of these pixels. Since this process (particularly the blurring) is time consuming,
+it caches the blurred pixels to a PNG file under data/cache. To validate the cache, a text signature of the floor elements and other parameters is generated and saved. This is done by
+`RawSensorModule.constructFloorSignature` which delegates most of the signature construction to `FieldElements.appendFloorSignature`. The caching logic is implemented in
+`RawSensorModule.constructBlurredFloorPixels`.
+The cache files under `/data/cache` should not be checked in to source control. I added a `.gitignore` file at the `processing` level that ignores anything under `**/data/cache` for all
+processing projects.
+
+
 ## October 3, 2018-A JMJ  Finished first cut of implementation of simulated color sensors!
 `PixelHelper`: new class to manage a pixel array represented in row-major form - same as Processing's `PGraphics.pixels` field, and also to created a blurred version.
 `FieldElements`: added `PixelHelper floorPixels` field that contains pre-rendered pixels (packed in row-major order) of visible floor field elements.

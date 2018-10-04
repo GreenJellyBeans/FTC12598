@@ -1,3 +1,5 @@
+import java.util.Arrays; //<>//
+
 // Class RawSensorModule collects simulated sensor information made available to robot control software.
 // Sensor errors are included in the simulation.
 class RawSensorModule {
@@ -5,9 +7,11 @@ class RawSensorModule {
   Robot r;
   Field f;
   final double colorSensorDiameter = 0.2; // 2cm diameter
+  PixelHelper floorPixels = null; // Initialized in init()
 
   // These are the locations of the centers of the color sensors, relative to the robot. In meters.
   // Color sensors all look straight down.
+  final int BLUR_RADIUS = 10; // Number of pixels to blur - TBD - should base it on physical dimensions
   Point[] colorSensorLocations = {
     new Point(0, 0) // Center of robot
   };
@@ -29,18 +33,29 @@ class RawSensorModule {
     return currentColors.length;
   }
   
+  
+
+  void init() {
+    // Data used by simulated color sensors
+    floorPixels = constructBlurredFloorPixels();
+  }
+
+
   // Color
   // Returns the r/g/b values of the {i}th color sensor
-  // See Processing documentation for red(), green() & blue() for explanation
+  // IMPNOTE: See Processing documentation for red(), green() & blue() for explanation
   // of these faster conversion operators.
-  int red(int i) {
-    return currentColors[0] >> 16 & 0xFF;
+  // ALSO - don't rename thse red/green/blue because they override built-in red/green/blue
+  // Processing functions and cause other RawSensorModule code to mess up
+  //
+  int sred(int i) {
+    return currentColors[i] >> 16 & 0xFF;
   }
-  int green(int i) {
-    return currentColors[0] >> 8 & 0xFF;
+  int sgreen(int i) {
+    return currentColors[i] >> 8 & 0xFF;
   }
-  int blue(int i) {
-    return currentColors[0] & 0xFF;
+  int sblue(int i) {
+    return currentColors[i] & 0xFF;
   }
 
   // Updates the simulation,
@@ -53,9 +68,9 @@ class RawSensorModule {
       Point p = colorSensorLocations[i];
       double fx = r.drive.fieldX(p.x, p.y);
       double fy = r.drive.fieldY(p.x, p.y);
-      color c = f.senseFloorColor(fx, fy, colorSensorDiameter);
-      currentColors[i] = c; //color(redNoise(), greenNoise(), blueNoise());
-      f.addExtendedStatus(String.format("Color[%d].red(): %d", i, red(c)));
+      color c = senseFloorColor(fx, fy);
+      currentColors[i] = c;
+      f.addExtendedStatus(String.format("ColorSensor[%d]: (%5.1f,%5.1f,%5.1f)", i, red(c), green(c), blue(c)));
     }
   }
 
@@ -73,5 +88,90 @@ class RawSensorModule {
 
   float blueNoise() {
     return (float) (255*noise((float) (blueNoiseBase + r.drive.x * noiseScale), (float) (blueNoiseBase + r.drive.y * noiseScale)));
+  }
+
+
+
+  // Sense the floor color looking downards with a sensor that scans a region
+  // of diameter {constant colorSensorDiameter}
+  // at field location ({x}, {y}). All units in meters. Returns a composite color value 
+  color senseFloorColor(double x, double y) {
+    final int size = f.elements.FLOOR_PIXEL_SIZE;
+    // We have to tralsform field coordinates (x,y) to the
+    // pre-rendered pixel buffer.
+    int bx = bound((int) (x/f.WIDTH*size), 0, size - 1);
+    int by = bound((int) ((f.WIDTH-y)/f.WIDTH*size), 0, size - 1);
+    return floorPixels.get(bx, by);
+  }
+  
+
+  // Construct the blurred floor pixels that are used by the simulated
+  // color sensors. Since it can take several seconds to compute this, we
+  // attempt to use a cashed version saved as a PNG.
+  private PixelHelper constructBlurredFloorPixels() {
+    byte[] curSig = constructFloorSignature().getBytes();
+    final String sigFileName = "data/cache/blurryFloorSignature.txt";
+    final String pngFileName = "data/cache/blurryFloor.png";
+    File sigF = new File(sketchPath(sigFileName));
+    
+    // Retrieve and validate cached version...
+    boolean sigMatch = false;
+    int size = f.elements.FLOOR_PIXEL_SIZE;
+    if (sigF.exists()) {
+      byte[] prevSig = loadBytes(sigFileName);
+      if (prevSig != null) {
+        if (Arrays.equals(curSig, prevSig)) {
+          println("SIGNATURE MATCHED!");
+          sigMatch = true;
+        } else {
+          println("SIGNATURE NOT MATCHED!");
+        }
+      }
+    }
+    if (sigMatch) {
+      PImage img = loadImage(pngFileName);
+      if (img == null) {
+        println("Could not load file " + pngFileName);
+      } else {
+        img.loadPixels();
+        color[] cachedPix = img.pixels;
+        if (img.height != size || img.width != size || cachedPix.length != size * size) {
+          println("Cached blurry file dimensions are wrong; re-creating cache.");
+        } else {
+          return new PixelHelper(cachedPix, size, size); // ****** EARLY RETURN ****
+        }
+      }
+    }
+    
+    // There is no cache or the cache is invalid. So we generate the
+    // floor pixels from scratch and create or update the cache.
+    println("*********************************************************");
+    println("PLEASE WAIT WHILE THE BLURRY FLOOR PIXELS ARE COMPUTED...");
+    println("*********************************************************");
+    PixelHelper rawPix = f.elements.generateFloorPixels();
+    PixelHelper blurredPix =  rawPix.blurredCopy(BLUR_RADIUS);
+    PImage img = createImage(size, size, RGB);
+    img.loadPixels();
+    color[] destPixels = img.pixels;
+    assert(destPixels.length == blurredPix.pix.length);
+    System.arraycopy(blurredPix.pix, 0,destPixels , 0, blurredPix.pix.length);
+    img.updatePixels();
+    
+    // Save signature and PNG file representing blurry floor
+    img.save(pngFileName);
+    saveBytes(sigFileName, curSig);
+    
+    return blurredPix;
+  }
+
+
+  // Construct a string that uniquely identifies the state of the blurred floor.
+  // Used to decide whether or not to re-compute the blurred floor, which
+  // takes a while.
+  private String constructFloorSignature() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("BLURVERSION: 1.0 BLUR:"+BLUR_RADIUS+"\n");
+    f.elements.appendFloorSignature(sb);
+    return sb.toString();
   }
 }
