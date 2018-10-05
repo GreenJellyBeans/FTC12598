@@ -8,7 +8,7 @@ import org.gamecontrolplus.*;
 
 class GamepadManager {
 
-  
+
   final String configName;
   final int numHwGamepads;
   final List<ProxyGamepad> proxyGamepads = new ArrayList<ProxyGamepad>();
@@ -104,8 +104,8 @@ class GamepadManager {
       public boolean start() {
       return rg==null  ? false : rg.start();
     }
- 
-    
+
+
     @Override
       public int hatPos() {
       return rg==null  ? 0 : rg.hatPos();
@@ -232,8 +232,8 @@ class GamepadManager {
       public boolean start() {
       return start.pressed();
     }
-       
-    
+
+
     @Override
       public int hatPos() {
       return dpad.getPos();

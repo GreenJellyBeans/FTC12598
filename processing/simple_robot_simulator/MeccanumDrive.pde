@@ -72,7 +72,7 @@ class MeccanumDrive {
   public MeccanumDrive(Field field) {
     this.field = field;
     this.trail = new Trail(field, color(0, 255, 0));
-    
+
     // Initial position and orientation - can be changed
     // by using place().
     this.x = field.WIDTH/2;

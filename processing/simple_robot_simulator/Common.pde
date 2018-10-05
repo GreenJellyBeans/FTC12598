@@ -8,7 +8,7 @@ class Point {
     this.x = x;
     this.y = y;
   }
- }
+}
 
 // Returns clipped version of {in} guaranteed to between [{mn}, {mx}]
 int bound(int in, int mn, int mx) {
@@ -88,7 +88,7 @@ class PixelHelper {
             for (int kj = -blurWidth; kj <= blurWidth; kj++) {
               int y = j + kj;
               if (y >= 0 && y < h) {
-                color c = get(x,y);
+                color c = get(x, y);
                 redSum += red(c);
                 greenSum += green(c);
                 blueSum += blue(c);

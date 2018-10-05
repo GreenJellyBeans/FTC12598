@@ -56,14 +56,13 @@ class FieldElements {
       sb.append(c);
       sb.append(sp);
       sb.append(String.format("%5.3f", size));
-      
+
       // Append linear elements
       for (Point p : path) {
-        sb.append(String.format("(%5.3f,%5.3f)",p.x, p.y)); 
+        sb.append(String.format("(%5.3f,%5.3f)", p.x, p.y));
       }
       sb.append("\n");
     }
-
   }
 
 
@@ -148,7 +147,7 @@ class FieldElements {
   // of the blurred pixel array, which takes a while
   void appendFloorSignature(StringBuilder sb) {
     sb.append("Version: " + VERSION);
-    for (Element e: fieldElements) {
+    for (Element e : fieldElements) {
       e.appendTo(sb);
     }
   }

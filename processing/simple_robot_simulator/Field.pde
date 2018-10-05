@@ -18,7 +18,7 @@ class Field {
 
 
   public void draw() {
-    
+
     // Boundary and mat
     fill(MAT_COLOR);
     stroke(0);
@@ -71,7 +71,7 @@ class Field {
   void drawRect(double x, double y, double w, double h) {
     rect(screenX(x), screenY(y), pixLen(w), pixLen(h));
   }
-  
+
 
   void drawCircle(double x, double y, double r) {
     float sr = pixLen(r);
@@ -99,5 +99,4 @@ class Field {
   void addExtendedStatus(String s) {
     extendedStatus += s + "\n";
   }
-
 }

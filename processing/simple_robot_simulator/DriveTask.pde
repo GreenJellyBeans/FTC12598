@@ -75,7 +75,7 @@ class DriveTask {
     fwd = clipInput(fwd);
     turn = clipInput(turn);
     strafe = clipInput(strafe);
-    
+
     Field f = robot.field;
     f.addExtendedStatus(String.format("HPOWER  fwd:%5.2f  turn:%5.2f  strafe:%5.2f", fwd, turn, strafe));
 

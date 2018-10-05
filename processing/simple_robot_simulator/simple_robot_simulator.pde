@@ -110,7 +110,7 @@ void loadConfig() {
 void checkMappings() {
   for (GamepadManager.RealGamepad rg : g_gamepadMgr.realGamepads) {
     if (rg == null) continue; // ********* CONTINUE
-    
+
     if (rg.start()) {
       if (rg.a()) {
         g_gamepadMgr.switchRoles(rg, ROLE_A);

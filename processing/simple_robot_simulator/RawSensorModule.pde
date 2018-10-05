@@ -32,8 +32,8 @@ class RawSensorModule {
   int numColorSensors() {
     return currentColors.length;
   }
-  
-  
+
+
 
   void init() {
     // Data used by simulated color sensors
@@ -103,7 +103,7 @@ class RawSensorModule {
     int by = bound((int) ((f.WIDTH-y)/f.WIDTH*size), 0, size - 1);
     return floorPixels.get(bx, by);
   }
-  
+
 
   // Construct the blurred floor pixels that are used by the simulated
   // color sensors. Since it can take several seconds to compute this, we
@@ -113,7 +113,7 @@ class RawSensorModule {
     final String sigFileName = "data/cache/blurryFloorSignature.txt";
     final String pngFileName = "data/cache/blurryFloor.png";
     File sigF = new File(sketchPath(sigFileName));
-    
+
     // Retrieve and validate cached version...
     boolean sigMatch = false;
     int size = f.elements.FLOOR_PIXEL_SIZE;
@@ -142,7 +142,7 @@ class RawSensorModule {
         }
       }
     }
-    
+
     // There is no cache or the cache is invalid. So we generate the
     // floor pixels from scratch and create or update the cache.
     println("*********************************************************");
@@ -154,13 +154,13 @@ class RawSensorModule {
     img.loadPixels();
     color[] destPixels = img.pixels;
     assert(destPixels.length == blurredPix.pix.length);
-    System.arraycopy(blurredPix.pix, 0,destPixels , 0, blurredPix.pix.length);
+    System.arraycopy(blurredPix.pix, 0, destPixels, 0, blurredPix.pix.length);
     img.updatePixels();
-    
+
     // Save signature and PNG file representing blurry floor
     img.save(pngFileName);
     saveBytes(sigFileName, curSig);
-    
+
     return blurredPix;
   }
 
