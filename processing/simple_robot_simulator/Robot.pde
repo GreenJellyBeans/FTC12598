@@ -111,7 +111,7 @@ class Robot {
 
   // Shows state of gamepad controls in the field's extended status area
   void displayGamepadStatus(String prefix, GamepadInterface gp) {
-    if (g_noGamepad) {
+    if (g_numGamepads == 0) {
       field.addExtendedStatus(prefix + " GAMEPAD OFF");
       return; // ******* EARLY RETURN
     }

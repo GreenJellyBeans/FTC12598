@@ -27,7 +27,7 @@ PApplet g_pa = this;
 final String CONFIG_FILE = "config.txt"; 
 
 // Configuration settings - can be overridden by settings in the config file.
-boolean g_noGamepad = false; // Config setting "noGamepad" turns it on
+int g_numGamepads = 0; // Config setting "numGamepads" overrides this value
 
 
 void setup() {
@@ -36,7 +36,7 @@ void setup() {
   loadConfig();
   g_field = new Field();
   g_field.init();
-  g_gamepadMgr = new GamepadManager("Gamepad-F310", g_noGamepad? 0 : 2);
+  g_gamepadMgr = new GamepadManager("Gamepad-F310", g_numGamepads);
   g_gamepadMgr.init();
 
   // Create two robots, with their own unique names, colors and initial position and orientation
@@ -114,15 +114,15 @@ void loadConfig() {
   for (String s : configTxt) {
 
     // Trim beginning and ending blanks and everything including and after #
-    // which is the comment char
-    s = s.replaceFirst("#.*", "").trim(); 
+    // which is the comment char, and replace tabs with spaces
+    s = s.replaceFirst("#.*", "").trim();
+    s = s.replaceAll("\t", "");
     if (s.length() == 0) {
       continue;
     }
-    println("CONFIG:[" + s + "]"); 
-    if (s.equals("noGamepad")) {
-      println("NO GAMEPAD!"); 
-      g_noGamepad = true;
+    println("CONFIG LINE:[" + s + "]"); 
+    if (s.startsWith("numGamepads")) {
+      g_numGamepads = parseIntConfig(s, 0, 4, g_numGamepads);
     }
   }
 }
@@ -162,3 +162,20 @@ void checkGamepadMappings() {
     }
   }
 }
+
+  // Parse a config string, ignoring the first token (name)
+  // If there is a parse error or the value is outside of
+  // [{min}, {max}] return {defaultValue} instead
+  int parseIntConfig(String s, int min, int max, int defaultValue) {
+    int ret = defaultValue;
+    try {
+      int i = s.indexOf(" ");
+      ret = Integer.parseInt(s.substring(i+1));
+      ret = inBounds(ret, min, max) ? ret : defaultValue;
+    }
+    catch (NumberFormatException e) {
+      System.err.println("Invalid integer in configuration string [" + s + "]");
+      ret = defaultValue;
+    }
+    return ret;
+  }

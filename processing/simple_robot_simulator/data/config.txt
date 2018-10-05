@@ -1,1 +1,5 @@
-# noGamepad
+#
+# The configuration file - contains settings that
+# are loaded when the program starts
+#
+numGamepads 0 # Number of real gamepads attached to the computer
