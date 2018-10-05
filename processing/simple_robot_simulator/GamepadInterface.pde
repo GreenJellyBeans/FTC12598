@@ -14,4 +14,5 @@ public interface GamepadInterface {
   boolean a();
   boolean b();
   boolean start();
+  int hatPos(); // This way to access hat state is not supported in First SDK - see http://lagers.org.uk/gamecontrol/api.html
 }
