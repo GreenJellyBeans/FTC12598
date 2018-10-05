@@ -47,7 +47,6 @@ class Robot {
 
   public void stop() {
     driveTask.stop();
-    drive.markSpot();
   }
 
 
@@ -68,7 +67,41 @@ class Robot {
   public void draw() {
     displayGamepadStatus("GP1", gamepad1);
     displayGamepadStatus("GP2", gamepad2);
-    drive.draw();
+    double x = drive.x;
+    double y = drive.y;
+    double side = drive.side;
+    double a = drive.a;
+    
+    if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
+      fill(255, 0, 0);
+      noLoop();
+      field.addExtendedStatus("done");
+    }
+
+    drive.trail.draw();
+
+    float pixSide = field.pixLen(side);
+    float sx = field.screenX(x);
+    float sy = field.screenY(y);
+    pushMatrix();
+    translate(sx, sy);
+    rotate((float) -a);
+    fill(255, 200);
+    stroke(0);
+    strokeWeight(1);
+    rect(0, 0, pixSide, pixSide);  
+    fill(0);
+    
+    // Render Robot ID in the center
+    text(id, 0, 0);
+    // Render L and R labels on the front left and right corners
+    // of the robot. Note that these are in screen coordinates, where
+    // y grows downwards!
+    final int adj = 12; // adjustment for text size
+    text("L", -pixSide/2, adj - pixSide/2);
+    text("R", pixSide/2 - adj, adj - pixSide/2);
+    popMatrix();
+    
     visualizeSensorData();
   }
 

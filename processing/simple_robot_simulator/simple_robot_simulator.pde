@@ -81,6 +81,7 @@ void draw() {
 
   g_field.draw();
   for (Robot r : g_robots) {
+    g_field.addExtendedStatus("\nROBOT " + r.id + " STATUS");    
     r.loop(t, dT); 
     r.simloop(t, dT); 
     r.draw();

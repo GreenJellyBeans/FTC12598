@@ -60,7 +60,6 @@ class MeccanumDrive {
   double pBL = 0;
   double pBR = 0;
 
-  boolean spotMarked = false;
   double markX = 0;
   double markY = 0;
 
@@ -207,54 +206,6 @@ class MeccanumDrive {
   }
 
 
-  // Mark the current spot - shows up in future renderings.
-  void markSpot() {
-    spotMarked = true;
-    markX = x;
-    markY = y;
-  }
-
-
-  // Render the robot - TODO: should move this to Robot class.
-  void draw() {
-
-    if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
-      fill(255, 0, 0);
-      noLoop();
-      field.addExtendedStatus("done");
-    }
-
-    trail.draw();
-
-    float pixSide = field.pixLen(side);
-    float sx = field.screenX(x);
-    float sy = field.screenY(y);
-    pushMatrix();
-    translate(sx, sy);
-    rotate((float) -a);
-    fill(255, 200);
-    stroke(0);
-    strokeWeight(1);
-    rect(0, 0, pixSide, pixSide);  
-    fill(0);
-
-    // Render L and R labels on the front left and right corners
-    // of the robot. Note that these are in screen coordinates, where
-    // y grows downwards!
-    final int adj = 12; // adjustment for text size
-    text("L", -pixSide/2, adj - pixSide/2);
-    text("R", pixSide/2 - adj, adj - pixSide/2);
-    popMatrix();
-
-    if (spotMarked) {
-      renderMark();
-    }
-  }
-
-
-  void renderMark() {
-    ellipse(field.screenX(markX), field.screenY(markY), 10, 10);
-  }
 
 
   // Clips to lie within [-1,1]
