@@ -8,19 +8,13 @@ import org.gamecontrolplus.*;
 
 class GamepadManager {
 
-  // These are the supported roles...
-  final String ROLE_A = "A";
-  final String ROLE_B = "B";
-
-  // Thease are the supported robot IDs:
-  final String ROBOT_1 = "1";
   
   final String configName;
   final int numHwGamepads;
+  final List<ProxyGamepad> proxyGamepads = new ArrayList<ProxyGamepad>();
+  final RealGamepad[] realGamepads;
 
   private ControlIO control; // set in init()
-  private final List<ProxyGamepad> proxyGamepads = new ArrayList<ProxyGamepad>();
-  private final RealGamepad[] realGamepads;
 
   // A virtual or proxy gamepad that routes all its methods to
   // an underlying real gamepad (if there is one) or to nothing at all.
@@ -109,6 +103,12 @@ class GamepadManager {
     @Override
       public boolean start() {
       return rg==null  ? false : rg.start();
+    }
+ 
+    
+    @Override
+      public int hatPos() {
+      return rg==null  ? 0 : rg.hatPos();
     }
   }
 
@@ -232,6 +232,12 @@ class GamepadManager {
       public boolean start() {
       return start.pressed();
     }
+       
+    
+    @Override
+      public int hatPos() {
+      return dpad.getPos();
+    }
   }
 
 
@@ -279,21 +285,6 @@ class GamepadManager {
   }
 
 
-  // Must be called periodically
-  // to check if there is a change in mapping
-  // of real gamepads to robots and roles
-  void checkMappings() {
-
-    for (RealGamepad rg : realGamepads) {
-      if (rg != null && rg.start()) {
-        if (rg.a()) {
-          switchRoles(rg, ROLE_A);
-        } else if (rg.b()) {
-          switchRoles(rg, ROLE_B);
-        }
-      }
-    }
-  }
 
 
   private void switchRoles(RealGamepad rg, String newRole) {

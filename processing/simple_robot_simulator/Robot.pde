@@ -4,6 +4,7 @@
 // of robot drive control algorithms.
 class Robot {
 
+  final String id; // Used to identify the robot and select which robot gets which gamepads
   final Field field; // Passed in during constructor - the field the robot operates within
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
@@ -11,15 +12,23 @@ class Robot {
   final DriveTask driveTask;
   final RawSensorModule sensors;
 
-  public Robot(Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
-    field = f;
+  public Robot(String id, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
+    this.id = id;
+    this.field = f;
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
     driveTask = new DriveTask(this);
-    drive = new MeccanumDrive(field, field.WIDTH/2, field.WIDTH/2, 0);
+    drive = new MeccanumDrive(field);
     sensors = new RawSensorModule(f, this);
   }
 
+  // Places the robot at the specified location and orientation.
+  // Units are meters and radians.
+  // This is typically used once - to initially position the robot
+  // somewhere on the field.
+  public void place(double x, double y, double a) {
+    drive.place(x, y, a);
+  }
 
   public void init() {
     sensors.init();
@@ -80,7 +89,8 @@ class Robot {
       (gp.a()? " A" : "") + 
       (gp.y()? " Y" : "");
     String buttonStatus = prefix + ((buttons.length() == 0) ? " BUTTONS: none" : " BUTTONS: " + buttons);
-    field.addExtendedStatus(buttonStatus);
+    String dpad = "  DPAD " + gp.hatPos();
+    field.addExtendedStatus(buttonStatus + dpad);
   }
 
   // Display/print the raw state of the sensors

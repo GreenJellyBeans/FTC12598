@@ -2,6 +2,24 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 5, 2018-A JMJ  Implemented multiple robots - mostly
+The main program (`simple_robot_simulator.pde`) initializes an array of robots, `g_robots`, calling `newRobot` to create a robot with a particular Id and placed
+at a particular position and orientation on the field. The main draw method has been updated to process all the robots.
+
+It was awkward to have the role and robot ID constants defined in `GamepadManager` - so moved those constants (`ROLE_A`, etc) to the main program, along
+with the one `GamepadManager` method that was referencing, them, `checkMappings`. Much cleaner.
+
+Added `hatPos` to `GamepadInterface`. This returns an integer representation of hat state - see http://lagers.org.uk/gamecontrol/api.html. This is different
+than the up/down/left/right buttons in the First FTC SDK - these latter versions are also supported by Game Control Plus, but that's 4 methods, and
+I need to check that only up is pressed (not up and left, for example) - that is equivalent to a `hatPos` value of 2, so a simpler check if I use
+the `hatPos` integer.
+
+Both `Robot` and `MeccanumDrive` have a new method call `place` - to place the robot at a particular position and location. These placement parameters were
+previously cluttering up the constructor parameters. The `place` method is just for initial placement, and may perhaps be used to re-set the robot
+in special cases.
+
+There are also some gratuitous re-formatting because of auto-format in this checkin.
+
 ## October 4, 2018-A JMJ  Implemented multiple gamepads with dynamic mapping
 `GamepadManager`: new class that manages multiple "real" gamepads that are connected to real hardware, and multiple "proxy" gamepads that can dynamically connect with any
 of the real gamepads or to nothing at all. The old `ProcessingGamepad` class has been removed.

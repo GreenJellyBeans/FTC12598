@@ -69,12 +69,15 @@ class MeccanumDrive {
 
 
   // Create a robot at the specified position
-  public MeccanumDrive(Field field, double x, double y, double a) {
+  public MeccanumDrive(Field field) {
     this.field = field;
     this.trail = new Trail(field, color(0, 255, 0));
-    this.x = x;
-    this.y = y;
-    this.a = a;
+    
+    // Initial position and orientation - can be changed
+    // by using place().
+    this.x = field.WIDTH/2;
+    this.y = field.WIDTH/2;
+    this.a = 0;
   }
 
 
@@ -97,6 +100,15 @@ class MeccanumDrive {
     pBR = clipPower(p) * powerAdjustBR;
   }
 
+  // Places the robot at the specified location and orientation.
+  // Units are meters and radians.
+  // This is typically used once - to initially position the robot
+  // somewhere on the field.
+  public void place(double x, double y, double a) {
+    this.x = x;
+    this.y = y;
+    this.a = a;
+  }
 
   void stop() {
     setPowerFL(0);
@@ -184,15 +196,15 @@ class MeccanumDrive {
     va = vaNew;
   }
 
-    // Convert robot coordinate to field coordinate - x component
-    double fieldX(double rx, double ry) {
-      return x + rx*Math.cos(a) - ry*Math.sin(a);
-    }
-    
-    // Convert robot coordinate to field coordinate - x component
-    double fieldY(double rx, double ry) {
-      return y + rx*Math.sin(a) + ry*Math.cos(a);
-    }
+  // Convert robot coordinate to field coordinate - x component
+  double fieldX(double rx, double ry) {
+    return x + rx*Math.cos(a) - ry*Math.sin(a);
+  }
+
+  // Convert robot coordinate to field coordinate - x component
+  double fieldY(double rx, double ry) {
+    return y + rx*Math.sin(a) + ry*Math.cos(a);
+  }
 
 
   // Mark the current spot - shows up in future renderings.
@@ -225,7 +237,7 @@ class MeccanumDrive {
     strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  
     fill(0);
-    
+
     // Render L and R labels on the front left and right corners
     // of the robot. Note that these are in screen coordinates, where
     // y grows downwards!
