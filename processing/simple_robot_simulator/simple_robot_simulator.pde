@@ -9,7 +9,7 @@ void settings() {
 
 
 Field g_field;
-ProcessingGamepad g_gamepad;
+GamepadManager g_gamepadMgr;
 Robot g_robot;
 long startTimeMs;
 long prevTimeMs  = 0;
@@ -25,9 +25,11 @@ void setup() {
   loadConfig();
   g_field = new Field();
   g_field.init();
-  g_gamepad = new ProcessingGamepad(g_noGamepad ? null : "Gamepad-F310");
-  g_gamepad.init();
-  g_robot = new Robot(g_field, g_gamepad); 
+  g_gamepadMgr = new GamepadManager("Gamepad-F310", g_noGamepad? 0 : 2);
+  g_gamepadMgr.init();
+  GamepadInterface gamepad1 = g_gamepadMgr.newProxyGamepad(g_gamepadMgr.ROBOT_1, g_gamepadMgr.ROLE_A);
+  GamepadInterface gamepad2 = g_gamepadMgr.newProxyGamepad(g_gamepadMgr.ROBOT_1, g_gamepadMgr.ROLE_B);
+  g_robot = new Robot(g_field, gamepad1, gamepad2); 
   startTimeMs = millis();
   g_robot.init();
   g_robot.start();
@@ -42,6 +44,9 @@ void setFont() {
 }
 
 void draw() {
+  
+  g_gamepadMgr.checkMappings();
+  
   background(200);
   if (prevTimeMs == 0) {
     prevTimeMs = millis();

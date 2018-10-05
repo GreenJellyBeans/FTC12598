@@ -2,6 +2,26 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 4, 2018-A JMJ  Implemented multiple gamepads with dynamic mapping
+`GamepadManager`: new class that manages multiple "real" gamepads that are connected to real hardware, and multiple "proxy" gamepads that can dynamically connect with any
+of the real gamepads or to nothing at all. The old `ProcessingGamepad` class has been removed.
+
+A real gamepad (class `GamepadManager.RealGamepad`) is matched with a proxy gamepad (class `GamepadManager.ProxyGamepad`) if it matches both the "robot Id" and the "role".
+Each proxy gamepad is permanently assigned a robot Id and
+a role, when it is created in the main program (simple_robot_simulator.pde). The `Robot` class constructor is passed-in two gamepads, both proxy gamepads, and this assignment stays
+for the life of the robot.
+
+Initially real gamepads are not assigned to any proxy gamepads, so effectively the robots are not controlled by any gamepad. If the user presses START+A on any gamepad that has not yet been
+mapped, that real gamepad is now linked to the proxy gamepad #1 of the first robot in the list of robots. If the user presses START+B, the gamepad is mapped to gamepad2. If the real
+gamepad is already mapped to a proxy robot, pressing START+A or START+B will stay with the robot that it is already bound to.
+
+If a particular real gamepad (r1) is mapped to a robot's gamepad1 (role "A") when a user presses START+A on another real gamepad(r2), gamepad1's mapping on the robot will switch to r2,
+so real gamepad r1 is now not mapped to anything - it is effectively ignored until it gets mapped to some proxy gamepad on some robot.
+
+[Not yet implemented] To select a particular robot, the user presses the DPAD - N selects robot 1, E robot 2, S robot 3 and W robot 4. By default, all gamepads are mapped
+to robot 1 (i.e., the robot with Id "1"). Multiple robots are not implemented yet - this just lays the groundwork for having multiple robots.
+
+
 ## October 3, 2018-B JMJ  Finished implementing caching the blurred floor pixels
 The code was added to classes `FieldElements` and `RawSensorModule`. `FieldElements` is responsible for rendering visible floor elements to a pixel array - on demand, in the 
 method `generateFloorPixels`. `RawSensorModule` calls `generateFloorPixels` and creates a blurred version of these pixels. Since this process (particularly the blurring) is time consuming,

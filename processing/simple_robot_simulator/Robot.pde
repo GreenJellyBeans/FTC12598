@@ -5,14 +5,16 @@
 class Robot {
 
   final Field field; // Passed in during constructor - the field the robot operates within
-  final GamepadInterface gamepad;
+  final GamepadInterface gamepad1;
+  final GamepadInterface gamepad2;
   final MeccanumDrive drive;
   final DriveTask driveTask;
   final RawSensorModule sensors;
 
-  public Robot(Field f, GamepadInterface gamepad) {
+  public Robot(Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
     field = f;
-    this.gamepad  = gamepad;
+    this.gamepad1  = gamepad1;
+    this.gamepad2  = gamepad2;
     driveTask = new DriveTask(this);
     drive = new MeccanumDrive(field, field.WIDTH/2, field.WIDTH/2, 0);
     sensors = new RawSensorModule(f, this);
@@ -55,28 +57,29 @@ class Robot {
 
 
   public void draw() {
-    displayGamepadStatus();
+    displayGamepadStatus("GP1", gamepad1);
+    displayGamepadStatus("GP2", gamepad2);
     drive.draw();
     visualizeSensorData();
   }
 
   // Shows state of gamepad controls in the field's extended status area
-  void displayGamepadStatus() {
+  void displayGamepadStatus(String prefix, GamepadInterface gp) {
     if (g_noGamepad) {
-      field.addExtendedStatus("GAMEPAD OFF");
+      field.addExtendedStatus(prefix + " GAMEPAD OFF");
       return; // ******* EARLY RETURN
     }
-    GamepadInterface gp = gamepad;
-    field.addExtendedStatus(String.format("STICKS LSx: %5.2f  LSy: %5.2f  RSx: %5.2f  RSy: %5.2f", 
+    field.addExtendedStatus(String.format(prefix + " STICKS LSx: %5.2f  LSy: %5.2f  RSx: %5.2f  RSy: %5.2f", 
       gp.left_stick_x(), gp.left_stick_y(), gp.right_stick_x(), gp.right_stick_y()
       ));
 
     String buttons =  
+      (gp.start()? " S" : "") + 
       (gp.left_bumper()? " LB" : "") + 
       (gp.right_bumper()? " RB" : "") + 
       (gp.a()? " A" : "") + 
       (gp.y()? " Y" : "");
-    String buttonStatus = (buttons.length() == 0) ? "BUTTONS: none" : "BUTTONS: " + buttons;
+    String buttonStatus = prefix + ((buttons.length() == 0) ? " BUTTONS: none" : " BUTTONS: " + buttons);
     field.addExtendedStatus(buttonStatus);
   }
 

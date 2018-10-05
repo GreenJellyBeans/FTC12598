@@ -8,6 +8,7 @@ a	A button	1	BUTTON	Button 0	0	0.0	0.0
 b	B button	1	BUTTON	Button 1	0	0.0	0.0
 x	X button	1	BUTTON	Button 2	0	0.0	0.0
 y	Y button	1	BUTTON	Button 3	0	0.0	0.0
+start	Start button	1	BUTTON	Button 7	0	0.0	0.0
 LR_trigger	L+R trigger combo	3	SLIDER	Z Axis	0	1.0	0.0
 left_bumper	Left bumper	1	BUTTON	Button 4	0	0.0	0.0
 right_bumper	Right bumper	1	BUTTON	Button 5	0	0.0	0.0

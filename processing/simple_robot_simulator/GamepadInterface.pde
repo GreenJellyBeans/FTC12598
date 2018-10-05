@@ -12,4 +12,6 @@ public interface GamepadInterface {
   float right_trigger();
   boolean y();
   boolean a();
+  boolean b();
+  boolean start();
 }

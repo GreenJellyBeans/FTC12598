@@ -46,7 +46,7 @@ class DriveTask {
 
 
   void driveTaskLoop1() {
-    GamepadInterface gp = robot.gamepad;
+    GamepadInterface gp = robot.gamepad1;
     if (!gamepadEnabled && gp.a()) {
       gamepadEnabled = true;
     }
