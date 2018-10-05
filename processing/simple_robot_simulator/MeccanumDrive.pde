@@ -68,9 +68,9 @@ class MeccanumDrive {
 
 
   // Create a robot at the specified position
-  public MeccanumDrive(Field field) {
+  public MeccanumDrive(Field field, color trailColor) {
     this.field = field;
-    this.trail = new Trail(field, color(0, 255, 0));
+    this.trail = new Trail(field, trailColor);
 
     // Initial position and orientation - can be changed
     // by using place().

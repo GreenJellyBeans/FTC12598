@@ -37,8 +37,8 @@ void setup() {
   g_gamepadMgr = new GamepadManager("Gamepad-F310", g_noGamepad? 0 : 2);
   g_gamepadMgr.init();
   g_robots = new Robot[]{
-    newRobot(ROBOT_1, g_field.WIDTH/2, g_field.WIDTH/2, radians(180)), 
-    newRobot(ROBOT_2, g_field.WIDTH/2+.5, g_field.WIDTH/2+.5, radians(180)) 
+    newRobot(ROBOT_1, color(0, 255, 0), g_field.WIDTH/2, g_field.WIDTH/2, radians(180)), 
+    newRobot(ROBOT_2, color(255, 255, 0), g_field.WIDTH/2+.5, g_field.WIDTH/2+.5, radians(180)) 
   }; 
   startTimeMs = millis();
   for (Robot r : g_robots) {
@@ -51,10 +51,10 @@ void setup() {
 // Construct and return a new robot with the specified ID and
 // with initial position ({x}, {y}) in meters and heading {a} 
 // in radians
-Robot newRobot(String robotId, double x, double y, double a) {
+Robot newRobot(String robotId, color c, double x, double y, double a) {
   GamepadInterface gamepad1 = g_gamepadMgr.newProxyGamepad(ROBOT_1, ROLE_A);
   GamepadInterface gamepad2 = g_gamepadMgr.newProxyGamepad(ROBOT_1, ROLE_B); 
-  Robot r =  new Robot(robotId, g_field, gamepad1, gamepad2) ;
+  Robot r =  new Robot(robotId, c, g_field, gamepad1, gamepad2) ;
   r.place(x, y, a);
   return r;
 }

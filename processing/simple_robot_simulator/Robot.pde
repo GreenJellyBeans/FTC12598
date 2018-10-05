@@ -12,13 +12,13 @@ class Robot {
   final DriveTask driveTask;
   final RawSensorModule sensors;
 
-  public Robot(String id, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
+  public Robot(String id, color c, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
     this.id = id;
     this.field = f;
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
     driveTask = new DriveTask(this);
-    drive = new MeccanumDrive(field);
+    drive = new MeccanumDrive(field, c);
     sensors = new RawSensorModule(f, this);
   }
 
@@ -78,6 +78,9 @@ class Robot {
       field.addExtendedStatus("done");
     }
 
+    noStroke();
+    fill(drive.trail.c);
+    field.drawCircle(x, y, drive.side/4);
     drive.trail.draw();
 
     float pixSide = field.pixLen(side);
@@ -93,7 +96,8 @@ class Robot {
     fill(0);
     
     // Render Robot ID in the center
-    text(id, 0, 0);
+    float adj0 = 5;
+    text(id, -adj0, adj0);
     // Render L and R labels on the front left and right corners
     // of the robot. Note that these are in screen coordinates, where
     // y grows downwards!
