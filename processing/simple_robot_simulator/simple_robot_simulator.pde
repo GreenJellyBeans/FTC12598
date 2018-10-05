@@ -163,19 +163,19 @@ void checkGamepadMappings() {
   }
 }
 
-  // Parse a config string, ignoring the first token (name)
-  // If there is a parse error or the value is outside of
-  // [{min}, {max}] return {defaultValue} instead
-  int parseIntConfig(String s, int min, int max, int defaultValue) {
-    int ret = defaultValue;
-    try {
-      int i = s.indexOf(" ");
-      ret = Integer.parseInt(s.substring(i+1));
-      ret = inBounds(ret, min, max) ? ret : defaultValue;
-    }
-    catch (NumberFormatException e) {
-      System.err.println("Invalid integer in configuration string [" + s + "]");
-      ret = defaultValue;
-    }
-    return ret;
+// Parse a config string, ignoring the first token (name)
+// If there is a parse error or the value is outside of
+// [{min}, {max}] return {defaultValue} instead
+int parseIntConfig(String s, int min, int max, int defaultValue) {
+  int ret = defaultValue;
+  try {
+    int i = s.indexOf(" ");
+    ret = Integer.parseInt(s.substring(i+1));
+    ret = inBounds(ret, min, max) ? ret : defaultValue;
   }
+  catch (NumberFormatException e) {
+    System.err.println("Invalid integer in configuration string [" + s + "]");
+    ret = defaultValue;
+  }
+  return ret;
+}

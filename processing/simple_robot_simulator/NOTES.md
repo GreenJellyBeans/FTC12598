@@ -2,6 +2,30 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 5, 2018-C JMJ  Beginning implementation of collision physics
+Most of the code is in `CollisionPhysics.pde`, which contains a collection of classes and methods:
+The `Wall` class keeps information about a single vertical wall - the position of it's center, the orientation of it's normal,
+and whether or not it is a boundary wall (latter is for quickly checking if there is a collision). Method `Wall.collisionMagnitude` 
+(mostly unimplemented) calculates the magnitude of the collision force of a single wall on a point, assuming frictionless collision, so the direction
+of the force is along the normal of the wall, i.e., perpendicular to the wall.
+
+The `CollisionResult` class aggregates net force and torque of  a robot, represented by a set of boundary points, with all walls.
+The `calculateCollisionImpact` method (empty at present) calculates this aggregate impact. It returns null if there is no collision with any wall,
+or a `CollisionResult` object if there was one or more collisions.
+
+This approach has one key limitation - if the robot collides with a convex object (such as a rectangular prism) made up of a set
+of walls, the first point of contact could be between the side of the robot and the corner of the object at the boundary of
+two walls. This condition will not be detected. The robot will simply penetrate the object until one of the corners of the
+robot hits a wall of the object. If the object is smaller than the robot a collision may never be detected.
+
+In the case of a collision between two robots, even if one robot doesn't detect the collision, the other one will, so the net effect
+(I think) will be that the robots never penetrate each other, though the robot whose corner hits will appear to be the only robot 
+effected.
+
+One way to detect the collision of a robot side with a corner made by two walls is to try collisions both with the boundary points on the robot and a set of walls AND
+the set of wall ends with the planes between consecutive boundary points of the robot. But we are not going to try this
+any time soon, as a key scenario is already supported: backing up against a field element larger than the robot.
+
 ## October 5, 2018-B JMJ  Finished implementation of multiple robots
 Implemented selection of robot - the hat position of the controller is used to specify which robot a particular real gamepad is to
 be bound to. hat+a, hat+b - selects a role AND robot, while START+a, START+b - selects just the role, keeping the robot 
