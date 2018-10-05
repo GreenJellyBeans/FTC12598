@@ -287,17 +287,32 @@ class GamepadManager {
 
 
 
-  private void switchRoles(RealGamepad rg, String newRole) {
-    if (proxyGamepads.size() == 0 || (rg.pg != null && rg.pg.role.equals(newRole))) {
+  // {newId} may be null - in which case no ID is specified.
+  private void switchRoles(RealGamepad rg, String newId, String newRole) {
+    boolean change = false;
+    ProxyGamepad curPg = rg.pg;
+    if (curPg == null) {
+      change = true;
+    } else {
+      change =  newId != null && !curPg.robotId.equals(newId); // New robot ID
+      change = change || !curPg.role.equals(newRole); // New role
+    }
+
+    if (proxyGamepads.size() == 0 || !change) {
       // Nothing to do. Either there are no proxy gamepads (an unlikely situation)
-      // or rg is already mapped to a proxy gamepad with role {newRole} 
+      // or rg is already mapped to a proxy gamepad with matching role and id 
       return; // *********** EARLY RETURN ***********
     }
 
-    // If previously unmapped, the default robot ID is always the ID of the
-    // first proxy gamepad.
     String defaultRobotId = proxyGamepads.get(0).robotId;
-    String robotId = rg.pg == null ? defaultRobotId : rg.pg.robotId;
+    String robotId = newId;
+
+    if (robotId == null) {
+      // No robot ID is specified, so we pick one. If possible, we keep the
+      // current robotID. However, if previously unmapped, the default robot ID
+      // is always the ID of the first proxy gamepad.
+      robotId = rg.pg == null ? defaultRobotId : rg.pg.robotId;
+    }
 
     // Find a matching proxy gamepad.
     ProxyGamepad pgNew = null;
@@ -310,7 +325,7 @@ class GamepadManager {
     }
 
     if (pgNew == null) {
-      System.err.println("Could not find a proxy gamepad with role " + newRole);
+      System.err.println("Could not find a proxy gamepad with role " + newRole + " and Id " + robotId);
     } else {
       assert(rg.pg != pgNew); // we already checked for this condition earlier
       linkGamepads(rg, pgNew);

@@ -71,7 +71,7 @@ class Robot {
     double y = drive.y;
     double side = drive.side;
     double a = drive.a;
-    
+
     if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
       fill(255, 0, 0);
       noLoop();
@@ -94,7 +94,7 @@ class Robot {
     strokeWeight(1);
     rect(0, 0, pixSide, pixSide);  
     fill(0);
-    
+
     // Render Robot ID in the center
     float adj0 = 5;
     text(id, -adj0, adj0);
@@ -105,7 +105,7 @@ class Robot {
     text("L", -pixSide/2, adj - pixSide/2);
     text("R", pixSide/2 - adj, adj - pixSide/2);
     popMatrix();
-    
+
     visualizeSensorData();
   }
 
@@ -134,7 +134,11 @@ class Robot {
   void visualizeSensorData() {
     if (sensors.numColorSensors()>0) {
       fill(sensors.sred(0), sensors.sgreen(0), sensors.sblue(0));
-      rect(width-50, height-50, 50, 50);
+      if (id.equals(ROBOT_1)) {
+        rect(width-120, height-50, 50, 50);
+      } else if (id.equals(ROBOT_2)) {
+        rect(width-60, height-50, 50, 50);
+      }
     }
   }
 };

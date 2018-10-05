@@ -2,6 +2,12 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 5, 2018-B JMJ  Finished implementation of multiple robots
+Implemented selection of robot - the hat position of the controller is used to specify which robot a particular real gamepad is to
+be bound to. hat+a, hat+b - selects a role AND robot, while START+a, START+b - selects just the role, keeping the robot 
+the same (unless there wasn't a robot selected, in which case the robot with id ROBOT_1 is selected). This logic is implemented in `checkMappings` in the main program and
+`GamepadManager.switchRoles`. The logic is subtle.
+
 ## October 5, 2018-A JMJ  Implemented multiple robots - mostly
 The main program (`simple_robot_simulator.pde`) initializes an array of robots, `g_robots`, calling `newRobot` to create a robot with a particular Id and placed
 at a particular position and orientation on the field. The main draw method has been updated to process all the robots.

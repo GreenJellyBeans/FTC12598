@@ -52,8 +52,8 @@ void setup() {
 // with initial position ({x}, {y}) in meters and heading {a} 
 // in radians
 Robot newRobot(String robotId, color c, double x, double y, double a) {
-  GamepadInterface gamepad1 = g_gamepadMgr.newProxyGamepad(ROBOT_1, ROLE_A);
-  GamepadInterface gamepad2 = g_gamepadMgr.newProxyGamepad(ROBOT_1, ROLE_B); 
+  GamepadInterface gamepad1 = g_gamepadMgr.newProxyGamepad(robotId, ROLE_A);
+  GamepadInterface gamepad2 = g_gamepadMgr.newProxyGamepad(robotId, ROLE_B); 
   Robot r =  new Robot(robotId, c, g_field, gamepad1, gamepad2) ;
   r.place(x, y, a);
   return r;
@@ -112,11 +112,27 @@ void checkMappings() {
   for (GamepadManager.RealGamepad rg : g_gamepadMgr.realGamepads) {
     if (rg == null) continue; // ********* CONTINUE
 
-    if (rg.start()) {
+    // Check if the hat specifies a valid robot ID
+    // 2 == UP == ROBOT_1; 4 == RIGHT == ROBOT_2   
+    int hatPos = rg.hatPos();
+    boolean idSelected = hatPos == 2 || hatPos == 4;
+    
+    // Check if a role has been identified
+    boolean roleSelected = rg.a() || rg.b();
+
+    // Either START must be pressed or a Robot ID must be specified (hat pressed),
+    // plus the role identifed.
+    if (roleSelected && (idSelected || rg.start())) {
+      String robotId = null;
+      if (hatPos == 2) {
+        robotId = ROBOT_1;
+      } else if (hatPos == 4) {
+        robotId = ROBOT_2;
+      }
       if (rg.a()) {
-        g_gamepadMgr.switchRoles(rg, ROLE_A);
+        g_gamepadMgr.switchRoles(rg, robotId, ROLE_A);
       } else if (rg.b()) {
-        g_gamepadMgr.switchRoles(rg, ROLE_B);
+        g_gamepadMgr.switchRoles(rg, robotId, ROLE_B);
       }
     }
   }
