@@ -14,8 +14,8 @@ final double EPSILON_ANGLE = 0.001;  // Angle amount (radians) considered to be 
 // All coordinates are field coordinates
 class Wall {
   final boolean isBoundary; // True iff the wall is a field boundary
-  double x; // of midpoint - in m
-  double y; // of midpoint - in m
+  double cx; // of midpoint - in m
+  double cy; // of midpoint - in m
   double len; // length - in m
   double aN; // angle of normal - in radians
   double nx; // unit vector of normal - x component
@@ -31,8 +31,8 @@ class Wall {
 
   // Place wall at new location and orientation
   void reposition(double x, double y, double aN) {
-    this.x = x;
-    this.y = y;
+    this.cx = x;
+    this.cy = y;
     this.aN = aN;
     this.nx = Math.cos(aN);
     this.ny = Math.sin(aN);
@@ -55,16 +55,26 @@ class Wall {
       }
     } else {
       // Quick check if the non-boundary wall is too far away from point
-      double distToCenter = distance(px, py, x, y);
+      double distToCenter = distance(px, py, cx, cy);
       if (distToCenter > len) {
         return 0; // ****** EARLY RETURN
       }
     }
 
-
     // We now have to transform (px, py) into the wall's coordinate system, and determine how
     // much "behind" the wall the point is, and calculate the collision force magnitude appropriately.
     // If it is not behind the wall, the magnetude is zero, of course.
+    double x = px-cx;
+    double y = py-cy;
+    // Note that nx is cos(aN) and ny is sin(aN), where aN is
+    // the angle of the normal to the x-axis.
+    double xx = x * nx + y *ny;
+    double yy = -x * ny + y * nx;
+    if (xx < 0 && Math.abs(yy) < len /2) {
+      // Collision!
+      double FORCE_FACTOR = 10;
+      return  -xx * FORCE_FACTOR; // We return a positive value always
+    }
     return 0;
   }
 
@@ -136,4 +146,12 @@ boolean sameAngle(double a, double b) {
 double normalizeAngle(double a) {
   final double twoPi = 2*Math.PI;
   return  a < 0 ?  a = twoPi - ((-a) % twoPi) : a % twoPi;
+}
+
+void testCollisionPhysics() {
+  final double SIZE = 10;
+  double cx = SIZE/2;
+  double cy = SIZE;
+  Wall w = new Wall(cx, cy, SIZE, -Math.PI/2);
+  println("MAG: " + w.collisionMagnitude(cx, cy+0.001));
 }

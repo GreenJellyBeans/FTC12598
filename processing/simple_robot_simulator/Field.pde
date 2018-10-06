@@ -4,7 +4,7 @@
 class Field {
 
   public final double BREADTH = 12*12*0.0254; // field width in meters (12 ft).; // in meters
-  public final double DEPTH = BREADTH * 1.5;  // field depth in meters (along the y axis)
+  public final double DEPTH = BREADTH;  // field depth in meters (along the y axis)
   public final color MAT_COLOR = 128; // Color of the mat.
   final int FIELD_OFFSET_PIXELS = 50; // Offset from origin (top-left)
   final int FIELD_DEPTH_PIXELS = height - 2 * FIELD_OFFSET_PIXELS;
