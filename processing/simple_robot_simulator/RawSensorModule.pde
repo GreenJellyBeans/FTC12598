@@ -96,11 +96,11 @@ class RawSensorModule {
   // of diameter {constant colorSensorDiameter}
   // at field location ({x}, {y}). All units in meters. Returns a composite color value 
   color senseFloorColor(double x, double y) {
-    final int size = f.elements.FLOOR_PIXEL_SIZE;
+    final double FPM = f.elements.FLOORPIX_PER_M;
     // We have to tralsform field coordinates (x,y) to the
     // pre-rendered pixel buffer.
-    int bx = bound((int) (x/f.WIDTH*size), 0, size - 1);
-    int by = bound((int) ((f.WIDTH-y)/f.WIDTH*size), 0, size - 1);
+    int bx = bound((int) (x * FPM), 0, f.elements.FLOOR_PIXEL_BREADTH - 1);
+    int by = bound((int) ((f.DEPTH-y) * FPM), 0, f.elements.FLOOR_PIXEL_DEPTH - 1);
     return floorPixels.get(bx, by);
   }
 
@@ -116,7 +116,9 @@ class RawSensorModule {
 
     // Retrieve and validate cached version...
     boolean sigMatch = false;
-    int size = f.elements.FLOOR_PIXEL_SIZE;
+    int sizeX = f.elements.FLOOR_PIXEL_BREADTH;
+    int sizeY = f.elements.FLOOR_PIXEL_DEPTH;
+   
     if (sigF.exists()) {
       byte[] prevSig = loadBytes(sigFileName);
       if (prevSig != null) {
@@ -135,10 +137,10 @@ class RawSensorModule {
       } else {
         img.loadPixels();
         color[] cachedPix = img.pixels;
-        if (img.height != size || img.width != size || cachedPix.length != size * size) {
+        if (img.height != sizeY || img.width != sizeX || cachedPix.length != sizeX * sizeY) {
           println("Cached blurry file dimensions are wrong; re-creating cache.");
         } else {
-          return new PixelHelper(cachedPix, size, size); // ****** EARLY RETURN ****
+          return new PixelHelper(cachedPix, sizeX, sizeY); // ****** EARLY RETURN ****
         }
       }
     }
@@ -150,7 +152,7 @@ class RawSensorModule {
     println("*********************************************************");
     PixelHelper rawPix = f.elements.generateFloorPixels();
     PixelHelper blurredPix =  rawPix.blurredCopy(BLUR_RADIUS);
-    PImage img = createImage(size, size, RGB);
+    PImage img = createImage(sizeX, sizeY, RGB);
     img.loadPixels();
     color[] destPixels = img.pixels;
     assert(destPixels.length == blurredPix.pix.length);

@@ -75,14 +75,17 @@ class FieldElements {
   // The resolution of this pixel array is different from the screen, so we
   // need separate scaling and drawing functions, typically beginning with "floor".
   //
-  final int FLOOR_PIXEL_SIZE  = 1000; // This is the size of the PGraphics buffer into which the floor and field elements
+  final int FLOOR_PIXEL_BREADTH  = 1000; // This is the width of the PGraphics buffer into which the floor and field elements
+  final int FLOOR_PIXEL_DEPTH; // This is the height of the PGraphics buffer into which the floor and field elements
+
   // are rendered
   final double FLOORPIX_PER_M; // Floor pixels per meter
 
 
   FieldElements(Field f) {
     field = f;
-    FLOORPIX_PER_M = FLOOR_PIXEL_SIZE / f.WIDTH; // floor pixels per meter
+    FLOOR_PIXEL_DEPTH = (int) (FLOOR_PIXEL_BREADTH * f.DEPTH / f.BREADTH);
+    FLOORPIX_PER_M = FLOOR_PIXEL_BREADTH / f.BREADTH; // floor pixels per meter
   }
 
 
@@ -203,13 +206,13 @@ class FieldElements {
   // Generate a pixel array that represents the the mat background and visible floor elements.
   // This is for input to any color sensor simulation
   PixelHelper generateFloorPixels() {
-    PGraphics floorPG = createGraphics(FLOOR_PIXEL_SIZE, FLOOR_PIXEL_SIZE);
+    PGraphics floorPG = createGraphics(FLOOR_PIXEL_BREADTH, FLOOR_PIXEL_DEPTH);
     floorPG.beginDraw();
     floorPG.background(field.MAT_COLOR);
     renderVisibleFloorElements(floorPG);
     floorPG.endDraw();
     floorPG.loadPixels();
-    return  new PixelHelper(floorPG.pixels, FLOOR_PIXEL_SIZE, FLOOR_PIXEL_SIZE);
+    return  new PixelHelper(floorPG.pixels, FLOOR_PIXEL_BREADTH, FLOOR_PIXEL_DEPTH);
   }
 
   // Render just the elements that are visible to
@@ -320,6 +323,6 @@ class FieldElements {
 
   // Floor coordinates (in pixels) of field cordinate {y} (in meters)
   private float floorY(double y) {
-    return (float) (FLOOR_PIXEL_SIZE - y * FLOORPIX_PER_M); // y grows upwards, py grows downwards
+    return (float) (FLOOR_PIXEL_DEPTH - y * FLOORPIX_PER_M); // y grows upwards, py grows downwards
   }
 }

@@ -2,6 +2,12 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 5, 2018-D JMJ  Support a non-square field
+This is really to make it viable for FRC, which has a rectangular field. Had to replace the `Field.WIDTH` with two constants,
+`Field.BREADTH` (along x-axis) and `Field.DEPTH` (along y-axis). This of course had a ripple-effect in other calculations.
+The pre-rendered blurry floor also had to be made non-square. The floor tile-rendering code had to be changed slightly to
+completely tile the field.
+
 ## October 5, 2018-C JMJ  Beginning implementation of collision physics
 Most of the code is in `CollisionPhysics.pde`, which contains a collection of classes and methods:
 The `Wall` class keeps information about a single vertical wall - the position of it's center, the orientation of it's normal,

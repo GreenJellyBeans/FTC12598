@@ -72,7 +72,7 @@ class Robot {
     double side = drive.side;
     double a = drive.a;
 
-    if (x < 0 || x > field.WIDTH || y < 0 || y > field.WIDTH) {
+    if (x < 0 || x > field.BREADTH || y < 0 || y > field.DEPTH) {
       fill(255, 0, 0);
       noLoop();
       field.addExtendedStatus("done");

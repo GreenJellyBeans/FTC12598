@@ -3,11 +3,12 @@
 //
 class Field {
 
-  public final double WIDTH = 12*12*0.0254; // field width in meters (12 ft).; // in meters
+  public final double BREADTH = 12*12*0.0254; // field width in meters (12 ft).; // in meters
+  public final double DEPTH = BREADTH * 1.5;  // field depth in meters (along the y axis)
   public final color MAT_COLOR = 128; // Color of the mat.
   final int FIELD_OFFSET_PIXELS = 50; // Offset from origin (top-left)
-  final int FIELD_WIDTH_PIXELS = height - 2 * FIELD_OFFSET_PIXELS;
-  final double PIX_PER_M = FIELD_WIDTH_PIXELS / WIDTH; // pixels per meter
+  final int FIELD_DEPTH_PIXELS = height - 2 * FIELD_OFFSET_PIXELS;
+  final double PIX_PER_M = FIELD_DEPTH_PIXELS / DEPTH; // pixels per meter
   String status = "NOTHING"; // Single line of status printed below the field.
   String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
   final FieldElements elements = new FieldElements(this);
@@ -23,15 +24,19 @@ class Field {
     fill(MAT_COLOR);
     stroke(0);
     strokeWeight(4);
-    drawRect(WIDTH/2, WIDTH/2, WIDTH, WIDTH);
+    drawRect(BREADTH/2, DEPTH/2, BREADTH, DEPTH);
 
     // Draw foam tile boundaries.
+    final double TILE_WIDTH = (0.3048*12)/6; // Six tiles per 12 feet, in meters
     strokeWeight(1);
     stroke(100);
-    for (int i = 1; i <= 5; i++) {
-      double offset = i * WIDTH/6;
-      drawLine(offset, 0, offset, WIDTH);
-      drawLine(0, offset, WIDTH, offset);
+    for (int i = 1; i <= (int) DEPTH/TILE_WIDTH; i++) {
+      double offset = i * TILE_WIDTH;
+      drawLine(0, offset, BREADTH, offset); // Horizontal lines
+    }
+    for (int i = 1; i <= BREADTH/TILE_WIDTH; i++) {
+      double offset = i * TILE_WIDTH;
+      drawLine(offset, 0, offset, DEPTH); // Vertical lines
     }
 
     // draw field elements
@@ -40,7 +45,7 @@ class Field {
     // Status
     fill(0);
     drawText(status, 0, 0, 0, 20);
-    drawText(extendedStatus, WIDTH, WIDTH, 20, 0);
+    drawText(extendedStatus, BREADTH, DEPTH, 20, 0);
     extendedStatus = "";
   }
 

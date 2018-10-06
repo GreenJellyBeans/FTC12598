@@ -74,8 +74,8 @@ class MeccanumDrive {
 
     // Initial position and orientation - can be changed
     // by using place().
-    this.x = field.WIDTH/2;
-    this.y = field.WIDTH/2;
+    this.x = field.BREADTH/2;
+    this.y = field.DEPTH/2;
     this.a = 0;
   }
 

@@ -73,9 +73,9 @@ class Wall {
   // For it to be a boundary wall it has to be right on the boundary of
   // the field.
   private boolean boundaryWall(double x, double y, double len, double aN) {
-    boolean bX =  sameLength(x, 0) || sameLength(x, g_field.WIDTH);
-    boolean bY =  sameLength(y, 0) || sameLength(y, g_field.WIDTH);
-    boolean bLen = sameLength(len, g_field.WIDTH);
+    boolean bX =  sameLength(x, 0) || sameLength(x, g_field.BREADTH);
+    boolean bY =  sameLength(y, 0) || sameLength(y, g_field.DEPTH);
+    boolean bLen = sameLength(len, g_field.BREADTH) || sameLength(len, g_field.DEPTH); // slightly lax but ok
     boolean bA = sameAngle(aN, 0) || sameAngle(aN, Math.PI/2) 
       || sameAngle(aN, Math.PI) || sameAngle(aN, Math.PI*3/2);
     return bX && bY && bLen && bA;
@@ -85,7 +85,7 @@ class Wall {
   // Returns true iff the point ({px}, {py}) is within
   // the field boundary
   private boolean insideField(double px, double py) {
-    return px > 0 && px < g_field.WIDTH && py > 0 && py < g_field.WIDTH;
+    return px > 0 && px < g_field.BREADTH && py > 0 && py < g_field.DEPTH;
   }
 };
 
