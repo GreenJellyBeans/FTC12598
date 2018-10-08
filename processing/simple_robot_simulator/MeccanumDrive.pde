@@ -182,7 +182,7 @@ class MeccanumDrive {
     double oldY = y;
     x += dT * (vx + vxNew)/2;
     y += dT * (vy + vyNew)/2;
-    a += dT * (va + vaNew)/2;// % 2*Math.PI;
+    a = normalizeAngle(a + dT * (va + vaNew)/2);
 
     // Conditionally add to the trail
     if (!samePoint(oldX, oldY, x, y)) {
