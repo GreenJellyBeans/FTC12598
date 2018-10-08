@@ -2,6 +2,9 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 8, 2018-D JMJ  Fixed bug calculating forces in MeccanumDrive
+`MeccanumDrive.simLoop` had it's fronts and rights reversed when computing the net force along the x and y axes. This error was not detected earlier
+
 ## October 5, 2018-D JMJ  Support a non-square field
 This is really to make it viable for FRC, which has a rectangular field. Had to replace the `Field.WIDTH` with two constants,
 `Field.BREADTH` (along x-axis) and `Field.DEPTH` (along y-axis). This of course had a ripple-effect in other calculations.

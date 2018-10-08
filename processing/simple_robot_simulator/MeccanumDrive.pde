@@ -128,8 +128,9 @@ class MeccanumDrive {
     double frontForce = frontMotiveForce();
 
     // Convert forces to the field's frame of reference...
-    double motiveFx = rightForce*Math.cos(a) - frontForce*Math.sin(a);
-    double motiveFy = rightForce*Math.sin(a) + frontForce*Math.cos(a);
+    // Note: Robot is pointing in the direction of {a}. 
+    double motiveFx = frontForce*Math.cos(a) - rightForce*Math.sin(a);
+    double motiveFy = frontForce*Math.sin(a) + rightForce*Math.cos(a);
 
     // Apply dampening effects -  acts in a direction opposite to the current direction of travel of the robot
     // This includes the extra load produced by non-powered motors. This is a big simplification, because non-powered
