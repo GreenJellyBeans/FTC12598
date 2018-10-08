@@ -10,27 +10,7 @@
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
 class MecanumDrive {
-  // Only metric units allowed.
-  //
-  final double mass = 42/2.2; // In kg
-  final double weight = mass * 9.8; // In N.
-  final double staticLinFriction = 0.02; // Coef. of static friction - unitless
-  final double dynamicLinFriction = 0.02; // Coef. of dynamic friction - unitless
-  final double dampingTorqueAdjustment = 0.45; // Factor applied when converting max damping force to torque
-  final double side = 17*0.0254; // side of the square robot, m. (17 inches).
-  final double rotInertia = mass * side * side / 6; // Rotational inertia in kg-m^2 - rect prism of uniform density
-  final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
-  final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
-  // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
-
-  final double DISTANCE_ZERO = 0.001; // 1mm is considered close enough to be the same length/distance/position
-  final double POWER_ZERO = 0.05; // Unit-less motor power. Values less than this are considered to be no power.
-  final double LIN_SPEED_ZERO = 0.001; // In m/s. Less than 1mm per second is considered NOT moving
-  final double ANGULAR_SPEED_ZERO = 0.1*Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
-  final double FORCE_MAG_ZERO = weight/10000; // Forces < 0.01% of the weight of the robot are considered effectively no force 
-  final double TORQUE_MAG_ZERO = FORCE_MAG_ZERO*side; // Base it off the zero force and side of the robot
-  final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*4; // N. A simple approximation of the impact of the drag of an unpowered motor.
-
+  final RobotProperties props;
   // In reality this depends on orientation of the wheels, but we just assume it is
   // isotropic against the prevailing direction of motion of the robot.
   // These adjust and set the direction for each wheel
@@ -68,8 +48,9 @@ class MecanumDrive {
 
 
   // Create a robot at the specified position
-  public MecanumDrive(Field field, color trailColor) {
+  public MecanumDrive(Field field, RobotProperties props, color trailColor) {
     this.field = field;
+    this.props = props;
     this.trail = new Trail(field, trailColor);
 
     // Initial position and orientation - can be changed
@@ -139,14 +120,14 @@ class MecanumDrive {
     double dampForce  = maxDampingForce();
     double hyp = Math.sqrt(vx*vx + vy*vy);
     double dampFx, dampFy;
-    if (!noSpeed(hyp)) {
+    if (!props.noSpeed(hyp)) {
       // Nonzero current velocity
       dampFx = Math.abs((vx/hyp)*dampForce);
       dampFy = Math.abs((vy/hyp)*dampForce);
     } else {
       // Current velocity is zero
       double hyp2 = Math.sqrt(motiveFx*motiveFx + motiveFy*motiveFy);
-      if (noForce(hyp2)) {
+      if (props.noForce(hyp2)) {
         // Current velocity is zero, and no motive force. Let's
         // set everything to 0 - the velocity will thus remain 0.
         dampFx = motiveFx = dampFy = motiveFy = 0;
@@ -186,7 +167,7 @@ class MecanumDrive {
     a = normalizeAngle(a + dT * (va + vaNew)/2);
 
     // Conditionally add to the trail
-    if (!samePoint(oldX, oldY, x, y)) {
+    if (!props.samePoint(oldX, oldY, x, y)) {
       trail.addPoint(x, y);
     }
 
@@ -223,13 +204,13 @@ class MecanumDrive {
   // simulate the torque-RPM curves of a typical motor. So we're taking a ham-handed approach
   // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
   double motiveForce(double power) {
-    double dist = this.side * FORCE_FRAC; // dist from center to wheel in m
+    double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
     double vLin = Math.sqrt(vx*vx + vy*vy);
     double vAng = Math.abs(va * dist); // va is in rad/sec
     double vTot = vLin + vAng;
-    double MAX_MOTIVE_FORCE_PER_WHEEL = weight*0.1;
+    double MAX_MOTIVE_FORCE_PER_WHEEL = props.weight*0.1;
     double force = 0;
-    if (noSpeed(vTot)) {
+    if (props.noSpeed(vTot)) {
       force = MAX_MOTIVE_FORCE_PER_WHEEL;
     } else {
       force = Math.min(MAX_MOTIVE_FORCE_PER_WHEEL, Math.abs(power/vTot));
@@ -245,13 +226,13 @@ class MecanumDrive {
 
   // Motive force along the *robot's* x-axis (side-to-side), NOT including friction effects
   private  double rightMotiveForce() { 
-    return FORCE_FRAC*(motiveForce(pFL) - motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
+    return props.FORCE_FRAC*(motiveForce(pFL) - motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
   }
 
 
   // Motive force along the *robot's* y-axis (front-to-back), NOT including friction effects
   private  double frontMotiveForce() {
-    return FORCE_FRAC*(motiveForce(pFL) + motiveForce(pFR) + motiveForce(pBL) + motiveForce(pBR));
+    return props.FORCE_FRAC*(motiveForce(pFL) + motiveForce(pFR) + motiveForce(pBL) + motiveForce(pBR));
   }
 
 
@@ -261,7 +242,7 @@ class MecanumDrive {
     // So the distance of each point of contact from the center is {this.side} * (1/2) * 1/cos(45 deg) = (1/2)*sqrt(2) =cos(45 deg) 
     // which conveniently happens to be {this.side} * FORCE_FRAC
     // We assume +ve torque will make the robot rotate counterclockwise. 
-    double dist = this.side * FORCE_FRAC;
+    double dist = props.side * props.FORCE_FRAC;
     return dist * (-motiveForce(pFL) + motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
   }
 
@@ -269,24 +250,24 @@ class MecanumDrive {
   // Max resistive force - a combination of friction and resistive effects of any powered-down motors
   // Return value is positive.
   double maxDampingForce() {
-    return weight*(isMoving() ? dynamicLinFriction : staticLinFriction) + motorDragForce();
+    return props.weight*(props.isMoving(vx, vy) ? props.dynamicLinFriction : props.staticLinFriction) + motorDragForce();
   }
 
 
   double maxDampingTorque() {
-    double dist = this.side * FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
-    return noRotation(va) ? 0 : dist*maxDampingForce()*dampingTorqueAdjustment;
+    double dist = props.side * props.FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
+    return props.noRotation(va) ? 0 : dist*maxDampingForce()*props.dampingTorqueAdjustment;
   }
 
 
   // Resistive force in N produced by any motors that are powered off
   private double motorDragForce() {
     int numPoweredOff = 0;
-    if (noPower(pFL)) numPoweredOff++;
-    if (noPower(pFR)) numPoweredOff++;
-    if (noPower(pBL)) numPoweredOff++;
-    if (noPower(pBR)) numPoweredOff++;
-    return numPoweredOff*MOTOR_DRAG_FORCE;
+    if (props.noPower(pFL)) numPoweredOff++;
+    if (props.noPower(pFR)) numPoweredOff++;
+    if (props.noPower(pBL)) numPoweredOff++;
+    if (props.noPower(pBR)) numPoweredOff++;
+    return numPoweredOff*props.MOTOR_DRAG_FORCE;
   } 
 
 
@@ -296,7 +277,7 @@ class MecanumDrive {
     assert(maxDampForce) >= 0;
     double newSpeed;
 
-    if (noSpeed(curSpeed)) {
+    if (props.noSpeed(curSpeed)) {
       if (Math.abs(motiveForce) < maxDampForce) {
         // Not enough motive force to produce motion
         newSpeed = 0;
@@ -304,13 +285,13 @@ class MecanumDrive {
         double netForce = motiveForce - Math.signum(motiveForce)*maxDampForce;
         // We expect the net force to be in the direction of the motive force
         assert(Math.signum(netForce) == Math.signum(motiveForce));
-        newSpeed = curSpeed + dT * netForce / mass;
+        newSpeed = curSpeed + dT * netForce / props.mass;
       }
     } else {
       // Nonzero current speed - dampening force is in the direction opposing the current direction
-      assert(linearDirection(curSpeed) != 0); // Because speed is not zero
-      double netForce = motiveForce - Math.signum(linearDirection(curSpeed))*maxDampForce;
-      newSpeed = curSpeed + dT * netForce / mass;
+      assert(props.linearDirection(curSpeed) != 0); // Because speed is not zero
+      double netForce = motiveForce - Math.signum(props.linearDirection(curSpeed))*maxDampForce;
+      newSpeed = curSpeed + dT * netForce / props.mass;
       if (Math.signum(curSpeed) != Math.signum(newSpeed)) {
         // We don't allow zero-crossings, because it involves incorrect application of damping force - when the change in
         // direction is only because of the damping force.
@@ -330,7 +311,7 @@ class MecanumDrive {
     assert(maxDampTorque) >= 0;
     double newSpeed;
 
-    if (noRotation(curSpeed)) {
+    if (props.noRotation(curSpeed)) {
       if (Math.abs(motiveTorque) < maxDampTorque) {
         // Not enough motive force to produce motion
         newSpeed = 0;
@@ -338,13 +319,13 @@ class MecanumDrive {
         double netTorque = motiveTorque - Math.signum(motiveTorque)*maxDampTorque;
         // We expect the net force to be in the direction of the motive force
         assert(Math.signum(netTorque) == Math.signum(motiveTorque));
-        newSpeed = curSpeed + dT * netTorque / rotInertia;
+        newSpeed = curSpeed + dT * netTorque / props.rotInertia;
       }
     } else {
       // Nonzero current speed - dampening force is in the direction opposing the current direction
-      assert(angularDirection(curSpeed) != 0); // Because speed is not zero
-      double netTorque = motiveTorque - Math.signum(linearDirection(curSpeed))*maxDampTorque;
-      newSpeed = curSpeed + dT * netTorque / rotInertia;
+      assert(props.angularDirection(curSpeed) != 0); // Because speed is not zero
+      double netTorque = motiveTorque - Math.signum(props.linearDirection(curSpeed))*maxDampTorque;
+      newSpeed = curSpeed + dT * netTorque / props.rotInertia;
       if (Math.signum(curSpeed) != Math.signum(newSpeed)) {
         // We don't allow zero-crossings, because it involves incorrect application of damping force - when the change in
         // direction is only because of the damping force.
@@ -353,60 +334,5 @@ class MecanumDrive {
       }
     }
     return newSpeed;
-  }
-
-
-  private boolean isMoving() {
-    return Math.max(Math.abs(vx), Math.abs(vy)) > LIN_SPEED_ZERO;
-  }
-
-
-  // Returns -1 | 0 | 1 depending on whether speed (in m/sec) is -ve, 0 or +ve
-  //
-  private int linearDirection(double speed) {
-    return (speed < -LIN_SPEED_ZERO) ? -1 : ((speed > LIN_SPEED_ZERO) ? 1 : 0);
-  }
-
-
-  // Returns -1 | 0 | 1 depending on whether speed (in m/sec) is -ve, 0 or +ve
-  //
-  private int angularDirection(double omega) {
-    return (omega < -ANGULAR_SPEED_ZERO) ? -1 : ((omega > ANGULAR_SPEED_ZERO) ? 1 : 0);
-  }
-
-
-  // Effectively no power  - this is the unitless power used to control the motor (setPower)
-  private boolean noPower(double p) {
-    return Math.abs(p) < POWER_ZERO;
-  }
-
-
-  // Effectively no speed  - {s} in m/sec
-  private boolean noSpeed(double s) {
-    return Math.abs(s) < LIN_SPEED_ZERO; // 0.1% of the weight of the robot - somewhat arbitrary
-  }
-
-
-  // Effectively no angular velocity  - {a} in rad / sec
-  private boolean noRotation(double a) {
-    return Math.abs(a) < ANGULAR_SPEED_ZERO;
-  }
-
-
-  // Effectively no force  - {f} in N
-  private boolean noForce(double f) {
-    return Math.abs(f) < FORCE_MAG_ZERO;
-  }
-
-
-  // Effectively no torque  - {t} in Nm
-  private boolean noTorque(double t) {
-    return Math.abs(t) < TORQUE_MAG_ZERO;
-  }
-
-
-  // Points are close enough to be considered the same
-  private boolean samePoint(double x1, double y1, double x2, double y2) {
-    return (Math.abs(x1-x2) + Math.abs(y1-y2)) < DISTANCE_ZERO;
   }
 }

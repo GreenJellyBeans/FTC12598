@@ -2,8 +2,14 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
-## October 8, 2018-D JMJ  Fixed bug calculating forces in MeccanumDrive
-`MeccanumDrive.simLoop` had it's fronts and rights reversed when computing the net force along the x and y axes. This error was not detected earlier
+## October 8, 2018-B JMJ  Some code reorganization
+Moved several robot properties and helper methods based on those properties from `MecanumDrive` to new class `RobotProperties`. These include mass, various friction coefficients, and
+methods `newForce`, etc, that depend on the absolute mass of the robot.  These are not static constants as they vary from robot instance to instance (in principle).
+The primary motivation is to make these properties and methods available to other classes, such as `Wall`, and anyways, they were not specific to a mecanum drive.
+`RobotProperties` is currently created in the `Robot` constructor and passed in as a constructor parameter to `MecanumDrive`.
+
+## October 8, 2018-A JMJ  Fixed bug calculating forces in MecanumDrive
+`MecanumDrive.simLoop` had it's fronts and rights reversed when computing the net force along the x and y axes. This error was not detected earlier
 
 ## October 5, 2018-D JMJ  Support a non-square field
 This is really to make it viable for FRC, which has a rectangular field. Had to replace the `Field.WIDTH` with two constants,
@@ -240,8 +246,8 @@ It would be nice if this can be done using external data files, rather hardcodin
 
 ## September 27, 2018 JMJ Looking back at original motivations and progress
 The original motivation was and remains to allow our FTC team, and potentially other FTC teams, to do
-early prototyping and testing of autonomous programs. Since our team is trying out a meccanum-wheel based
-holonomic drive this season (2018-2019), I decided to implement a very simple 2D physics-based model of a meccanum-
+early prototyping and testing of autonomous programs. Since our team is trying out a mecanum-wheel based
+holonomic drive this season (2018-2019), I decided to implement a very simple 2D physics-based model of a mecanum-
 drive based robot
 that is integrated into an FTC field animation. I wanted to write this from scratch rather than using an existing
 2D or 3D physics library because I hoped (and still hope) for the team members to understand its inner workings
@@ -255,7 +261,7 @@ constants (such as friction forces, motor power and weight) that can be tweaked,
 serve as at least a starting point for driver practice.
 
 ### The Physics Model
-The heart of the meccanum drive simulation is in the class MeccanumDrive. It models the drive as 4 "motive" forces
+The heart of the mecanum drive simulation is in the class `MeccanumDrive`. It models the drive as 4 "motive" forces
 acting diagonally on the 4 corners of the robot, like so:
 
 ```
@@ -275,7 +281,7 @@ using a combination of weight and number of stopped motors, and this force is ap
 to the direction of motion of the *center* of the robot.
 A resistive/dampening torque is similarly applied, that is proportional
 to this aggregate friction force. This is a vast simplification, because in reality, each wheel has it's unique
-contribution to drag, taking into account it's direction (remember that these are meccanum wheels) and also
+contribution to drag, taking into account it's direction (remember that these are mecanum wheels) and also
 the relative speed of the wheels and the ground - is there slipping? If not, is the speed matching what the
 motor would have it do? So this is a very ham-handed approximation.
 2. The wheels are assumed to be perfectly located and oriented at the corners of a square.

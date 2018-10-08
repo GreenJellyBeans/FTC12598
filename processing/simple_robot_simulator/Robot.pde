@@ -9,16 +9,18 @@ class Robot {
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
   final MecanumDrive drive;
-  final DriveStraightTask driveTask;
+  final DriveTask driveTask;
   final RawSensorModule sensors;
+  final RobotProperties props;
 
   public Robot(String id, color c, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
     this.id = id;
     this.field = f;
+    this.props = new RobotProperties();
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
-    driveTask = new DriveStraightTask(this);
-    drive = new MecanumDrive(field, c);
+    driveTask = new DriveTask(this);
+    drive = new MecanumDrive(field, props, c);
     sensors = new RawSensorModule(f, this);
   }
 
@@ -69,7 +71,7 @@ class Robot {
     displayGamepadStatus("GP2", gamepad2);
     double x = drive.x;
     double y = drive.y;
-    double side = drive.side;
+    double side = props.side;
     double a = drive.a;
 
     if (x < 0 || x > field.BREADTH || y < 0 || y > field.DEPTH) {
@@ -80,7 +82,7 @@ class Robot {
 
     noStroke();
     fill(drive.trail.c);
-    field.drawCircle(x, y, drive.side/4);
+    field.drawCircle(x, y, props.side/4);
     drive.trail.draw();
 
     float pixSide = field.pixLen(side);
