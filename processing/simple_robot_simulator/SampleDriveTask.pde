@@ -82,10 +82,20 @@ class SampleDriveTask implements DriveTask {
     Field f = robot.field;
     f.addExtendedStatus(String.format("HPOWER  fwd:%5.2f  turn:%5.2f  strafe:%5.2f", fwd, turn, strafe));
 
-    double pFL = fwd + strafe + turn;
-    double pFR = fwd - strafe - turn;
-    double pBL = fwd - strafe + turn;
-    double pBR =fwd + strafe - turn;
+    // Note: +ve strafe makes the robot go right, and with
+    // the robot's front facing increasing x, to go right
+    // means to go in the direction of decreasing y:
+    //
+    //                 ^ y-axis
+    //      robot      |
+    //    ...... FL    |
+    //    .    .       --> x-axis
+    //    ...... FR
+    //
+    double pFL = fwd - strafe + turn;
+    double pFR = fwd + strafe - turn;
+    double pBL = fwd + strafe + turn;
+    double pBR = fwd - strafe - turn;
 
     // m is the max absolute value of the individual motor power amounts. If it is too small, we stop all motors.
     double m = Math.max(Math.max(Math.abs(pFL), Math.abs(pFR)), Math.max(Math.abs(pBL), Math.abs(pBR)));

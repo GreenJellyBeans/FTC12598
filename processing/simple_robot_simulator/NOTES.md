@@ -2,6 +2,17 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 8, 2018-D JMJ  Fixed bug in strafe direction
+    Note: +ve strafe makes the robot go right, and with
+    the robot's front facing increasing x, "to go right"
+    means to go in the direction of decreasing y:
+    
+                    ^ y-axis
+         robot      |
+       ...... FL    |
+       .    .       --> x-axis
+       ...... FR
+
 ## October 8, 2018-C JMJ  More code reorganization
 This reorganization is chiefly to allow independent development of multiple drive tasks without having to change the
 code in the main robot class, and also to allow different drive task implementations for different robot instances.

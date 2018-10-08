@@ -112,7 +112,7 @@ void draw() {
   prevTimeMs = now;
 
   g_field.updateStatus(String.format("t:% 7.3f", t)); 
-  
+
   // Draw the field
   g_field.draw();
 
