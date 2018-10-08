@@ -146,15 +146,14 @@ boolean sameAngle(double a, double b) {
 // Returns an equivalent angle that is within [0, 2*Pi]
 // a can be negative.
 double normalizeAngle(double a) {
-  return  a < 0 ?  a = TWO_PI - ((-a) % TWO_PI) : a % TWO_PI;
+  return  a < 0 ?  TWO_PI - ((-a) % TWO_PI) : a % TWO_PI;
 }
 
 // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
 double balancedAngle(double a) {
-  final double 
   double na = normalizeAngle(a); // always positive
-  return a < Math.PI ? a : a - TWO_PI;
+  return na < Math.PI ? na : na - TWO_PI;
 }
 
 void testCollisionPhysics() {

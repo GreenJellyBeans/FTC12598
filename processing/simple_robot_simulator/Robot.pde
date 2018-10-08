@@ -9,7 +9,7 @@ class Robot {
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
   final MeccanumDrive drive;
-  final DriveTask driveTask;
+  final DriveStraightTask driveTask;
   final RawSensorModule sensors;
 
   public Robot(String id, color c, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
@@ -17,7 +17,7 @@ class Robot {
     this.field = f;
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
-    driveTask = new DriveTask(this);
+    driveTask = new DriveStraightTask(this);
     drive = new MeccanumDrive(field, c);
     sensors = new RawSensorModule(f, this);
   }
