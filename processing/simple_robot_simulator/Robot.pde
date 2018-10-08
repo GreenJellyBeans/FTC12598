@@ -60,7 +60,7 @@ class Robot {
   public void simloop(double t, double dT) {
     drive.simloop(t, dT);
     sensors.simloop(t, dT);
-    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, drive.a));
+    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, balancedAngle(drive.a)));
   }
 
 

@@ -8,6 +8,7 @@
 
 final double EPSILON_LENGTH = 0.001; // Length amount (meters) considered to be close enough to zero
 final double EPSILON_ANGLE = 0.001;  // Angle amount (radians) considered to be close enough to  zero
+final double TWO_PI =  2*Math.PI;
 
 
 // Data for a single wall
@@ -67,7 +68,8 @@ class Wall {
     double x = px-cx;
     double y = py-cy;
     // Note that nx is cos(aN) and ny is sin(aN), where aN is
-    // the angle of the normal to the x-axis.
+    // the angle of the normal to the x-axis. We want to rotate
+    // by (-aN).
     double xx = x * nx + y *ny;
     double yy = -x * ny + y * nx;
     if (xx < 0 && Math.abs(yy) < len /2) {
@@ -144,14 +146,21 @@ boolean sameAngle(double a, double b) {
 // Returns an equivalent angle that is within [0, 2*Pi]
 // a can be negative.
 double normalizeAngle(double a) {
-  final double twoPi = 2*Math.PI;
-  return  a < 0 ?  a = twoPi - ((-a) % twoPi) : a % twoPi;
+  return  a < 0 ?  a = TWO_PI - ((-a) % TWO_PI) : a % TWO_PI;
+}
+
+// Return a value between -Pi and Pi - suitable for
+// PID algorithms and such
+double balancedAngle(double a) {
+  final double 
+  double na = normalizeAngle(a); // always positive
+  return a < Math.PI ? a : a - TWO_PI;
 }
 
 void testCollisionPhysics() {
   final double SIZE = 10;
   double cx = SIZE/2;
-  double cy = SIZE;
-  Wall w = new Wall(cx, cy, SIZE, -Math.PI/2);
-  println("MAG: " + w.collisionMagnitude(cx, cy+0.001));
+  double cy = 0;
+  Wall w = new Wall(cx, cy, SIZE, Math.PI/2);
+  println("MAG: " + w.collisionMagnitude(cx, cy+0.1));
 }
