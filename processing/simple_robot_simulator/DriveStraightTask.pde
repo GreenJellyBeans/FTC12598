@@ -1,8 +1,8 @@
 class DriveStraightTask {
 
-  double targetBearing = radians(45);
+  double targetBearing = radians(180);
   Robot ra;
-  final double Kp = 0.1;
+  final double Kp = 0.0001;
 
   public DriveStraightTask(Robot r) {
     ra=r;
@@ -21,12 +21,12 @@ class DriveStraightTask {
     f.addExtendedStatus(String.format("ERROR: %5.2f ", error));
 
     //fix it
-    double pFwd = 0.1;//0.5;
+    double pFwd = 0;//0.05;//0.5;
     double pStrafe = 0;//0.5;
     double pTurn = -error*Kp;
 
     /**/
-    MeccanumDrive d = ra.drive;
+    MecanumDrive d = ra.drive;
     d.setPowerFL(pFwd + pStrafe + pTurn);
     d.setPowerFR(pFwd - pStrafe - pTurn);
     d.setPowerBL(pFwd - pStrafe + pTurn);
@@ -43,10 +43,10 @@ class DriveStraightTask {
   }
 
   void setStartingPower() {
-    double pFwd = 0.0;//0.5;
+    double pFwd = 0.1;//0.5;
     double pStrafe = 0;//0.5;
-    double pTurn = 0.01;
-    MeccanumDrive d = ra.drive;
+    double pTurn = 0;//0.01;
+    MecanumDrive d = ra.drive;
 
     d.setPowerFL(pFwd + pStrafe + pTurn);
     d.setPowerFR(pFwd - pStrafe - pTurn);

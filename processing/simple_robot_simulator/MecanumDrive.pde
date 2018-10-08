@@ -1,5 +1,5 @@
 //
-// The MeccanumDrive class implements a very simple physics-based robot simulator
+// The MecanumDrive class implements a very simple physics-based robot simulator
 // of a 4-wheel meccanum-based holonomic drive. The physics is stripped down to 4 diagonal
 // forces on the 4 corners of a square robot producing linear and angular velocities.
 // Composite static and dynamic linear and rotational friction, specified as constants, provide
@@ -9,7 +9,7 @@
 // of robot drive control algorithms.
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
-class MeccanumDrive {
+class MecanumDrive {
   // Only metric units allowed.
   //
   final double mass = 42/2.2; // In kg
@@ -68,7 +68,7 @@ class MeccanumDrive {
 
 
   // Create a robot at the specified position
-  public MeccanumDrive(Field field, color trailColor) {
+  public MecanumDrive(Field field, color trailColor) {
     this.field = field;
     this.trail = new Trail(field, trailColor);
 

@@ -36,7 +36,7 @@ class DriveTask {
     double pFwd = 0;//0.5;
     double pStrafe = 0;//0.5;
     double pTurn = 0.1;
-    MeccanumDrive d = robot.drive;
+    MecanumDrive d = robot.drive;
 
     d.setPowerFL(pFwd + pStrafe + pTurn);
     d.setPowerFR(pFwd - pStrafe - pTurn);
@@ -106,7 +106,7 @@ class DriveTask {
 
 
   void setPowerAll(double pFL, double pFR, double pBL, double pBR) {
-    MeccanumDrive d = robot.drive;
+    MecanumDrive d = robot.drive;
     d.setPowerFL(pFL);
     d.setPowerFR(pFR);
     d.setPowerBL(pBL);
