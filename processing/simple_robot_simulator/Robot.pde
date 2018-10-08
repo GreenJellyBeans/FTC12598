@@ -3,13 +3,11 @@
 // It's purpose is for basic experimentation and validation
 // of robot drive control algorithms.
 class Robot {
-
   final String id; // Used to identify the robot and select which robot gets which gamepads
   final Field field; // Passed in during constructor - the field the robot operates within
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
   final MecanumDrive drive;
-  final DriveTask driveTask;
   final RawSensorModule sensors;
   final RobotProperties props;
 
@@ -19,7 +17,6 @@ class Robot {
     this.props = new RobotProperties();
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
-    driveTask = new DriveTask(this);
     drive = new MecanumDrive(field, props, c);
     sensors = new RawSensorModule(f, this);
   }
@@ -34,7 +31,6 @@ class Robot {
 
   public void init() {
     sensors.init();
-    driveTask.init();
   }
 
 
@@ -42,27 +38,12 @@ class Robot {
   }
 
 
-  public void start() {
-    driveTask.start();
-  }
-
-
-  public void stop() {
-    driveTask.stop();
-  }
-
-
-  public void loop(double t, double dT) {
-    driveTask.loop();
-  }
-
   // Updates the simulation,
   // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed
   // since previous call
   public void simloop(double t, double dT) {
     drive.simloop(t, dT);
     sensors.simloop(t, dT);
-    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, balancedAngle(drive.a)));
   }
 
 

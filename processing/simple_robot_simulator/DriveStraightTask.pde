@@ -1,4 +1,4 @@
-class DriveStraightTask {
+class DriveStraightTask implements DriveTask {
 
   double targetBearing = radians(180);
   Robot ra;
@@ -11,6 +11,9 @@ class DriveStraightTask {
     setStartingPower();
   }
 
+  void deinit() {
+  }
+  
   void loop() {
     //get current bearing   
     Field f = ra.field;

@@ -2,6 +2,17 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 8, 2018-C JMJ  More code reorganization
+This reorganization is chiefly to allow independent development of multiple drive tasks without having to change the
+code in the main robot class, and also to allow different drive task implementations for different robot instances.
+- Defined interface `DriveTask` and the old `DriveTask` is now `SampleDriveTask` - and now implements `DriveTask`.
+- Removed `DriveTask` from `Robot` - it lives outside robot code now. The main program code in `simple_robot_simulator.pde` now
+  creates a drive task for each robot and initializes and starts each task and directly calls each task's loop method.
+  Since the robot no longer has a drive task, I also removed its `start`, `stop` and `loop` methods.
+- The list of tasks is maintained in global variable `g_driveTasks`.
+- Moved some status reporting around. In particular, position is now reported as part of each robot's properties.
+
+
 ## October 8, 2018-B JMJ  Some code reorganization
 Moved several robot properties and helper methods based on those properties from `MecanumDrive` to new class `RobotProperties`. These include mass, various friction coefficients, and
 methods `newForce`, etc, that depend on the absolute mass of the robot.  These are not static constants as they vary from robot instance to instance (in principle).

@@ -153,11 +153,6 @@ class MecanumDrive {
     double vyNew = newLinearSpeed(vy, motiveFy, dampFy, dT);
     double vaNew = newAngularSpeed(va, motiveTorque, dampTorque, dT);
 
-    field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", pFL, pFR, pBL, pBR));
-    field.addExtendedStatus(String.format("MOTIVE  MFx:%5.2f  MFy:%5.2f  MT:%5.2f", motiveFx, motiveFy, motiveTorque));
-    field.addExtendedStatus(String.format("DAMPEN  DFx:%5.2f  DFy:%5.2f  DT:%5.2f", dampFx, dampFy, dampTorque));
-    field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vxNew, vyNew, vaNew));
-
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).
     double oldX = x;
@@ -175,6 +170,13 @@ class MecanumDrive {
     vx = vxNew;
     vy = vyNew;
     va = vaNew;
+
+    // Update status
+    field.addExtendedStatus(String.format("POS     x:%1.2f  y:%1.2f  a:%1.2f", x, y, balancedAngle(a)));
+    field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", pFL, pFR, pBL, pBR));
+    field.addExtendedStatus(String.format("MOTIVE  MFx:%5.2f  MFy:%5.2f  MT:%5.2f", motiveFx, motiveFy, motiveTorque));
+    field.addExtendedStatus(String.format("DAMPEN  DFx:%5.2f  DFy:%5.2f  DT:%5.2f", dampFx, dampFy, dampTorque));
+    field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vxNew, vyNew, vaNew));
   }
 
   // Convert robot coordinate to field coordinate - x component

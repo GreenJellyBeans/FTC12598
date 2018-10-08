@@ -1,10 +1,13 @@
-// The DriveTask collects together methods that control the robot movement
-class DriveTask {
+// A sample drive task that uses gamepad1 to control the robot. It uses the
+// left joystick's x to calculate turn amount, and the right joystick's 
+// x and y to control strafe and forward motion, respectively.
+// Also maps left and right bumpers to a fixed amount of pure turn motion.
+class SampleDriveTask implements DriveTask {
 
   final Robot robot;
   boolean gamepadEnabled = false; // Stays disabled until "A" button is pressed
 
-  public DriveTask(Robot r) {
+  public SampleDriveTask(Robot r) {
     robot = r;
   }
 
