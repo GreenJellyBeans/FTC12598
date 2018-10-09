@@ -11,10 +11,17 @@ class Field {
   final double PIX_PER_M = FIELD_DEPTH_PIXELS / DEPTH; // pixels per meter
   String status = "NOTHING"; // Single line of status printed below the field.
   String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
-  final FieldElements elements = new FieldElements(this);
+  final FieldElements elements = new FieldElements(this); 
+  Wall[] walls; // initialized in init.
 
   void init() {
     elements.load();
+    walls = new Wall[] {
+      new Wall(BREADTH/2, 0, BREADTH, Math.PI/2), // bottom
+      new Wall(BREADTH/2, DEPTH, BREADTH, -Math.PI/2), //top
+      new Wall(0, DEPTH/2, DEPTH, 0), //left
+      new Wall(BREADTH, DEPTH/2, DEPTH, -Math.PI) //right
+    };
   }
 
 

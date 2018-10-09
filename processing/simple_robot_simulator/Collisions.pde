@@ -74,8 +74,9 @@ class Wall {
     double yy = -x * ny + y * nx;
     if (xx < 0 && Math.abs(yy) < len /2) {
       // Collision!
-      double FORCE_FACTOR = 10;
-      return  -xx * FORCE_FACTOR; // We return a positive value always
+      g_field.addExtendedStatus("COLLISION!");
+      double FORCE_FACTOR = 1000;
+      return  - xx * FORCE_FACTOR; // We return a positive value always
     }
     return 0;
   }
@@ -137,7 +138,6 @@ CollisionResult calculateCollisionImpact(RobotProperties props, Wall[] walls, Po
     double cyy = cy - p.y;
     
     for (Wall w : walls) {
-
       double mag = w.collisionMagnitude(p.x, p.y);
 
       // No need to further process Wall w if it does not
@@ -166,7 +166,7 @@ CollisionResult calculateCollisionImpact(RobotProperties props, Wall[] walls, Po
     }
   }
   
-  if (props.noForce(fx) || props.noForce(fy) || props.noTorque(torque)) {
+  if (props.noForce(fx) && props.noForce(fy) && props.noTorque(torque)) {
     return null;
   }
   return new CollisionResult(fx, fy, torque);

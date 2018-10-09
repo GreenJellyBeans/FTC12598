@@ -156,16 +156,22 @@ class MecanumDrive {
     double collisionFx = 0;
     double collisionFy = 0;
     double collisionTorque = 0;
-    CollisionResult col = calculateCollisionImpact(props, null, boundaryPoints, x, y);
+    CollisionResult col = calculateCollisionImpact(props, field.walls, boundaryPoints, x, y);
+    if (col != null) {
+      field.addExtendedStatus(String.format("COLLISION fx=%5.2f fy=%5.2f torque=%5.2f", col.fx, col.fy, col.torque));
+      collisionFx = col.fx;
+      collisionFy = col.fy;
+      collisionTorque = col.torque;
+    }
 
     // Calculated updated velocities - we assume, for simplicity,
     // constant force and torque for the whole previous period of duration dT.
     // We could assume a ramped force, but that would change the equations by adding
     // nonlinear elements that would tend to 0 as dT goes to 0, so we assume dT is sufficiently
     // small to make the simulation valid enough.
-    double vxNew = newLinearSpeed(vx, motiveFx, dampFx, dT);
-    double vyNew = newLinearSpeed(vy, motiveFy, dampFy, dT);
-    double vaNew = newAngularSpeed(va, motiveTorque, dampTorque, dT);
+    double vxNew = newLinearSpeed(vx, motiveFx+collisionFx, dampFx, dT);
+    double vyNew = newLinearSpeed(vy, motiveFy+collisionFy, dampFy, dT);
+    double vaNew = newAngularSpeed(va, motiveTorque+collisionTorque, dampTorque, dT);
 
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).

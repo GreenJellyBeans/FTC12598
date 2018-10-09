@@ -2,6 +2,13 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 8, 2018-F JMJ  Milestone - collision impact with walls works!
+Currently, there are 4 hardcoded walls representing the 4 field boundary walls - these
+are in the `Field` object. The walls are bit too "springy"/elastic. Currently the impact force
+is linear in the distance that the robot penetrates the wall - there is no damping, i.e.,
+no loss of energy during impact, so the robot bounces back. But this is a pretty decent
+state of affairs, and good enough for now.
+
 ## October 8, 2018-E JMJ  Misc enhancements for collision physics
 - Implemented `calculateCollisionImpact`, though it's not tested.
 - `MecanumDrive`: keeps track of boundary points - the corners of the robot, expressed in field-coordinates.
