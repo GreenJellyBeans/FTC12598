@@ -6,6 +6,9 @@ class RobotProperties {
   //
   final double mass = 42/2.2; // In kg
   final double weight = mass * 9.8; // In N.
+  
+    // In reality this depends on orientation of the wheels, but we just assume it is
+  // isotropic against the prevailing direction of motion of the robot.
   final double staticLinFriction = 0.02; // Coef. of static friction - unitless
   final double dynamicLinFriction = 0.02; // Coef. of dynamic friction - unitless
   final double dampingTorqueAdjustment = 0.45; // Factor applied when converting max damping force to torque
@@ -69,6 +72,11 @@ class RobotProperties {
   // Effectively no torque  - {t} in Nm
   boolean noTorque(double t) {
     return Math.abs(t) < TORQUE_MAG_ZERO;
+  }
+  
+  // A length or distance close enough to zero
+  boolean noLength(double len) {
+    return Math.abs(len) < DISTANCE_ZERO;
   }
 
 

@@ -2,6 +2,13 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 8, 2018-E JMJ  Misc enhancements for collision physics
+- Implemented `calculateCollisionImpact`, though it's not tested.
+- `MecanumDrive`: keeps track of boundary points - the corners of the robot, expressed in field-coordinates.
+
+Also:
+- `MecanumDrive`: cache the values of sin(a) and cos(a) whenever angle a is updated.
+
 ## October 8, 2018-D JMJ  Fixed bug in strafe direction
     Note: +ve strafe makes the robot go right, and with
     the robot's front facing increasing x, "to go right"

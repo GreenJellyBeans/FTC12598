@@ -11,8 +11,8 @@
 //
 class MecanumDrive {
   final RobotProperties props;
-  // In reality this depends on orientation of the wheels, but we just assume it is
-  // isotropic against the prevailing direction of motion of the robot.
+  final Point[] boundaryPoints; // the 4 corners
+
   // These adjust and set the direction for each wheel
   // Typically they are set to +1 or -1, but they could be
   // individually tweaked to generate various unbalanced conditions.
@@ -25,7 +25,9 @@ class MecanumDrive {
   // Current position and orientation
   double x;
   double y;
-  double a;
+  double a; // in radians
+  double cos_a; // cos(a)
+  double sin_a; // sin(a)
 
   double vx = 0; // velocity in x-direction, m/s
   double vy = 0; // velocity in y-direction  m/s
@@ -52,12 +54,16 @@ class MecanumDrive {
     this.field = field;
     this.props = props;
     this.trail = new Trail(field, trailColor);
-
+    boundaryPoints = new Point[]{
+      new Point(), 
+      new Point(), 
+      new Point(), 
+      new Point()
+    };
+    
     // Initial position and orientation - can be changed
     // by using place().
-    this.x = field.BREADTH/2;
-    this.y = field.DEPTH/2;
-    this.a = 0;
+    place(field.BREADTH/2, field.DEPTH/2, 0);
   }
 
 
@@ -88,6 +94,9 @@ class MecanumDrive {
     this.x = x;
     this.y = y;
     this.a = a;
+    this.cos_a = Math.cos(a);
+    this.sin_a = Math.sin(a);
+    updateBoundaryPoints();
   }
 
   void stop() {
@@ -110,8 +119,8 @@ class MecanumDrive {
 
     // Convert forces to the field's frame of reference...
     // Note: Robot is pointing in the direction of {a}. 
-    double motiveFx = frontForce*Math.cos(a) - rightForce*Math.sin(a);
-    double motiveFy = frontForce*Math.sin(a) + rightForce*Math.cos(a);
+    double motiveFx = frontForce*cos_a - rightForce*sin_a;
+    double motiveFy = frontForce*sin_a + rightForce*cos_a;
 
     // Apply dampening effects -  acts in a direction opposite to the current direction of travel of the robot
     // This includes the extra load produced by non-powered motors. This is a big simplification, because non-powered
@@ -143,6 +152,11 @@ class MecanumDrive {
     double motiveTorque = motiveTorque();
     double dampTorque = maxDampingTorque();
 
+    // Calculate collision force and torque;
+    double collisionFx = 0;
+    double collisionFy = 0;
+    double collisionTorque = 0;
+    CollisionResult col = calculateCollisionImpact(props, null, boundaryPoints, x, y);
 
     // Calculated updated velocities - we assume, for simplicity,
     // constant force and torque for the whole previous period of duration dT.
@@ -160,6 +174,9 @@ class MecanumDrive {
     x += dT * (vx + vxNew)/2;
     y += dT * (vy + vyNew)/2;
     a = normalizeAngle(a + dT * (va + vaNew)/2);
+    this.cos_a = Math.cos(a);
+    this.sin_a = Math.sin(a);
+    updateBoundaryPoints();
 
     // Conditionally add to the trail
     if (!props.samePoint(oldX, oldY, x, y)) {
@@ -181,12 +198,12 @@ class MecanumDrive {
 
   // Convert robot coordinate to field coordinate - x component
   double fieldX(double rx, double ry) {
-    return x + rx*Math.cos(a) - ry*Math.sin(a);
+    return x + rx*cos_a - ry*sin_a;
   }
 
   // Convert robot coordinate to field coordinate - x component
   double fieldY(double rx, double ry) {
-    return y + rx*Math.sin(a) + ry*Math.cos(a);
+    return y + rx*sin_a + ry*cos_a;
   }
 
 
@@ -337,4 +354,29 @@ class MecanumDrive {
     }
     return newSpeed;
   }
+
+
+
+  // The boundaryPoints array keeps track of the locations of
+  // the corners of the robot, in field coordinates; these change as
+  // the robot moves, so need to be updated constantly.
+  void updateBoundaryPoints() {
+    double d = props.side/2;
+    // This generates four combinations of {-d, d} X {-d, d}, which 
+    // are the corners in robot-coordinates; those then have to be tranformed
+    // to field coordinates
+    int i = 0;
+    for (int ii = -1; ii <= 1; ii+= 2) {
+      double x0  = d*ii;
+      for (int jj = -1; jj <= 1; jj+= 2) {
+        double y0  = d*jj;
+        Point p  = boundaryPoints[i];
+        p.set(fieldX(x0, y0), fieldY(x0, y0));
+        // uncomment to verify we got the corners right...
+        // fill(0); field.drawCircle(p.x, p.y, 0.05);
+        i++;
+      }
+    }
+    assert(i == 4);
+  };
 }

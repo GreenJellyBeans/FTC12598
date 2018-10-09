@@ -90,9 +90,10 @@ class Robot {
     text("L", pixSide/2 + adj, -adj - pixSide/2);
     text("R", pixSide/2 + adj, pixSide/2 + 0.5 * adj);
     popMatrix();
-
+    
     visualizeSensorData();
   }
+
 
   // Shows state of gamepad controls in the field's extended status area
   void displayGamepadStatus(String prefix, GamepadInterface gp) {
@@ -115,6 +116,7 @@ class Robot {
     field.addExtendedStatus(buttonStatus + dpad);
   }
 
+
   // Display/print the raw state of the sensors
   void visualizeSensorData() {
     if (sensors.numColorSensors()>0) {
@@ -126,4 +128,4 @@ class Robot {
       }
     }
   }
-};
+}

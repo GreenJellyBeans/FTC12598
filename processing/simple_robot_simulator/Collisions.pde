@@ -120,9 +120,56 @@ class CollisionResult {
 
 // Calculates the result of a potential impact of a set of corner points {corners} with
 // a set of walls. Net torque is computed about the point ({cx}, {cy}), which is typically
-// the center of the robot.
-CollisionResult calculateCollisionImpact(Wall[] walls, Point[]corners, double cx, double  cy) {
-  return null;
+// the center of the robot. Special case: null is returned if there is negigable net force or torque. 
+CollisionResult calculateCollisionImpact(RobotProperties props, Wall[] walls, Point[]corners, double cx, double  cy) {
+  double fx = 0;
+  double fy = 0;
+  double torque = 0;
+  
+  if (walls == null || corners == null || walls.length == 0 || corners.length == 0) {
+    return null; // ************ EARLY RETURN **************
+  }
+  
+  for (Point p : corners) {
+    // To calculate torque about (cx, cy), we need to first translate 
+    // the origin to (p.x, p.y), the point of collision.
+    double cxx = cx - p.x;
+    double cyy = cy - p.y;
+    
+    for (Wall w : walls) {
+
+      double mag = w.collisionMagnitude(p.x, p.y);
+
+      // No need to further process Wall w if it does not
+      // collide with p
+      if (props.noForce(mag)) {
+        continue;
+      }
+
+      // Collision force magnetude is normal to the wall, so we
+      // calculate forces in the x and y directions
+      // by multiplying by the appropriate wall normal vector
+      // components, w.nx and w.ny
+      fx += mag * w.nx;
+      fy += mag * w.ny;
+
+
+      // Then we rotate the x-axis to be aligned with the wall normal.
+      // But we only need the transformed y-coordinate becasue that is
+      // the distance between (p.x, p.y) that is perpendicular to the normal
+      // force. The rotation is (-nA), where nA is the angle of the normal.
+      // Note that nx is cos(aN) and ny is sin(aN), where aN is
+      // the angle of the normal to the x-axis. We want to rotate
+      // by (-aN).
+      double pyy = -cxx * w.ny + cyy * w.nx;
+      torque += mag * pyy;
+    }
+  }
+  
+  if (props.noForce(fx) || props.noForce(fy) || props.noTorque(torque)) {
+    return null;
+  }
+  return new CollisionResult(fx, fy, torque);
 }
 
 
