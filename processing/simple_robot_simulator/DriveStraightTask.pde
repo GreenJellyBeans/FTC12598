@@ -2,7 +2,7 @@ class DriveStraightTask implements DriveTask {
 
   double targetBearing = radians(180);
   Robot ra;
-  final double Kp = 0.0001;
+  final double Kp = 0.5;
 
   public DriveStraightTask(Robot r) {
     ra=r;

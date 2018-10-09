@@ -1,6 +1,6 @@
 //
 // The MecanumDrive class implements a very simple physics-based robot simulator
-// of a 4-wheel meccanum-based holonomic drive. The physics is stripped down to 4 diagonal
+// of a 4-wheel mecanum-based holonomic drive. The physics is stripped down to 4 diagonal
 // forces on the 4 corners of a square robot producing linear and angular velocities.
 // Composite static and dynamic linear and rotational friction, specified as constants, provide
 // damping effects.
@@ -34,7 +34,7 @@ class MecanumDrive {
   double va = 0; // angular velocity along z-axis, rad/s
 
   // Motor power
-  // Forces act in a "diamond" pattern for meccanum:
+  // Forces act in a "diamond" pattern for mecanum:
   //    /\
   //    \/
   double pFL = 0;
@@ -125,7 +125,7 @@ class MecanumDrive {
     // Apply dampening effects -  acts in a direction opposite to the current direction of travel of the robot
     // This includes the extra load produced by non-powered motors. This is a big simplification, because non-powered
     // motors and friction in general will be mostly along the the same direction as the raw forces because of the 
-    // free-wheeling meccanum wheel segments.
+    // free-wheeling mecanum wheel segments.
     double dampForce  = maxDampingForce();
     double hyp = Math.sqrt(vx*vx + vy*vy);
     double dampFx, dampFy;
@@ -222,50 +222,38 @@ class MecanumDrive {
 
 
   // Calculates the motive force in N of a single motor, given input unitless power, that ranges
-  // within [-1, 1]. If we assume constant-power across different RPM, the motive force
-  // would be inversely proportional to velocity. We can at best be very approximate here, because
+  // within [-1, 1]. This model is based on the description in http://lancet.mit.edu/motors/motors3.html#tscurve.
+  // For any particular input power, the relationship between torque and RPM is a line with -ve slope. The y-intercept
+  // is the stall torque and the x-intercept is the max RPM, aka no-load RPM. The way this method uses power is in
+  // defining the line itself - so it defines a family of lines, or rather a continum of lines, one line for each
+  // value of power. The line furthest from the original is the torque-RPM line described above. The remaining are
+  // simply the line multiplied by {power}:
+  // |\
+  // |\\
+  // |\\\
+  // |\\\\
+  // |---------- > RPM
+  //
+  // We can at best be very approximate here, because
   // to be more accurate one would have to estimate the RPM of each motor, which would depend on
-  // the speed of turning of each individual wheel, which we do not track. Furthermore, we would have to
-  // simulate the torque-RPM curves of a typical motor. So we're taking a ham-handed approach
-  // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
-  double motiveForceOld(double power) {
-    double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
-    double vLin = Math.sqrt(vx*vx + vy*vy);
-    double vAng = Math.abs(va * dist); // va is in rad/sec
-    double vTot = vLin + vAng;
-    double MAX_MOTIVE_FORCE_PER_WHEEL = props.weight*0.1;
-    double force = 0;
-    if (props.noSpeed(vTot)) {
-      force = MAX_MOTIVE_FORCE_PER_WHEEL;
-    } else {
-      force = Math.min(MAX_MOTIVE_FORCE_PER_WHEEL, Math.abs(power/vTot));
-    }
-    return force * Math.signum(power);
-  }
-
-
-  // VERSION 2 - Calculates the motive force in N of a single motor, given input unitless power, that ranges
-  // within [-1, 1]. If we assume constant-power across different RPM, the motive force
-  // would be inversely proportional to velocity. We can at best be very approximate here, because
-  // to be more accurate one would have to estimate the RPM of each motor, which would depend on
-  // the speed of turning of each individual wheel, which we do not track. Furthermore, we would have to
-  // simulate the torque-RPM curves of a typical motor. So we're taking a ham-handed approach
+  // the speed of turning of each individual wheel, which we do not track. So we're taking a ham-handed approach
   // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
   double motiveForce(double power) {
     double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
-    double vaLin = Math.sqrt(vx*vx + vy*vy)/dist;
-    double vaTot = vaLin + Math.abs(va);
-    double MAX_ANGULAR_SPEED = 5.0; // Since we don't plug in wheel radius, this is a bit arbitrary, but can be tweaked.
-    double MAX_MOTIVE_FORCE_PER_WHEEL = props.weight*0.1; //0.05;
+    double vLin = Math.sqrt(vx*vx + vy*vy); // magnitude of linear velocity
+    double vTot = vLin + Math.abs(va * dist); // adding contriutions of angular velocity about center (see "ham handed" comment above)
     double force = 0;
-    if (props.noRotation(vaTot)) {
-      force = MAX_MOTIVE_FORCE_PER_WHEEL; // Equivalent of stall torque
-    } else if (vaTot > MAX_ANGULAR_SPEED) {
+    double absPower = Math.abs(power);
+    double maxForce = absPower * props.MAX_MOTIVE_FORCE_PER_WHEEL;
+    double maxSpeed = absPower * props.MAX_VIRTUAL_SPEED;
+    if (props.noRotation(vTot)) {
+      force = maxForce; // Equivalent of stall torque - this force is acting diagonally because of mecanum wheels.
+    } else if (vTot > maxSpeed) {
       force = 0; // "No load speed" achieved - torque goes to zero
     } else {
       // The relationship is a line with -ve slope - see, for example,
       // http://lancet.mit.edu/motors/motors3.html#tscurve
-      force = MAX_MOTIVE_FORCE_PER_WHEEL * (1 - vaTot / MAX_ANGULAR_SPEED);
+      force = maxForce * (1 - vTot / maxSpeed);
     }
     return force * Math.signum(power);
   }

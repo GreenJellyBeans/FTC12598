@@ -38,7 +38,7 @@ class SampleDriveTask implements DriveTask {
   void setStartingPower() {
     double pFwd = 0;//0.5;
     double pStrafe = 0;//0.5;
-    double pTurn = 0.1;
+    double pTurn = 0.3;
     MecanumDrive d = robot.drive;
 
     d.setPowerFL(pFwd + pStrafe + pTurn);

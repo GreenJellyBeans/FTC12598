@@ -17,6 +17,9 @@ class RobotProperties {
   final double P_TO_F_SCALE = 0.1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
   final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
   // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
+  final double MAX_VIRTUAL_SPEED = 2.0; // M/sec. Corner (wheel) speed at which motor torques go to zero.
+  final double MAX_MOTIVE_FORCE_PER_WHEEL = weight*0.1; // N. Equivalent of stall torque, expressed as force acting on the diagonal.
+
 
   final double DISTANCE_ZERO = 0.001; // 1mm is considered close enough to be the same length/distance/position
   final double POWER_ZERO = 0.05; // Unit-less motor power. Values less than this are considered to be no power.

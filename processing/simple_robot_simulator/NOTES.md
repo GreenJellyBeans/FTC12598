@@ -2,6 +2,25 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 9, 2018-F JMJ  Fixed the motor torque-speed curve function
+It was previously slewing between -1 and 1. 
+
+New version of `motiveForce` - from the comments: Calculates the motive force in N of a single motor, given input unitless power, that ranges
+within [-1, 1]. This model is based on the description in `http://lancet.mit.edu/motors/motors3.html#tscurve`.
+For any particular input power, the relationship between torque and RPM is a line with -ve slope. The y-intercept
+is the stall torque and the x-intercept is the max RPM, AKA no-load RPM. The way this method uses power is in
+defining the line itself - so it defines a family of lines, or rather a continuum of lines, one line for each
+value of power. The line furthest from the original is the torque-RPM line described above. The remaining are
+simply the line multiplied by {power}:
+```
+ |\
+ |\\
+ |\\\
+ |\\\\
+ |---------- > RPM
+```
+With this fix, the robot speeds can now be properly controlled by the joysticks.
+
 ## October 8, 2018-F JMJ  Milestone - collision impact with walls works!
 Currently, there are 4 hardcoded walls representing the 4 field boundary walls - these
 are in the `Field` object. The walls are bit too "springy"/elastic. Currently the impact force
