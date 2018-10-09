@@ -60,7 +60,7 @@ class MecanumDrive {
       new Point(), 
       new Point()
     };
-    
+
     // Initial position and orientation - can be changed
     // by using place().
     place(field.BREADTH/2, field.DEPTH/2, 0);
@@ -228,7 +228,7 @@ class MecanumDrive {
   // the speed of turning of each individual wheel, which we do not track. Furthermore, we would have to
   // simulate the torque-RPM curves of a typical motor. So we're taking a ham-handed approach
   // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
-  double motiveForce(double power) {
+  double motiveForceOld(double power) {
     double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
     double vLin = Math.sqrt(vx*vx + vy*vy);
     double vAng = Math.abs(va * dist); // va is in rad/sec
@@ -239,6 +239,33 @@ class MecanumDrive {
       force = MAX_MOTIVE_FORCE_PER_WHEEL;
     } else {
       force = Math.min(MAX_MOTIVE_FORCE_PER_WHEEL, Math.abs(power/vTot));
+    }
+    return force * Math.signum(power);
+  }
+
+
+  // VERSION 2 - Calculates the motive force in N of a single motor, given input unitless power, that ranges
+  // within [-1, 1]. If we assume constant-power across different RPM, the motive force
+  // would be inversely proportional to velocity. We can at best be very approximate here, because
+  // to be more accurate one would have to estimate the RPM of each motor, which would depend on
+  // the speed of turning of each individual wheel, which we do not track. Furthermore, we would have to
+  // simulate the torque-RPM curves of a typical motor. So we're taking a ham-handed approach
+  // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
+  double motiveForce(double power) {
+    double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
+    double vaLin = Math.sqrt(vx*vx + vy*vy)/dist;
+    double vaTot = vaLin + Math.abs(va);
+    double MAX_ANGULAR_SPEED = 5.0; // Since we don't plug in wheel radius, this is a bit arbitrary, but can be tweaked.
+    double MAX_MOTIVE_FORCE_PER_WHEEL = props.weight*0.1; //0.05;
+    double force = 0;
+    if (props.noRotation(vaTot)) {
+      force = MAX_MOTIVE_FORCE_PER_WHEEL; // Equivalent of stall torque
+    } else if (vaTot > MAX_ANGULAR_SPEED) {
+      force = 0; // "No load speed" achieved - torque goes to zero
+    } else {
+      // The relationship is a line with -ve slope - see, for example,
+      // http://lancet.mit.edu/motors/motors3.html#tscurve
+      force = MAX_MOTIVE_FORCE_PER_WHEEL * (1 - vaTot / MAX_ANGULAR_SPEED);
     }
     return force * Math.signum(power);
   }

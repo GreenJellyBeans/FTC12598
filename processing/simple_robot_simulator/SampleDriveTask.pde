@@ -76,7 +76,7 @@ class SampleDriveTask implements DriveTask {
   void setHybridPower(double fwd, double turn, double strafe) {
     // Let's clip anyways, incase we get faulty input
     fwd = clipInput(fwd);
-    turn = clipInput(turn);
+    turn = 0.5*clipInput(turn);
     strafe = clipInput(strafe);
 
     Field f = robot.field;
@@ -103,7 +103,7 @@ class SampleDriveTask implements DriveTask {
       setPowerAll(0, 0, 0, 0);
     } else {
       // Scale everything so no magnitude exeeds 1
-      double scale = Math.max(1/m, 1);
+      double scale = Math.min(1/m, 1);
       pFL *= scale;
       pFR *= scale;
       pBL *= scale;

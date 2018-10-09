@@ -9,12 +9,12 @@ class RobotProperties {
   
     // In reality this depends on orientation of the wheels, but we just assume it is
   // isotropic against the prevailing direction of motion of the robot.
-  final double staticLinFriction = 0.02; // Coef. of static friction - unitless
-  final double dynamicLinFriction = 0.02; // Coef. of dynamic friction - unitless
-  final double dampingTorqueAdjustment = 0.45; // Factor applied when converting max damping force to torque
+  final double staticLinFriction = 0.1;//0.04; // Coef. of static friction - unitless
+  final double dynamicLinFriction = 0.1  ;//0.04; // Coef. of dynamic friction - unitless
+  final double dampingTorqueAdjustment = 1;//0.45; // Factor applied when converting max damping force to torque
   final double side = 17*0.0254; // side of the square robot, m. (17 inches).
   final double rotInertia = mass * side * side / 6; // Rotational inertia in kg-m^2 - rect prism of uniform density
-  final double P_TO_F_SCALE = 1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
+  final double P_TO_F_SCALE = 0.1; // Unitless motor power (which is within [-1, 1]) to force (N) conversion
   final double FORCE_FRAC = 1/Math.sqrt(2); // Fraction of wheel force in the x (or y) direction - assuming square positioning.
   // Cos(Pi/4) == Sin(Pi/4) (or Cos(45 degrees))
 
@@ -24,7 +24,7 @@ class RobotProperties {
   final double ANGULAR_SPEED_ZERO = 0.1*Math.PI/180; // In rad/sec. Less than 1 degree of rotation per second is considered NOT rotating.
   final double FORCE_MAG_ZERO = weight/10000; // Forces < 0.01% of the weight of the robot are considered effectively no force 
   final double TORQUE_MAG_ZERO = FORCE_MAG_ZERO*side; // Base it off the zero force and side of the robot
-  final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*4; // N. A simple approximation of the impact of the drag of an unpowered motor.
+  final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*100;//4; // N. A simple approximation of the impact of the drag of an unpowered motor.
 
   boolean isMoving(double vx, double vy) {
     return Math.max(Math.abs(vx), Math.abs(vy)) > LIN_SPEED_ZERO;
