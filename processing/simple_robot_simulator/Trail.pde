@@ -2,19 +2,11 @@
 //
 class Trail {
 
-  private final int MAX_SIZE = 10000; // Max number of points to track
-
-  class Point {
-    double x;
-    double y;
-    public Point(double x, double y) {
-      this.x = x;
-      this.y = y;
-    }
-  }
+  private final int MAX_SIZE = 100; // Max number of points to track
   color c;
   Field f;
-  List<Point> pointList = new ArrayList<Point>();
+  Point[] points = new Point[MAX_SIZE];
+  int curIndex = 0;
 
 
   public Trail(Field f, color c) {
@@ -24,19 +16,35 @@ class Trail {
 
 
   public void addPoint(double x, double y) {
-
-    if (pointList.size() < MAX_SIZE) {
-      Point p = new Point(x, y);
-      pointList.add(p);
+    int prevIndex = curIndex > 0 ? curIndex -1 : points.length - 1;
+    Point prevPoint = points[prevIndex];
+    Point p = null;
+    if (prevPoint == null) {
+      p = new Point(x, y);
+    } else if (distinctPoint(prevPoint.x, prevPoint.y, x, y)) {
+      prevPoint.set(x, y);
+      p = prevPoint;
     }
+    if (p != null) {
+      points[curIndex] = new Point(x, y);
+      curIndex = (curIndex+1) % points.length;
+    }
+  }
+
+
+  // Points are sufficiently visually separated to record in the trail.
+  boolean distinctPoint(double x1, double y1, double x2, double y2) {
+    return (Math.abs(x1-x2) + Math.abs(y1-y2)) > 10/g_field.PIX_PER_M;
   }
 
 
   public void draw() {
     stroke(c);
-    strokeWeight(1);
-    for (Point p : pointList) {
-      f.drawPoint(p.x, p.y);
+    strokeWeight(2);
+    for (Point p : points) {
+      if (p != null) {
+        f.drawPoint(p.x, p.y);
+      }
     }
   }
 }

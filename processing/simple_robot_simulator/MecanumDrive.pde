@@ -184,10 +184,10 @@ class MecanumDrive {
     this.sin_a = Math.sin(a);
     updateBoundaryPoints();
 
-    // Conditionally add to the trail
-    if (!props.samePoint(oldX, oldY, x, y)) {
-      trail.addPoint(x, y);
-    }
+    // Add to the trail - though this may not
+    // be added if it is too close to the previously
+    // added point.
+    trail.addPoint(x, y);
 
     // Update velocities
     vx = vxNew;

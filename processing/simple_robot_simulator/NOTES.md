@@ -2,6 +2,17 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 10, 2018-A JMJ  Too many points in trail was causing delays, causing simulation to misbehave
+Previous to this checkin each trail was keeping up to 10,000 points. As time progressed and this
+limit was reached, collisions behaved oddly, in particular the asymmetric collision force was
+not having the desired effect and robotics would bounce off walls with increasing vigor. This was
+clearly because the delta between successive calls to update the simulation were increasing because 
+of the overhead of rendering all those points.
+
+With this checkin, a trail keeps far fewer points in a round-robin array, and only records new
+points if the distance from the previous point is visually some distance away, and also it 
+trims the oldest point to keep the number of points within the limit.
+
 ## October 9, 2018-B JMJ  New field element: block, plus asymmetric collision physics
 A `block` is a rectangular field element that has 4 walls:
 
