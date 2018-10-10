@@ -7,6 +7,7 @@ import java.util.List;
 enum ElementType {
   // Elements visible to sensors on robot
   TAPE, 
+    BLOCK, 
 
     // Virtual elements, invisible to robot
     MARK, // Marks a position
@@ -128,16 +129,20 @@ class FieldElements {
       }
 
       Element e = null;
+      String sepChar = ">"; // Separator character
       if (shape.startsWith("redTape")) {
         e = new Element(ElementType.TAPE, false, label, color(255, 50, 50), TAPE_WIDTH);
       } else if (shape.startsWith("blueTape")) {
         e = new Element(ElementType.TAPE, false, label, color(50, 100, 255), TAPE_WIDTH);
+      } else if (shape.startsWith("block")) {
+        e = new Element(ElementType.BLOCK, false, label, color(160), 0);
+        sepChar = "|";
       } else if (shape.startsWith("path")) {
         e = new Element(ElementType.PATH, true, label, color(0, 128), PATH_WIDTH);
       } else if (shape.startsWith("mark")) {
         e = new Element(ElementType.MARK, true, label, color(255, 255, 50), MARK_SIZE);
       }
-      if (e != null && loadElementDetails(e, s)) {
+      if (e != null && loadElementDetails(e, s, sepChar)) {
         elementList.add(e);
       }
     }  
@@ -162,6 +167,8 @@ class FieldElements {
     for (Element e : fieldElements) {
       if (e.type == ElementType.TAPE) {
         renderLinearElement(e);
+      } else if (e.type == ElementType.BLOCK) {
+        renderBlockElement(e);
       } else if (e.type == ElementType.MARK) {
         renderMarkElement(e);
       } else if (e.type == ElementType.PATH) {
@@ -171,7 +178,7 @@ class FieldElements {
   }
 
 
-  private boolean loadElementDetails(Element e, String in) {
+  private boolean loadElementDetails(Element e, String in, String sepChar) {
     // We expect somehing like this:
     // 1 2 > 3 4 > 5 6
     Scanner s = new Scanner(in);
@@ -184,7 +191,7 @@ class FieldElements {
       path.add(new Point(x*0.3048, y*0.3048));
       if (s.hasNext()) {
         String t = s.next();
-        if (!t.equals(">")) {
+        if (!t.equals(sepChar)) {
           println("Unexpected token parsing point #"+i);
           break;
         }
@@ -260,6 +267,20 @@ class FieldElements {
     }
   }
 
+  private void renderBlockElement(Element e) {
+    // Draw a rectangle, add label
+    Point p = e.path[0];
+    Point dim = e.path[1];
+    double w = dim.x;
+    double h = dim.y;
+    fill(e.c);
+    noStroke();
+    field.drawRect(p.x, p.y, w, h); // Assumes rectmode is CENTER
+    fill(0);
+    if (e.label.length()>0) {
+      field.drawText(e.label, p.x, p.y, 10, 0);
+    }
+  }
 
   // Apply the {sp.process} method to each segment of Element {e}.
   private void processLinearSegment(Element e, SegmentProcessor sp) {

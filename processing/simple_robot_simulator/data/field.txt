@@ -1,5 +1,6 @@
 blueTape 6 6 > 1 0 > 1 1 > 0 1 > 0 0
 redTape 7 7 > 1 0 > 1 1 > 0 1 > 0 0
-path 8 8 > 1 0 > 1 1 > 0 1 > 0 0 
-mark.p1 9 9
-mark.p2 2 2
+block.obsticle 4 4 | 1.92 1.92
+path 9 9 > 1 0 > 1 2.5 > 2 0 
+mark.start 9 9
+mark.end 11 9

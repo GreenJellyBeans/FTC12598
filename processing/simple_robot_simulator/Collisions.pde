@@ -18,13 +18,15 @@ class Wall {
   double cx; // of midpoint - in m
   double cy; // of midpoint - in m
   double len; // length - in m
+  double thickness;
   double aN; // angle of normal - in radians
   double nx; // unit vector of normal - x component
   double ny; // unit vector of normal - y component
 
 
-  Wall(double x, double y, double len, double aN) {
+  Wall(double x, double y, double len, double thickness, double aN) {
     this.len = len;
+    this.thickness = thickness;
     reposition(x, y, aN);
     isBoundary = boundaryWall(x, y, len, aN);
   }
@@ -48,7 +50,7 @@ class Wall {
   // relationship is nonlinear.
   // To get the component along x or y axes, simply
   // multiply by nx or ny.
-  double collisionMagnitude(double px, double py) {
+  double collisionMagnitude(double px, double py, double vx, double vy) {
     if (isBoundary) {
       // Quick check for boundary walls
       if (insideField(px, py)) {
@@ -57,7 +59,7 @@ class Wall {
     } else {
       // Quick check if the non-boundary wall is too far away from point
       double distToCenter = distance(px, py, cx, cy);
-      if (distToCenter > len) {
+      if (distToCenter > len + thickness) {
         return 0; // ****** EARLY RETURN
       }
     }
@@ -72,11 +74,21 @@ class Wall {
     // by (-aN).
     double xx = x * nx + y *ny;
     double yy = -x * ny + y * nx;
-    if (xx < 0 && Math.abs(yy) < len /2) {
+    if (xx > -thickness && xx < 0 && Math.abs(yy) < len /2) {
       // Collision!
-      g_field.addExtendedStatus("COLLISION!");
-      double FORCE_FACTOR = 1000;
-      return  - xx * FORCE_FACTOR; // We return a positive value always
+      // This is a damped collision - energy is not preserved. The force
+      // resists motion in a direction against the wall much more than
+      // the force pushing the robot back out once it has started to move outwards.
+      double vxx = vx * nx + vy * ny;
+      double BREAKING_FORCE_FACTOR = 10000;
+      double RESTORING_FORCE_FACTOR = 10;
+      // Sometimes the velocity oscilates positive
+      // when it is in the breaking zone, so we have to
+      // ignore small positive velosities, otherwise the
+      // robot can creep through walls.
+      boolean breaking = vxx < 0.01;
+      double forceFactor = breaking ? BREAKING_FORCE_FACTOR : RESTORING_FORCE_FACTOR;
+      return  - xx * forceFactor; // We return a positive value always
     }
     return 0;
   }
@@ -122,23 +134,28 @@ class CollisionResult {
 // Calculates the result of a potential impact of a set of corner points {corners} with
 // a set of walls. Net torque is computed about the point ({cx}, {cy}), which is typically
 // the center of the robot. Special case: null is returned if there is negigable net force or torque. 
-CollisionResult calculateCollisionImpact(RobotProperties props, Wall[] walls, Point[]corners, double cx, double  cy) {
+CollisionResult calculateCollisionImpact(MecanumDrive drive) {
+  RobotProperties props = drive.props;
+  Wall[] walls = drive.field.walls;
+  Point[]corners = drive.boundaryPoints;
+  double cx = drive.x;
+  double cy = drive.y;
   double fx = 0;
   double fy = 0;
   double torque = 0;
-  
+
   if (walls == null || corners == null || walls.length == 0 || corners.length == 0) {
     return null; // ************ EARLY RETURN **************
   }
-  
+
   for (Point p : corners) {
     // To calculate torque about (cx, cy), we need to first translate 
     // the origin to (p.x, p.y), the point of collision.
     double cxx = cx - p.x;
     double cyy = cy - p.y;
-    
+
     for (Wall w : walls) {
-      double mag = w.collisionMagnitude(p.x, p.y);
+      double mag = w.collisionMagnitude(p.x, p.y, drive.vx, drive.vy);
 
       // No need to further process Wall w if it does not
       // collide with p
@@ -165,7 +182,7 @@ CollisionResult calculateCollisionImpact(RobotProperties props, Wall[] walls, Po
       torque += mag * pyy;
     }
   }
-  
+
   if (props.noForce(fx) && props.noForce(fy) && props.noTorque(torque)) {
     return null;
   }
@@ -207,6 +224,6 @@ void testCollisionPhysics() {
   final double SIZE = 10;
   double cx = SIZE/2;
   double cy = 0;
-  Wall w = new Wall(cx, cy, SIZE, Math.PI/2);
-  println("MAG: " + w.collisionMagnitude(cx, cy+0.1));
+  Wall w = new Wall(cx, cy, SIZE, SIZE, Math.PI/2);
+  println("MAG: " + w.collisionMagnitude(cx, cy+0.1, 0, 0));
 }

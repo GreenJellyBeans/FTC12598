@@ -2,7 +2,43 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
-## October 9, 2018-F JMJ  Fixed the motor torque-speed curve function
+## October 9, 2018-B JMJ  New field element: block, plus asymmetric collision physics
+A `block` is a rectangular field element that has 4 walls:
+
+```
+# block cx cy | wx wy
+block 10 20 | 30 40
+```
+In this first iteration, blocks are axis-aligned and are rendered gray.
+In future iterations, they could be at any angle, color, and potentially could
+have different resistive forces
+
+`Field.makeWalls` makes all the walls - including the boundary walls and the walls
+contributed by all the blocks among the field elements. Walls have a new parameter,
+`thickness`, that is used in determining collisions.
+
+Method `collisionMagnitude`, which determines the magnitude of a collision, if there is one,
+now implements a heavily damped collision. This is to address the issue of the robots bouncing
+off walls with way to much vigor. The method
+now takes the velocity of the robot into account. If the robot is colliding and
+moving *into* the wall, it resits with a much greater force than if it is moving *out* of the wall.
+
+There is the very annoying effect (that was anticipated) of convex objects behaving oddly
+at their corners, because a wall thinks that a robot corner is behind it when it is in fact
+just intruding into a neighboring wall. After much tweaking of wall thickness and resistive
+force, blocks now are not completely impassible - the robot can ram into them and go into them. This
+is a consequence of having thinner walls. The thinner the wall, the more localized the
+phantom intrusion effect. I had thought that with asymmetric collision forces I could now
+make the resistive force extremely large, so that there is very little intrusion, thereby
+enabling thinner walls, but this produces such a kickback that (I think) even that initial
+kick is enough to produce a big rebound. I also experimented with introducing added
+dampening forces while the robot is colliding and it was not producing any beneficial effect,
+at least in the simplistic forms I was trying.
+
+The other annoying thing is that the collision is detected only at the corners of the robots, so the
+robot can introduce into blocks if it hits the corner of the block with the side of the robot. This was discussed in entry "October 5, 2018-C JMJ  Beginning implementation of collision physics" below.
+
+## October 9, 2018-A JMJ  Fixed the motor torque-speed curve function
 It was previously slewing between -1 and 1. 
 
 New version of `motiveForce` - from the comments: Calculates the motive force in N of a single motor, given input unitless power, that ranges

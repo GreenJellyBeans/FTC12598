@@ -16,12 +16,7 @@ class Field {
 
   void init() {
     elements.load();
-    walls = new Wall[] {
-      new Wall(BREADTH/2, 0, BREADTH, Math.PI/2), // bottom
-      new Wall(BREADTH/2, DEPTH, BREADTH, -Math.PI/2), //top
-      new Wall(0, DEPTH/2, DEPTH, 0), //left
-      new Wall(BREADTH, DEPTH/2, DEPTH, -Math.PI) //right
-    };
+    walls = makeWalls();
   }
 
 
@@ -110,5 +105,40 @@ class Field {
 
   void addExtendedStatus(String s) {
     extendedStatus += s + "\n";
+  }
+
+  Wall[] makeWalls() {
+    List<Wall> walls = new ArrayList<Wall>();
+
+    // Add the boundary walls...
+    double thickness = BREADTH; // Not critical what this as long as it is deep enough to stop the robot!
+    walls.add(new Wall(BREADTH/2, 0, BREADTH, thickness, Math.PI/2)); // bottom
+    walls.add(new Wall(BREADTH/2, DEPTH, BREADTH, thickness, -Math.PI/2)); //top
+    walls.add(new Wall(0, DEPTH/2, DEPTH, thickness, 0)); //left
+    walls.add(new Wall(BREADTH, DEPTH/2, DEPTH, thickness, -Math.PI)); //right
+
+    // Process all blocks
+    for (FieldElements.Element e : elements.fieldElements) {
+      if (e.type == ElementType.BLOCK) {
+        addWallsFromBlock(walls, e);
+      }
+    }
+    return walls.toArray(new Wall[walls.size()]);
+  }
+
+  void addWallsFromBlock(List<Wall> walls, FieldElements.Element e) {
+    assert(e.type == ElementType.BLOCK);
+    assert(e.path.length == 2);
+    Point p1 = e.path[0]; // center
+    Point p2 = e.path[1]; // dimensions
+    double cx = p1.x;
+    double cy = p1.y;
+    double w = p2.x;
+    double h = p2.y;
+    double thickness = Math.min(w, h)/20; // Can't be too thick or it reaches and grabs robots from the other side!
+    walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2)); // North facing - OK
+    walls.add(new Wall(cx + w/2, cy, h, thickness, 0)); // East facing  - OK
+    walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2)); // South facing - OK
+    walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI)); // West facing
   }
 }
