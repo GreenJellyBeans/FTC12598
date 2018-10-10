@@ -70,7 +70,7 @@ class SampleDriveTask implements DriveTask {
     }
   }
 
-  // Sets the power to each of the 4 motors of the meccanum drive given
+  // Sets the power to each of the 4 motors of the mecanum drive given
   // the incoming request to go forward, turn and strafe by amounts
   // ranging within [-1, 1]
   void setHybridPower(double fwd, double turn, double strafe) {
