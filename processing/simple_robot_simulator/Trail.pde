@@ -22,6 +22,7 @@ class Trail {
     if (prevPoint == null) {
       p = new Point(x, y);
     } else if (distinctPoint(prevPoint.x, prevPoint.y, x, y)) {
+      // We re-use points if possible...
       prevPoint.set(x, y);
       p = prevPoint;
     }

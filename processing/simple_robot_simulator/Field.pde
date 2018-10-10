@@ -45,6 +45,7 @@ class Field {
     elements.draw();
 
     // Status
+    textAlign(LEFT);
     fill(0);
     drawText(status, 0, 0, 0, 20);
     drawText(extendedStatus, BREADTH, DEPTH, 20, 0);

@@ -140,7 +140,7 @@ class FieldElements {
       } else if (shape.startsWith("path")) {
         e = new Element(ElementType.PATH, true, label, color(0, 128), PATH_WIDTH);
       } else if (shape.startsWith("mark")) {
-        e = new Element(ElementType.MARK, true, label, color(255, 255, 50), MARK_SIZE);
+        e = new Element(ElementType.MARK, true, label, color(255, 128), MARK_SIZE);
       }
       if (e != null && loadElementDetails(e, s, sepChar)) {
         elementList.add(e);
@@ -156,7 +156,9 @@ class FieldElements {
   void appendFloorSignature(StringBuilder sb) {
     sb.append("Version: " + VERSION);
     for (Element e : fieldElements) {
-      e.appendTo(sb);
+      if (!e.virtual) {
+        e.appendTo(sb);
+      }
     }
   }
 
@@ -164,6 +166,8 @@ class FieldElements {
   // Render all field elements
   void draw() {
 
+    // All text in elements is centered..
+    textAlign(CENTER);
     for (Element e : fieldElements) {
       if (e.type == ElementType.TAPE) {
         renderLinearElement(e);
@@ -261,10 +265,7 @@ class FieldElements {
     field.drawCircle(p.x, p.y, e.size/2);
     stroke(2);
     field.drawPoint(p.x, p.y);
-    fill(0);
-    if (e.label.length()>0) {
-      field.drawText(e.label, p.x, p.y, 10, 0);
-    }
+    drawLabel(e.label, p.x, p.y, 20);
   }
 
   private void renderBlockElement(Element e) {
@@ -276,9 +277,13 @@ class FieldElements {
     fill(e.c);
     noStroke();
     field.drawRect(p.x, p.y, w, h); // Assumes rectmode is CENTER
+    drawLabel(e.label, p.x, p.y, 0);
+  }
+
+  private void drawLabel(String text, double x, double y, int yPixOffset) {
     fill(0);
-    if (e.label.length()>0) {
-      field.drawText(e.label, p.x, p.y, 10, 0);
+    if (text.length() > 0) {
+      field.drawText(text, x, y, 0, yPixOffset);
     }
   }
 

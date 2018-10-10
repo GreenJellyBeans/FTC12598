@@ -80,15 +80,16 @@ class Robot {
 
     // Render Robot ID in the center
     float adj0 = 5;
-    text(id, -adj0, adj0);
+    textAlign(CENTER);
+    text(id, 0, adj0);
     // Render L and R labels on the front left and right corners
     // of the robot. Note that these are in screen coordinates, where
     // y grows downwards! Also note that after rotating to be aligned
     // with the robot's x-axis, the robot is facing the x-axis, which is
     // towards the right!
-    final int adj = -12; // adjustment for text size
-    text("L", pixSide/2 + adj, -adj - pixSide/2);
-    text("R", pixSide/2 + adj, pixSide/2 + 0.5 * adj);
+    final int adj = -10; // adjustment for text size
+    text("L", pixSide/2 + adj, -1.5*adj - pixSide/2);
+    text("R", pixSide/2 + adj, pixSide/2 + 0.9*adj);
     popMatrix();
     
     visualizeSensorData();
