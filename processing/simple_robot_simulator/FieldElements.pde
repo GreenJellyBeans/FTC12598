@@ -23,7 +23,7 @@ interface SegmentProcessor {
 class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
-  final String VERSION = "1.0"; // Increment to invalidate cache
+  final String VERSION = "1.1"; // Increment to invalidate cache
 
   class Element {
     ElementType type;
@@ -96,6 +96,7 @@ class FieldElements {
     final double FEET_TO_METERS = 0.3048;
     final double INCHES_TO_METERS = FEET_TO_METERS/12;
     final double TAPE_WIDTH = 2*INCHES_TO_METERS;
+    final double FAT_TAPE_WIDTH = 5*INCHES_TO_METERS;
     final double PATH_WIDTH = 0.5*INCHES_TO_METERS;
     final double MARK_SIZE = 4*INCHES_TO_METERS;
 
@@ -130,10 +131,12 @@ class FieldElements {
 
       Element e = null;
       String sepChar = ">"; // Separator character
-      if (shape.startsWith("redTape")) {
+      if (shape.startsWith("red_tape")) {
         e = new Element(ElementType.TAPE, false, label, color(255, 50, 50), TAPE_WIDTH);
-      } else if (shape.startsWith("blueTape")) {
+      } else if (shape.startsWith("blue_tape")) {
         e = new Element(ElementType.TAPE, false, label, color(50, 100, 255), TAPE_WIDTH);
+      } else if (shape.startsWith("fat_black_tape")) {
+        e = new Element(ElementType.TAPE, false, label, color(30), FAT_TAPE_WIDTH);
       } else if (shape.startsWith("block")) {
         e = new Element(ElementType.BLOCK, false, label, color(160), 0);
         sepChar = "|";

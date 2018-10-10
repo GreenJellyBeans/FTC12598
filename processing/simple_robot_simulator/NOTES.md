@@ -2,6 +2,20 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 10, 2018-B JMJ  Added "fat_black_tape" and renamed other tapes
+Here's a sample of the new format for `field.txt`:
+
+```
+blue_tape 6 6 > 1 0 > 1 1 > 0 1 > 0 0
+red_tape 7 7 > 1 0 > 1 1 > 0 1 > 0 0
+fat_black_tape 0.5 0.5 > 0.5 0 > 1 1
+block.obsticle 4 4 | 1.92 1.92
+path 9 9 > 1 0 > 1 2.5 > 2 0 
+mark.start 9 9
+```
+Note the replacing of camel casing by underscores. "fat_black_tape" can
+be used to mark the crater boundaries in this years' competition.
+
 ## October 10, 2018-A JMJ  Too many points in trail was causing delays, causing simulation to misbehave
 Previous to this checkin each trail was keeping up to 10,000 points. As time progressed and this
 limit was reached, collisions behaved oddly, in particular the asymmetric collision force was
