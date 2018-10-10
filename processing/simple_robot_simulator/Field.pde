@@ -13,6 +13,7 @@ class Field {
   String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
   final FieldElements elements = new FieldElements(this); 
   Wall[] walls; // initialized in init.
+  final boolean visualizeWallNormals = false; // set to true to display wall normal vectors for debugging
 
   void init() {
     elements.load();
@@ -43,6 +44,18 @@ class Field {
 
     // draw field elements
     elements.draw();
+
+    // draw wall normals.
+    if (visualizeWallNormals) {
+      for (Wall w : walls) {
+        stroke(255, 0, 0);
+        strokeWeight(8);
+        drawPoint(w.cx, w.cy);
+        strokeWeight(2);
+        double len = 0.2;
+        drawLine(w.cx, w.cy, w.cx+len*w.nx, w.cy+len*w.ny);
+      }
+    }
 
     // Status
     textAlign(LEFT);
@@ -137,9 +150,14 @@ class Field {
     double w = p2.x;
     double h = p2.y;
     double thickness = Math.min(w, h)/20; // Can't be too thick or it reaches and grabs robots from the other side!
+    int pos = walls.size();
+    double angle = radians(45); // Hardcoded for now.
     walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2)); // North facing - OK
     walls.add(new Wall(cx + w/2, cy, h, thickness, 0)); // East facing  - OK
     walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2)); // South facing - OK
     walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI)); // West facing
+    for (int i = 0; i < 4; i++) {
+      walls.get(pos + i).rotate(angle, cx, cy);
+    }
   }
 }

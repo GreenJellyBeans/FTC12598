@@ -40,8 +40,24 @@ class Wall {
     this.nx = Math.cos(aN);
     this.ny = Math.sin(aN);
   }
-
-
+  
+  // Rotate entire Wall by {a} about point (px, py)
+  void rotate(double a, double px, double py) {
+    double c = Math.cos(a);
+    double s = Math.sin(a);
+    
+    // Translate origin (temporarily) to (px, py)
+    double x1 = cx - px;
+    double y1 = cy - py;
+    cx = px + c*x1 - s*y1;
+    cy = py + c*y1 + s*x1;
+    
+    // Update wall angle and normals
+    aN = aN + a;
+    nx = Math.cos(aN);
+    ny = Math.sin(aN);    
+  }
+  
   // Calculates the magnetude of the collision
   // force - it will be normal to the wall (walls are frictionless), and simply
   // a function of how much "behind" the point is to the wall.

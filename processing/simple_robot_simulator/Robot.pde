@@ -69,9 +69,11 @@ class Robot {
     float pixSide = field.pixLen(side);
     float sx = field.screenX(x);
     float sy = field.screenY(y);
+
     pushMatrix();
+    
     translate(sx, sy);
-    rotate((float) -a);
+    rotate((float) -a); // In Processing, rotate(t) rotates the axes by -t
     fill(255, 200);
     stroke(0);
     strokeWeight(1);

@@ -6,6 +6,10 @@ fat_black_tape 0.5 0.5 > 0.5 0 > 1 1
 
 # The block entities are not visible to sensors, but
 # they impede robot movement
+# block cx cy | w h
+# where:
+#    (cx, cy) is center coordinates in feet
+#    w and h are width and height, also in feet
 block.obsticle 4 4 | 1.92 1.92
 
 # The path and mark entities are virtual - they have no

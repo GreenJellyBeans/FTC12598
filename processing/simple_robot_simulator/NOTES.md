@@ -2,6 +2,12 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 10, 2018-B JMJ  Block field elements can be positioned at an angle.
+Blocks were positioned as axis-aligned rectangles. Now they can be positioned
+at any angle. However, the input format (`files.txt`) doesn't support
+specifying an angle, so it is hardcoded at 45 degrees for now.
+
+
 ## October 10, 2018-B JMJ  Added "fat_black_tape" and renamed other tapes
 Here's a sample of the new format for `field.txt`:
 

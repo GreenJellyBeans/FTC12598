@@ -24,6 +24,7 @@ class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
   final String VERSION = "1.1"; // Increment to invalidate cache
+  final double FEET_TO_METERS = 0.3048;
 
   class Element {
     ElementType type;
@@ -93,7 +94,6 @@ class FieldElements {
   // Loads all field elements
   void load() {
     // Input are in feet and inches
-    final double FEET_TO_METERS = 0.3048;
     final double INCHES_TO_METERS = FEET_TO_METERS/12;
     final double TAPE_WIDTH = 2*INCHES_TO_METERS;
     final double FAT_TAPE_WIDTH = 5*INCHES_TO_METERS;
@@ -185,8 +185,11 @@ class FieldElements {
   }
 
 
+  // Reads in an array of points from {in} into {e.path}. Assumes these input values are
+  // in FEET and so does the conversion to METERS. Input is pairs of floating point numbers.
+  // Each pair is separated by space and {sepChar}
   private boolean loadElementDetails(Element e, String in, String sepChar) {
-    // We expect somehing like this:
+    // We expect somehing like this (if {sepChar} is ">")
     // 1 2 > 3 4 > 5 6
     Scanner s = new Scanner(in);
     int i = 0;
@@ -195,7 +198,7 @@ class FieldElements {
       double x = s.nextDouble(); 
       double y = s.nextDouble();
       //println ("(x,y) = " + x + " " + y);
-      path.add(new Point(x*0.3048, y*0.3048));
+      path.add(new Point(x*FEET_TO_METERS, y*FEET_TO_METERS));
       if (s.hasNext()) {
         String t = s.next();
         if (!t.equals(sepChar)) {
@@ -275,11 +278,16 @@ class FieldElements {
     // Draw a rectangle, add label
     Point p = e.path[0];
     Point dim = e.path[1];
+    double angle = radians(45); // hardcoded for now.
     double w = dim.x;
     double h = dim.y;
+    pushMatrix();
+    translate(field.screenX(p.x), field.screenY(p.y));
+    rotate(-(float)angle); // In Processing, rotate(-t) rotates the axes by t;
     fill(e.c);
     noStroke();
-    field.drawRect(p.x, p.y, w, h); // Assumes rectmode is CENTER
+    rect(0, 0, field.pixLen(w), field.pixLen(h)); // Assumes rectmode is CENTER
+    popMatrix();
     drawLabel(e.label, p.x, p.y, 0);
   }
 
