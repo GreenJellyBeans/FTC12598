@@ -24,11 +24,11 @@ class Wall {
   double ny; // unit vector of normal - y component
 
 
-  Wall(double x, double y, double len, double thickness, double aN) {
+  Wall(double x, double y, double len, double thickness, double aN, boolean boundary) {
     this.len = len;
     this.thickness = thickness;
     reposition(x, y, aN);
-    isBoundary = boundaryWall(x, y, len, aN);
+    isBoundary = boundary;
   }
 
 
@@ -90,7 +90,13 @@ class Wall {
     // by (-aN).
     double xx = x * nx + y *ny;
     double yy = -x * ny + y * nx;
-    if (xx > -thickness && xx < 0 && Math.abs(yy) < len /2) {
+    
+    // For non-boundary walls, we taper off thickness at corners. This helps to
+    // reduce the cases of mistaken collisions when you have neighboring walls of
+    // a convex structure. The tapering is at a 45-degree angle, that works best for
+    // right-angle corners. Results for non-right angle corners will vary...
+    double thick = isBoundary? thickness : Math.min(thickness, len/2 - Math.abs(yy));
+    if (xx > -thick && xx < 0 && Math.abs(yy) < len /2) {
       // Collision!
       // This is a damped collision - energy is not preserved. The force
       // resists motion in a direction against the wall much more than
@@ -107,19 +113,6 @@ class Wall {
       return  - xx * forceFactor; // We return a positive value always
     }
     return 0;
-  }
-
-
-  // Determines if the wall is one of the boundary walls
-  // For it to be a boundary wall it has to be right on the boundary of
-  // the field.
-  private boolean boundaryWall(double x, double y, double len, double aN) {
-    boolean bX =  sameLength(x, 0) || sameLength(x, g_field.BREADTH);
-    boolean bY =  sameLength(y, 0) || sameLength(y, g_field.DEPTH);
-    boolean bLen = sameLength(len, g_field.BREADTH) || sameLength(len, g_field.DEPTH); // slightly lax but ok
-    boolean bA = sameAngle(aN, 0) || sameAngle(aN, Math.PI/2) 
-      || sameAngle(aN, Math.PI) || sameAngle(aN, Math.PI*3/2);
-    return bX && bY && bLen && bA;
   }
 
 
@@ -237,9 +230,4 @@ double balancedAngle(double a) {
 }
 
 void testCollisionPhysics() {
-  final double SIZE = 10;
-  double cx = SIZE/2;
-  double cy = 0;
-  Wall w = new Wall(cx, cy, SIZE, SIZE, Math.PI/2);
-  println("MAG: " + w.collisionMagnitude(cx, cy+0.1, 0, 0));
 }

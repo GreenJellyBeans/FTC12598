@@ -126,10 +126,10 @@ class Field {
 
     // Add the boundary walls...
     double thickness = BREADTH; // Not critical what this as long as it is deep enough to stop the robot!
-    walls.add(new Wall(BREADTH/2, 0, BREADTH, thickness, Math.PI/2)); // bottom
-    walls.add(new Wall(BREADTH/2, DEPTH, BREADTH, thickness, -Math.PI/2)); //top
-    walls.add(new Wall(0, DEPTH/2, DEPTH, thickness, 0)); //left
-    walls.add(new Wall(BREADTH, DEPTH/2, DEPTH, thickness, -Math.PI)); //right
+    walls.add(new Wall(BREADTH/2, 0, BREADTH, thickness, Math.PI/2, true)); // bottom
+    walls.add(new Wall(BREADTH/2, DEPTH, BREADTH, thickness, -Math.PI/2, true)); //top
+    walls.add(new Wall(0, DEPTH/2, DEPTH, thickness, 0, true)); //left
+    walls.add(new Wall(BREADTH, DEPTH/2, DEPTH, thickness, -Math.PI, true)); //right
 
     // Process all blocks
     for (FieldElements.Element e : elements.fieldElements) {
@@ -146,13 +146,13 @@ class Field {
     double cy = e.y;
     double w = e.w;
     double h = e.h;
-    double thickness = Math.min(w, h)/20; // Can't be too thick or it reaches and grabs robots from the other side!
+    double thickness = Math.min(w, h)/4; // Can't be too thick or it reaches and grabs robots from the other side!
     int pos = walls.size();
     double angle = e.a;
-    walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2)); // North facing - OK
-    walls.add(new Wall(cx + w/2, cy, h, thickness, 0)); // East facing  - OK
-    walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2)); // South facing - OK
-    walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI)); // West facing
+    walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2, false)); // North facing - OK
+    walls.add(new Wall(cx + w/2, cy, h, thickness, 0, false)); // East facing  - OK
+    walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2, false)); // South facing - OK
+    walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI, false)); // West facing
     for (int i = 0; i < 4; i++) {
       walls.get(pos + i).rotate(angle, cx, cy);
     }

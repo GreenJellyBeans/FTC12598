@@ -2,6 +2,28 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-C JMJ  Tapering thickness of non-boundary walls at their ends
+This mitigates the issue for walls that define convex objects, such as block field elements.
+(mentioned in "October 9, 2018-B JMJ" note and earlier notes. The mitigation is specifically
+designed to work for 90-degree corners - the thickness of all non-boundary walls are
+tapered by 45 degree at both ends of the wall. This is implemented in method
+`collisionMagnetude`. With this change, no part of the compound wall structure have regions
+where walls overlap. This allows for thicker walls, and that in turn reduces the case
+where the robot breaks through walls.
+
+A tapered wall is illustrated below - this one has it's normal facing upwards. If you
+visualize 4 of these walls making up a box, you can see that the walls do not overlap.
+```
+----------------------------------
+\                               /
+ \-----------------------------/
+```
+The downside is that the walls can be penetrated more easily near their corners. However in practice
+this effect is not dominant, and the net result is positive - for example, robots no longer
+simply blast through blocks. Of course there is still the issue that robots go through wall corners
+that was mentioned in earlier notes..
+
+
 ## October 11, 2018-B JMJ  Field elements are now specified in two files
 File `data/field_base.txt` contains elements that define the standard field - this file shouldn't
 change once the rules of the competition are defined.
