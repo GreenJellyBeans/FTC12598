@@ -20,6 +20,19 @@ class Point {
     this.x = x;
     this.y = y;
   }
+  
+  // Rotate the point by angle {a} about point (px, py)
+  void rotate(double a, double px, double py) {
+    double c = Math.cos(a);
+    double s = Math.sin(a);
+    
+    // Translate origin (temporarily) to (px, py)
+    double x1 = x - px;
+    double y1 = y - py;
+    x = px + c*x1 - s*y1;
+    y = py + c*y1 + s*x1;    
+  }
+  
 }
 
 // The DriveTask collects together methods that control the robot movement

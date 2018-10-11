@@ -13,11 +13,12 @@ class Field {
   String extendedStatus ="NOT\nONE\nTHING"; // Multiline status printed to right of field
   final FieldElements elements = new FieldElements(this); 
   Wall[] walls; // initialized in init.
+  Point[] convexCorners = {}; // Corners between adjacent walls around any convex objects, if any. Initialized in makeWalls().
   final boolean visualizeWallNormals = false; // set to true to display wall normal vectors for debugging
 
   void init() {
     elements.load();
-    walls = makeWalls();
+    makeWalls();
   }
 
 
@@ -121,8 +122,9 @@ class Field {
     extendedStatus += s + "\n";
   }
 
-  Wall[] makeWalls() {
+  void makeWalls() {
     List<Wall> walls = new ArrayList<Wall>();
+    List<Point> convexCorners = new ArrayList<Point>();
 
     // Add the boundary walls...
     double thickness = BREADTH; // Not critical what this as long as it is deep enough to stop the robot!
@@ -134,27 +136,44 @@ class Field {
     // Process all blocks
     for (FieldElements.Element e : elements.fieldElements) {
       if (e.type == ElementType.BLOCK) {
-        addWallsFromBlock(walls, e);
+        addWallsAndCornersFromBlock(walls, convexCorners, e);
       }
     }
-    return walls.toArray(new Wall[walls.size()]);
+    this.walls = walls.toArray(new Wall[walls.size()]);
+    this.convexCorners = convexCorners.toArray(new Point[convexCorners.size()]);
   }
 
-  void addWallsFromBlock(List<Wall> walls, FieldElements.Element e) {
+  void addWallsAndCornersFromBlock(List<Wall> walls, List<Point> corners, FieldElements.Element e) {
     assert(e.type == ElementType.BLOCK);
     double cx = e.x;
     double cy = e.y;
     double w = e.w;
     double h = e.h;
     double thickness = Math.min(w, h)/4; // Can't be too thick or it reaches and grabs robots from the other side!
-    int pos = walls.size();
+    int wpos = walls.size();
+    int cpos = corners.size();
     double angle = e.a;
+
+    // Add walls
     walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2, false)); // North facing - OK
     walls.add(new Wall(cx + w/2, cy, h, thickness, 0, false)); // East facing  - OK
     walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2, false)); // South facing - OK
     walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI, false)); // West facing
+
+    // Add corners
+    corners.add(new Point(cx - w/2, cy - h/2));
+    corners.add(new Point(cx - w/2, cy + h/2));
+    corners.add(new Point(cx + w/2, cy - h/2));
+    corners.add(new Point(cx + w/2, cy + h/2));
+
+
     for (int i = 0; i < 4; i++) {
-      walls.get(pos + i).rotate(angle, cx, cy);
+      walls.get(wpos + i).rotate(angle, cx, cy);
     }
+    
+    for (int i = 0; i < 4; i++) {
+      corners.get(cpos + i).rotate(angle, cx, cy);
+    }
+    
   }
 }

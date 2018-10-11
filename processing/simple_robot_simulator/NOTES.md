@@ -2,6 +2,10 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-D JMJ  Field now keeps a list of corners block walls
+This is the first part of the support for robot sides (not corners) collision with 
+wall boundaries. This is maintained in `Field.convexCorners`.
+
 ## October 11, 2018-C JMJ  Tapering thickness of non-boundary walls at their ends
 This mitigates the issue for walls that define convex objects, such as block field elements.
 (mentioned in "October 9, 2018-B JMJ" note and earlier notes. The mitigation is specifically
