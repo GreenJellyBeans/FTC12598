@@ -168,7 +168,10 @@ class MecanumDrive {
     double collisionFx = 0;
     double collisionFy = 0;
     double collisionTorque = 0;
-    CollisionResult col = calculateCollisionImpact(this);
+    CollisionResult col = calculateCollisionImpact(this, true); // first: robot corners with outside walls
+    if (col == null) {
+      col = calculateCollisionImpact(this, false); // next to try: robot sides with external corners
+    }
     if (col != null) {
       field.addExtendedStatus(String.format("COLLISION fx=%5.2f fy=%5.2f torque=%5.2f", col.fx, col.fy, col.torque));
       collisionFx = col.fx;

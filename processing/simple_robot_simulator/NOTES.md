@@ -2,6 +2,15 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-F JMJ  Collision of robot sides with corners is implemented!
+This is implemented in `calculateCollisionImpact`, which is now called twice, once
+to calculate the impact forces and torques due to collision between robot corners and
+external walls (as before) and once to do this for collision between robot sides and
+external corners.
+
+There is still some deviant behaviour around corners due to the pseudo collisions with
+adjacent walls (as explained earlier), but this effect is now tolerable.
+
 ## October 11, 2018-E JMJ  Updated collision visualization; robots keep walls
 To better assist in visualizing collision physics, points of collision are now
 red when they are actually colliding, and both robot and field walls and wall boundaries

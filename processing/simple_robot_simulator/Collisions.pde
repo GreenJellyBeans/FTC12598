@@ -147,13 +147,15 @@ class CollisionResult {
 }
 
 
-// Calculates the result of a potential impact of a set of corner points {corners} with
-// a set of walls. Net torque is computed about the point ({cx}, {cy}), which is typically
+// Calculates the result of a potential impact of a set of corner points  with
+// a set of walls. Net torque is computed about the point ({drive.x}, {drive.y}), which is
 // the center of the robot. Special case: null is returned if there is negigable net force or torque. 
-CollisionResult calculateCollisionImpact(MecanumDrive drive) {
+// If {robotCorners} then the collisions are between the corners of the robot and the walls. If !{robotCorners}
+// then the collision is computed between the corners of external walls and the sides of the robot.
+CollisionResult calculateCollisionImpact(MecanumDrive drive, boolean robotCorners) {
   RobotProperties props = drive.props;
-  Wall[] walls = drive.field.walls;
-  Point[]corners = drive.boundaryPoints;
+  Point[]corners = (robotCorners) ? drive.boundaryPoints : drive.field.convexCorners;
+  Wall[] walls = (robotCorners) ? drive.field.walls : drive.walls;
   double cx = drive.x;
   double cy = drive.y;
   double fx = 0;
@@ -164,6 +166,12 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
     return null; // ************ EARLY RETURN **************
   }
 
+  // Robot walls face outwards - in the opposite direction to normal external walls when they
+  // collide with the robot. So we have to invert directions when aggregating forces and torques.
+  // This is captured in the following variable.
+  double direction = robotCorners ? 1 : -1;
+
+
   for (Point p : corners) {
     // To calculate torque about (cx, cy), we need to first translate 
     // the origin to (p.x, p.y), the point of collision.
@@ -171,7 +179,9 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
     double cyy = cy - p.y;
 
     for (Wall w : walls) {
-      double mag = w.collisionMagnitude(p.x, p.y, drive.vx, drive.vy);
+      // Note that velocity direction also has to be reversed - this is used in computing
+      // assymetric collision reaction force.
+      double mag = w.collisionMagnitude(p.x, p.y, direction*drive.vx, direction*drive.vy);
 
       // No need to further process Wall w if it does not
       // collide with p
@@ -180,18 +190,21 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
       }
 
       if (g_field.visualizeCollisions) {
+        // Draw a nice red disk at the collision point.
         fill(255, 0, 0);
         noStroke();
         g_field.drawCircle(p.x, p.y, 0.1);
       }
-      
+
       // Collision force magnetude is normal to the wall, so we
       // calculate forces in the x and y directions
       // by multiplying by the appropriate wall normal vector
       // components, w.nx and w.ny
-      fx += mag * w.nx;
-      fy += mag * w.ny;
+      // HOWEVER, if the walls are robot walls, we have to reverse the normals so that they
+      // point inwards.
 
+      fx += mag * w.nx * direction;
+      fy += mag * w.ny * direction;
 
       // Then we rotate the x-axis to be aligned with the wall normal.
       // But we only need the transformed y-coordinate becasue that is
@@ -201,7 +214,7 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
       // the angle of the normal to the x-axis. We want to rotate
       // by (-aN).
       double pyy = -cxx * w.ny + cyy * w.nx;
-      torque += mag * pyy;
+      torque += mag * pyy * direction;
     }
   }
 
