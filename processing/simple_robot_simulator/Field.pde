@@ -33,7 +33,7 @@ class Field {
     final double TILE_WIDTH = (0.3048*12)/6; // Six tiles per 12 feet, in meters
     strokeWeight(1);
     stroke(100);
-    for (int i = 1; i <= (int) DEPTH/TILE_WIDTH; i++) {
+    for (int i = 1; i <= DEPTH/TILE_WIDTH; i++) {
       double offset = i * TILE_WIDTH;
       drawLine(0, offset, BREADTH, offset); // Horizontal lines
     }
