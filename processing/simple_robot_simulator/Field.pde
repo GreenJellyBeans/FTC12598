@@ -14,8 +14,8 @@ class Field {
   final FieldElements elements = new FieldElements(this); 
   Wall[] walls; // initialized in init.
   Point[] convexCorners = {}; // Corners between adjacent walls around any convex objects, if any. Initialized in makeWalls().
-  final boolean visualizeWallNormals = false; // set to true to display wall normal vectors for debugging
-
+  final boolean visualizeCollisions = true; // set to true to display wall normal vectors and collision points for debugging
+  final color collisionColor = color(0, 255, 0); // Collision visualizations have this color
   void init() {
     elements.load();
     makeWalls();
@@ -46,16 +46,10 @@ class Field {
     // draw field elements
     elements.draw();
 
-    // draw wall normals.
-    if (visualizeWallNormals) {
-      for (Wall w : walls) {
-        stroke(255, 0, 0);
-        strokeWeight(8);
-        drawPoint(w.cx, w.cy);
-        strokeWeight(2);
-        double len = 0.2;
-        drawLine(w.cx, w.cy, w.cx+len*w.nx, w.cy+len*w.ny);
-      }
+    // draw wall normals and convex corners
+    if (visualizeCollisions) {
+      visualizeWalls(walls);
+      visualizeCorners(convexCorners);
     }
 
     // Status
@@ -154,26 +148,41 @@ class Field {
     int cpos = corners.size();
     double angle = e.a;
 
-    // Add walls
-    walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2, false)); // North facing - OK
-    walls.add(new Wall(cx + w/2, cy, h, thickness, 0, false)); // East facing  - OK
-    walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2, false)); // South facing - OK
+    walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2, false)); // North facing
+    walls.add(new Wall(cx + w/2, cy, h, thickness, 0, false)); // East facing
+    walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2, false)); // South facing
     walls.add(new Wall(cx - w/2, cy, h, thickness, -Math.PI, false)); // West facing
 
-    // Add corners
     corners.add(new Point(cx - w/2, cy - h/2));
     corners.add(new Point(cx - w/2, cy + h/2));
     corners.add(new Point(cx + w/2, cy - h/2));
     corners.add(new Point(cx + w/2, cy + h/2));
 
-
     for (int i = 0; i < 4; i++) {
       walls.get(wpos + i).rotate(angle, cx, cy);
     }
-    
+
     for (int i = 0; i < 4; i++) {
       corners.get(cpos + i).rotate(angle, cx, cy);
     }
-    
+  }
+
+  void visualizeWalls(Wall[] walls) {
+    for (Wall w : walls) {
+      stroke(collisionColor);
+      strokeWeight(8);
+      drawPoint(w.cx, w.cy);
+      strokeWeight(2);
+      double len = 0.2;
+      drawLine(w.cx, w.cy, w.cx+len*w.nx, w.cy+len*w.ny);
+    }
+  }
+
+  void visualizeCorners(Point[] corners) {
+    fill(collisionColor);
+    noStroke();
+    for (Point p : corners) {
+      drawCircle(p.x, p.y, 0.05);
+    }
   }
 }

@@ -2,6 +2,14 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-E JMJ  Updated collision visualization; robots keep walls
+To better assist in visualizing collision physics, points of collision are now
+red when they are actually colliding, and both robot and field walls and wall boundaries
+are visualized. This visualization is enabled if `Field.visualizeCollisions` is set to true.
+
+The robot now keeps a constantly-updated set of it's own walls in it's `walls` array. This is
+for upcoming implementation of collision of robot walls with wall corners.
+
 ## October 11, 2018-D JMJ  Field now keeps a list of corners block walls
 This is the first part of the support for robot sides (not corners) collision with 
 wall boundaries. This is maintained in `Field.convexCorners`.

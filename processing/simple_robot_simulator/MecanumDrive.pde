@@ -12,6 +12,7 @@
 class MecanumDrive {
   final RobotProperties props;
   final Point[] boundaryPoints; // the 4 corners
+  final Wall[] walls; // the 4 walls of the robot
 
   // These adjust and set the direction for each wheel
   // Typically they are set to +1 or -1, but they could be
@@ -60,6 +61,16 @@ class MecanumDrive {
       new Point(), 
       new Point()
     };
+    // Robot walls  - they are as wide as the robot's side, and as thick
+    // as the quarter the robot's side. Thickness comes into play when the
+    // robot collides with a corner that intrudes into the robot because
+    // of the robot's momentum.
+    walls = new Wall[] {
+      new Wall(props.side, props.side/4), 
+      new Wall(props.side, props.side/4), 
+      new Wall(props.side, props.side/4), 
+      new Wall(props.side, props.side/4)
+    };
 
     // Initial position and orientation - can be changed
     // by using place().
@@ -97,6 +108,7 @@ class MecanumDrive {
     this.cos_a = Math.cos(a);
     this.sin_a = Math.sin(a);
     updateBoundaryPoints();
+    updateWalls();
   }
 
   void stop() {
@@ -175,14 +187,13 @@ class MecanumDrive {
 
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).
-    double oldX = x;
-    double oldY = y;
     x += dT * (vx + vxNew)/2;
     y += dT * (vy + vyNew)/2;
     a = normalizeAngle(a + dT * (va + vaNew)/2);
     this.cos_a = Math.cos(a);
     this.sin_a = Math.sin(a);
     updateBoundaryPoints();
+    updateWalls();
 
     // Add to the trail - though this may not
     // be added if it is too close to the previously
@@ -374,7 +385,7 @@ class MecanumDrive {
       }
     }
     return newSpeed;
-  }
+  } 
 
 
 
@@ -393,11 +404,28 @@ class MecanumDrive {
         double y0  = d*jj;
         Point p  = boundaryPoints[i];
         p.set(fieldX(x0, y0), fieldY(x0, y0));
-        // uncomment to verify we got the corners right...
-        // fill(0); field.drawCircle(p.x, p.y, 0.05);
         i++;
       }
     }
     assert(i == 4);
+    if (field.visualizeCollisions) {
+      field.visualizeCorners(boundaryPoints);
+    }
   };
+
+  void updateWalls() {
+    double d = props.side/2;
+    double da = Math.PI/2;
+    updateWall(walls[0], d, 0, a); // East wall - faces increasing X (in robot frame of reference, where origin is the center)
+    updateWall(walls[1], 0, -d, a - da); // South wall
+    updateWall(walls[2], -d, 0, a + 2*da); // West wall
+    updateWall(walls[3], 0, d, a + da); // North wall - faces increasing Y
+    if (field.visualizeCollisions) {
+      field.visualizeWalls(walls);
+    }
+  }
+
+  void updateWall(Wall w, double x, double y, double a1) {
+    w.reposition(fieldX(x, y), fieldY(x, y), a1);
+  }
 }

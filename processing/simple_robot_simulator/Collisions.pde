@@ -23,6 +23,13 @@ class Wall {
   double nx; // unit vector of normal - x component
   double ny; // unit vector of normal - y component
 
+  // A wall whose position and orientation will be defined later or constantly updated.
+  Wall(double len, double thickness) {
+    this.len = len;
+    this.thickness = thickness;
+    isBoundary = false;
+    reposition(0, 0, 0);
+  }
 
   Wall(double x, double y, double len, double thickness, double aN, boolean boundary) {
     this.len = len;
@@ -40,24 +47,24 @@ class Wall {
     this.nx = Math.cos(aN);
     this.ny = Math.sin(aN);
   }
-  
+
   // Rotate entire Wall by {a} about point (px, py)
   void rotate(double a, double px, double py) {
     double c = Math.cos(a);
     double s = Math.sin(a);
-    
+
     // Translate origin (temporarily) to (px, py)
     double x1 = cx - px;
     double y1 = cy - py;
     cx = px + c*x1 - s*y1;
     cy = py + c*y1 + s*x1;
-    
+
     // Update wall angle and normals
     aN = aN + a;
     nx = Math.cos(aN);
-    ny = Math.sin(aN);    
+    ny = Math.sin(aN);
   }
-  
+
   // Calculates the magnetude of the collision
   // force - it will be normal to the wall (walls are frictionless), and simply
   // a function of how much "behind" the point is to the wall.
@@ -90,7 +97,7 @@ class Wall {
     // by (-aN).
     double xx = x * nx + y *ny;
     double yy = -x * ny + y * nx;
-    
+
     // For non-boundary walls, we taper off thickness at corners. This helps to
     // reduce the cases of mistaken collisions when you have neighboring walls of
     // a convex structure. The tapering is at a 45-degree angle, that works best for
@@ -172,6 +179,12 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
         continue;
       }
 
+      if (g_field.visualizeCollisions) {
+        fill(255, 0, 0);
+        noStroke();
+        g_field.drawCircle(p.x, p.y, 0.1);
+      }
+      
       // Collision force magnetude is normal to the wall, so we
       // calculate forces in the x and y directions
       // by multiplying by the appropriate wall normal vector
