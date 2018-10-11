@@ -142,16 +142,13 @@ class Field {
 
   void addWallsFromBlock(List<Wall> walls, FieldElements.Element e) {
     assert(e.type == ElementType.BLOCK);
-    assert(e.path.length == 2);
-    Point p1 = e.path[0]; // center
-    Point p2 = e.path[1]; // dimensions
-    double cx = p1.x;
-    double cy = p1.y;
-    double w = p2.x;
-    double h = p2.y;
+    double cx = e.x;
+    double cy = e.y;
+    double w = e.w;
+    double h = e.h;
     double thickness = Math.min(w, h)/20; // Can't be too thick or it reaches and grabs robots from the other side!
     int pos = walls.size();
-    double angle = radians(45); // Hardcoded for now.
+    double angle = e.a;
     walls.add(new Wall(cx, cy + h/2, w, thickness, Math.PI/2)); // North facing - OK
     walls.add(new Wall(cx + w/2, cy, h, thickness, 0)); // East facing  - OK
     walls.add(new Wall(cx, cy - h/2, w, thickness, -Math.PI/2)); // South facing - OK

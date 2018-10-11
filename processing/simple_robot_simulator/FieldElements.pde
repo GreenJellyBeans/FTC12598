@@ -23,29 +23,35 @@ interface SegmentProcessor {
 class FieldElements {
 
   final String FILE_NAME = "field.txt"; // Should be under ./data
-  final String VERSION = "1.1"; // Increment to invalidate cache
+  final String VERSION = "1.2"; // Increment to invalidate cache
   final double FEET_TO_METERS = 0.3048;
 
   class Element {
-    ElementType type;
-    boolean virtual; // true == not visible to robot
-    String label;
-    color c;
-    double size;
-    Point[] path;
+    final ElementType type;
+    final boolean virtual; // true == not visible to robot
+    final String label;
+    final color c;
+    double x; // x position in meters
+    double y; // y position in meters
+    double w; // width in meters
+    double h; // height in meters
+    double a;  // angle or orientation in radians
+    Point[] path; // May be null, points in meters
 
 
-    Element(ElementType type, boolean virtual, String label, color c, double size) {
+    Element(ElementType type, boolean virtual, String label, color c, double x, double y) {
       this.type = type;
       this.virtual = virtual;
       this.label = label;
       this.c = c;
-      this.size = size;
+      this.x = x;
+      this.y = y;
       path = null;
     }
 
+
     // Append a compact text representation to {sb}.
-    void appendTo(StringBuilder sb) {
+    private void appendTo(StringBuilder sb) {
       char sp = ' ';
       sb.append("ELEMENT");
       sb.append(sp);
@@ -57,11 +63,17 @@ class FieldElements {
       sb.append(sp);
       sb.append(c);
       sb.append(sp);
-      sb.append(String.format("%5.3f", size));
+      sb.append(String.format("%6.4f", x));
+      sb.append(String.format("%6.4f", y));
+      sb.append(String.format("%6.4f", w));
+      sb.append(String.format("%6.4f", h));
+      sb.append(String.format("%6.4f", a));
 
       // Append linear elements
-      for (Point p : path) {
-        sb.append(String.format("(%5.3f,%5.3f)", p.x, p.y));
+      if (path != null) {
+        for (Point p : path) {
+          sb.append(String.format("(%6.4f,%6.4f)", p.x, p.y));
+        }
       }
       sb.append("\n");
     }
@@ -130,25 +142,41 @@ class FieldElements {
       }
 
       Element e = null;
-      String sepChar = ">"; // Separator character
+      Scanner in = new Scanner(s);
+      boolean noErrors = true;
+
+      // Extract position - all shapes have a position
+      double x = in.nextDouble() * FEET_TO_METERS;
+      double y = in.nextDouble()  * FEET_TO_METERS;
+
       if (shape.startsWith("red_tape")) {
-        e = new Element(ElementType.TAPE, false, label, color(255, 50, 50), TAPE_WIDTH);
+        e = new Element(ElementType.TAPE, false, label, color(255, 50, 50), x, y);
+        e.w = TAPE_WIDTH;
+        noErrors = loadPath(in, e);
       } else if (shape.startsWith("blue_tape")) {
-        e = new Element(ElementType.TAPE, false, label, color(50, 100, 255), TAPE_WIDTH);
+        e = new Element(ElementType.TAPE, false, label, color(50, 100, 255), x, y);
+        e.w = TAPE_WIDTH;
+        noErrors = loadPath(in, e);
       } else if (shape.startsWith("fat_black_tape")) {
-        e = new Element(ElementType.TAPE, false, label, color(30), FAT_TAPE_WIDTH);
+        e = new Element(ElementType.TAPE, false, label, color(30), x, y);
+        e.w = FAT_TAPE_WIDTH;
+        noErrors = loadPath(in, e);
       } else if (shape.startsWith("block")) {
-        e = new Element(ElementType.BLOCK, false, label, color(160), 0);
-        sepChar = "|";
+        e = new Element(ElementType.BLOCK, false, label, color(160), x, y);
+        noErrors = loadBlock(in, e);
       } else if (shape.startsWith("path")) {
-        e = new Element(ElementType.PATH, true, label, color(0, 128), PATH_WIDTH);
+        e = new Element(ElementType.PATH, true, label, color(0, 128), x, y);
+        e.w = PATH_WIDTH;
+        noErrors = loadPath(in, e);
       } else if (shape.startsWith("mark")) {
-        e = new Element(ElementType.MARK, true, label, color(255, 128), MARK_SIZE);
+        e = new Element(ElementType.MARK, true, label, color(255, 128), x, y);
+        e.w = e.h = MARK_SIZE;
       }
-      if (e != null && loadElementDetails(e, s, sepChar)) {
+      if (e != null && noErrors) {
         elementList.add(e);
       }
-    }  
+      in.close();
+    }
 
     fieldElements = elementList.toArray(new Element[elementList.size()]);
   }
@@ -187,31 +215,27 @@ class FieldElements {
 
   // Reads in an array of points from {in} into {e.path}. Assumes these input values are
   // in FEET and so does the conversion to METERS. Input is pairs of floating point numbers.
-  // Each pair is separated by space and {sepChar}
-  private boolean loadElementDetails(Element e, String in, String sepChar) {
-    // We expect somehing like this (if {sepChar} is ">")
-    // 1 2 > 3 4 > 5 6
-    Scanner s = new Scanner(in);
+  // Each pair is separated by space and '>'
+  private boolean loadPath(Scanner s, Element e) {
+    // We expect something like this 
+    // > 3 4 > 5 6
     int i = 0;
-    List<Point> path = new ArrayList<Point>();
+    List<Point> path = new ArrayList<Point>(); //<>//
     while (s.hasNext()) {
+      String t = s.next();
+      if (!t.equals(">")) {
+        println("Unexpected token parsing point #"+i);
+        break;
+      }
       double x = s.nextDouble(); 
       double y = s.nextDouble();
       //println ("(x,y) = " + x + " " + y);
       path.add(new Point(x*FEET_TO_METERS, y*FEET_TO_METERS));
-      if (s.hasNext()) {
-        String t = s.next();
-        if (!t.equals(sepChar)) {
-          println("Unexpected token parsing point #"+i);
-          break;
-        }
-      }
       i++;
     }
-    s.close();
 
     // We expect at least one point.
-    if (path.size()<1) {
+    if (path.size()<1) { //<>//
       println("shape " + e.type + " has no points");
       return false;
     }
@@ -219,6 +243,29 @@ class FieldElements {
     e.path = path.toArray(new Point[path.size()]);
     return true;
   }
+
+
+
+  // Load parameters specific to blocks
+  private boolean loadBlock(Scanner s, Element e) {
+    // A block looks like this:
+    // block.obsticle 4 4 | 1.92 1.92 | 90
+    // Of this, only this remains in the scanner buffer:
+    // | 1.92 1.92 | 90
+    final String BAR = "|";
+    String b = s.next();
+    if (!b.equals(BAR)) return false; // EARLY RETURN
+    double w = s.nextDouble();
+    double h = s.nextDouble();
+    b = s.next();
+    if (!b.equals(BAR)) return false; // EARLY RETURN
+    double rot = s.nextDouble();
+    e.w = w * FEET_TO_METERS;
+    e.h = h * FEET_TO_METERS;
+    e.a = radians((float)rot);
+    return true;
+  }
+
 
   // Generate a pixel array that represents the the mat background and visible floor elements.
   // This is for input to any color sensor simulation
@@ -247,7 +294,7 @@ class FieldElements {
 
   // These consist of multiple line-segments
   private void renderLinearElement(Element e) {
-    float weight = Math.max(field.pixLen(e.size), 1);
+    float weight = Math.max(field.pixLen(e.w), 1);
     stroke(e.c);
     strokeWeight(weight);
     // Note: Processing does not support Lambda expressions.
@@ -264,31 +311,28 @@ class FieldElements {
 
   private void renderMarkElement(Element e) {
     // Draw a circle with a cross, and add label.
-    Point p = e.path[0];
     fill(e.c);
     stroke(0);
     strokeWeight(2);
-    field.drawCircle(p.x, p.y, e.size/2);
+    field.drawCircle(e.x, e.y, e.w/2);
     stroke(2);
-    field.drawPoint(p.x, p.y);
-    drawLabel(e.label, p.x, p.y, 20);
+    field.drawPoint(e.x, e.y);
+    drawLabel(e.label, e.x, e.y, 20);
   }
 
   private void renderBlockElement(Element e) {
     // Draw a rectangle, add label
-    Point p = e.path[0];
-    Point dim = e.path[1];
-    double angle = radians(45); // hardcoded for now.
-    double w = dim.x;
-    double h = dim.y;
+    double angle = e.a;
+    double w = e.w;
+    double h = e.h;
     pushMatrix();
-    translate(field.screenX(p.x), field.screenY(p.y));
+    translate(field.screenX(e.x), field.screenY(e.y));
     rotate(-(float)angle); // In Processing, rotate(-t) rotates the axes by t;
     fill(e.c);
     noStroke();
     rect(0, 0, field.pixLen(w), field.pixLen(h)); // Assumes rectmode is CENTER
     popMatrix();
-    drawLabel(e.label, p.x, p.y, 0);
+    drawLabel(e.label, e.x, e.y, 0);
   }
 
   private void drawLabel(String text, double x, double y, int yPixOffset) {
@@ -300,24 +344,18 @@ class FieldElements {
 
   // Apply the {sp.process} method to each segment of Element {e}.
   private void processLinearSegment(Element e, SegmentProcessor sp) {
-    boolean first = true;
     double xFirst = 0;
     double yFirst = 0;
     double xPrev = 0;
     double yPrev = 0;
+    xFirst = xPrev = e.x;
+    yFirst = yPrev = e.y;
     for (Point p : e.path) {
-      // The first point is absolute; rest are relative
-      if (first) {
-        xFirst = xPrev = p.x;
-        yFirst = yPrev = p.y;
-        first = false;
-      } else {
-        double x  = xFirst + p.x;
-        double y  = yFirst + p.y;
-        sp.process(xPrev, yPrev, x, y);
-        xPrev = x;
-        yPrev = y;
-      }
+      double x  = xFirst + p.x;
+      double y  = yFirst + p.y;
+      sp.process(xPrev, yPrev, x, y); //<>//
+      xPrev = x;
+      yPrev = y;
     }
   }
 
@@ -326,7 +364,7 @@ class FieldElements {
   // PGraphics, which has different units than the scren, so we use
   // the floorXX methods.
   private void renderFloorLinearElement(final PGraphics pg, Element e) {
-    float weight = Math.max(floorPixLen(e.size), 1);
+    float weight = Math.max(floorPixLen(e.w), 1);
     pg.stroke(e.c);
     pg.strokeWeight(weight);
     // Note: Processing does not support Lambda expressions.

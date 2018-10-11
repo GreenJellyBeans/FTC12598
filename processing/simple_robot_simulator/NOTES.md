@@ -2,6 +2,23 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-A JMJ  Changed field element structure and processing
+It was a hack to try to extract angles and starting positions from the path. How
+`Element` has explicit fields for initial position (x and y) and also width, height
+and rotation. The field elements data file format is unchanged EXCEPT for the block
+format, which is now:
+
+```
+# block cx cy | w h | rot
+# where:
+#    (cx, cy) is center coordinates in feet
+#    w and h are width and height, also in feet
+#    rot is rotation amount (anticlockwise) in degrees
+block.obsticle 4 4 | 1.92 1.92 | 90
+```
+With these changes, blocks can be rendered at an arbitrary rotation specified as the 
+last number in block specification.
+
 ## October 10, 2018-B JMJ  Block field elements can be positioned at an angle.
 Blocks were positioned as axis-aligned rectangles. Now they can be positioned
 at any angle. However, the input format (`files.txt`) doesn't support
