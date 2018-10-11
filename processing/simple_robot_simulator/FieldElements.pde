@@ -1,4 +1,4 @@
-//
+// //<>// //<>// //<>//
 // Class FieldElements loads and applies additional user-proved elements to the field.
 //
 import java.util.Scanner;
@@ -22,7 +22,9 @@ interface SegmentProcessor {
 
 class FieldElements {
 
-  final String FILE_NAME = "field.txt"; // Should be under ./data
+  final String BASE_FILE_NAME = "field_base.txt"; // Should be under ./data
+  final String EXTRAS_FILE_NAME = "field_extras.txt"; // Should be under ./data
+
   final String VERSION = "1.2"; // Increment to invalidate cache
   final double FEET_TO_METERS = 0.3048;
 
@@ -105,15 +107,30 @@ class FieldElements {
 
   // Loads all field elements
   void load() {
+    List<Element> elementList = new ArrayList<Element>();
+
+    // Load the base elements that define the field - these change infrequently
+    String[] fieldObjects = g_pa.loadStrings(BASE_FILE_NAME);
+    appendLoad(elementList, fieldObjects);
+
+    // Load optional extra objects that are typically annotations
+    File extrasF = new File(sketchPath("data/" + EXTRAS_FILE_NAME));
+    if (extrasF.exists()) {
+      fieldObjects = g_pa.loadStrings(EXTRAS_FILE_NAME);
+      appendLoad(elementList, fieldObjects);
+    }
+    fieldElements = elementList.toArray(new Element[elementList.size()]);
+  }
+
+  // Add the elements represented by the text array {fieldObjects} to
+  // the list of flements.
+  private void appendLoad(List<Element> elementList, String[] fieldObjects) {
     // Input are in feet and inches
     final double INCHES_TO_METERS = FEET_TO_METERS/12;
     final double TAPE_WIDTH = 2*INCHES_TO_METERS;
     final double FAT_TAPE_WIDTH = 5*INCHES_TO_METERS;
     final double PATH_WIDTH = 0.5*INCHES_TO_METERS;
     final double MARK_SIZE = 4*INCHES_TO_METERS;
-
-    String[] fieldObjects = g_pa.loadStrings(FILE_NAME);
-    List<Element> elementList = new ArrayList<Element>();
 
     // Process elements
     for (String s : fieldObjects) {
@@ -177,8 +194,6 @@ class FieldElements {
       }
       in.close();
     }
-
-    fieldElements = elementList.toArray(new Element[elementList.size()]);
   }
 
 
@@ -220,7 +235,7 @@ class FieldElements {
     // We expect something like this 
     // > 3 4 > 5 6
     int i = 0;
-    List<Point> path = new ArrayList<Point>(); //<>//
+    List<Point> path = new ArrayList<Point>();
     while (s.hasNext()) {
       String t = s.next();
       if (!t.equals(">")) {
@@ -235,7 +250,7 @@ class FieldElements {
     }
 
     // We expect at least one point.
-    if (path.size()<1) { //<>//
+    if (path.size()<1) {
       println("shape " + e.type + " has no points");
       return false;
     }
@@ -353,7 +368,7 @@ class FieldElements {
     for (Point p : e.path) {
       double x  = xFirst + p.x;
       double y  = yFirst + p.y;
-      sp.process(xPrev, yPrev, x, y); //<>//
+      sp.process(xPrev, yPrev, x, y);
       xPrev = x;
       yPrev = y;
     }

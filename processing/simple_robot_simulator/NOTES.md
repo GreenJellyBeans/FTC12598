@@ -2,6 +2,13 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 11, 2018-B JMJ  Field elements are now specified in two files
+File `data/field_base.txt` contains elements that define the standard field - this file shouldn't
+change once the rules of the competition are defined.
+
+Optional file `data/field_extras.txt` contains optional elements that are typically part of
+a particular team's strategy, such as autonomous paths.
+
 ## October 11, 2018-A JMJ  Changed field element structure and processing
 It was a hack to try to extract angles and starting positions from the path. How
 `Element` has explicit fields for initial position (x and y) and also width, height

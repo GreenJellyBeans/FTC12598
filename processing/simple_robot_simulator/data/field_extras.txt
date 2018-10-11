@@ -1,0 +1,11 @@
+#
+# Place temporary field elements here - especially paths that describe
+# desired robot paths and other strategy items  - anything that is
+# not part of the standard field.
+#
+
+# The path and mark entities are virtual - they have no
+# effect on the robot.
+path 9 9 > 1 0 > 1 2.5 > 2 0 
+mark.start2 9 9
+mark.end2 11 9
