@@ -2,6 +2,18 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 12, 2018-B JMJ  DriveBase encoder values
+These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
+In particular, when strafing, the forward direction doesn't advance, and so the simulated
+encoders don't advance either, while of course the wheels themselves are rotating.
+
+But if moving purely forward, I think that mecanum drives behave more or less like normal
+drives, except perhaps the factor by which encoder ticks have to be multiplied will be 
+different, and perhaps not a simple product of wheel circumference and wheel RPM and time.
+
+NOTE: `SampleDriveTask` monitors the `Y` button - if pressed it will reset all encoders by calling
+`DriveBase.resetEncoders`.
+
 ## October 12, 2018-B JMJ  Finished moving non-mecanum stuff into new class DriveBase
 Had to also move velocities (`vx, vy, va1`) because they are used to in collision
 force computation. Encoder methods in `DriveBase` are implemented but not tested.
