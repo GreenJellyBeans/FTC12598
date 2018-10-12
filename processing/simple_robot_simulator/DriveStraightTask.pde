@@ -13,14 +13,14 @@ class DriveStraightTask implements DriveTask {
 
   void deinit() {
   }
-  
+
   void loop() {
     //get current bearing   
     Field f = ra.field;
-    f.addExtendedStatus(String.format("ANGLE: %5.2f", balancedAngle(ra.drive.a)));
+    f.addExtendedStatus(String.format("ANGLE: %5.2f", balancedAngle(ra.base.a)));
 
     //find difference from target bearing (error)
-    double error = balancedAngle(targetBearing - ra.drive.a) ;
+    double error = balancedAngle(targetBearing - ra.base.a) ;
     f.addExtendedStatus(String.format("ERROR: %5.2f ", error));
 
     //fix it
@@ -29,11 +29,11 @@ class DriveStraightTask implements DriveTask {
     double pTurn = -error*Kp;
 
     /**/
-    MecanumDrive d = ra.drive;
-    d.setPowerFL(pFwd + pStrafe + pTurn);
-    d.setPowerFR(pFwd - pStrafe - pTurn);
-    d.setPowerBL(pFwd - pStrafe + pTurn);
-    d.setPowerBR(pFwd + pStrafe - pTurn);
+    double pFL = (pFwd + pStrafe + pTurn);
+    double pFR = (pFwd - pStrafe - pTurn);
+    double pBL = (pFwd - pStrafe + pTurn);
+    double pBR = (pFwd + pStrafe - pTurn);
+    ra.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
     /**/
   }
 
@@ -49,11 +49,10 @@ class DriveStraightTask implements DriveTask {
     double pFwd = 0.1;//0.5;
     double pStrafe = 0;//0.5;
     double pTurn = 0;//0.01;
-    MecanumDrive d = ra.drive;
-
-    d.setPowerFL(pFwd + pStrafe + pTurn);
-    d.setPowerFR(pFwd - pStrafe - pTurn);
-    d.setPowerBL(pFwd - pStrafe + pTurn);
-    d.setPowerBR(pFwd + pStrafe - pTurn);
+    double pFL = (pFwd + pStrafe + pTurn);
+    double pFR = (pFwd - pStrafe - pTurn);
+    double pBL = (pFwd - pStrafe + pTurn);
+    double pBR = (pFwd + pStrafe - pTurn);
+    ra.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
   }
 }

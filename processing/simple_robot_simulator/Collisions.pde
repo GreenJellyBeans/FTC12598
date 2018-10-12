@@ -152,12 +152,12 @@ class CollisionResult {
 // the center of the robot. Special case: null is returned if there is negigable net force or torque. 
 // If {robotCorners} then the collisions are between the corners of the robot and the walls. If !{robotCorners}
 // then the collision is computed between the corners of external walls and the sides of the robot.
-CollisionResult calculateCollisionImpact(MecanumDrive drive, boolean robotCorners) {
+CollisionResult calculateCollisionImpact(DriveBase drive, boolean robotCorners) {
   RobotProperties props = drive.props;
   Point[]corners = (robotCorners) ? drive.boundaryPoints : drive.field.convexCorners;
   Wall[] walls = (robotCorners) ? drive.field.walls : drive.walls;
-  double cx = drive.x;
-  double cy = drive.y;
+  double cx = drive.cx;
+  double cy = drive.cy;
   double fx = 0;
   double fy = 0;
   double torque = 0;

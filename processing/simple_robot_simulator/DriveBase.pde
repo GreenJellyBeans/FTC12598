@@ -1,8 +1,8 @@
 // Class DriveBase contains the details of the drive that are not tied to a specific drive mechanism such
-// as meccanum. However this Drive assumes 4 wheels at the 1 corners of a square, and each wheel has a
+// as mecanum. However this Drive assumes 4 wheels at the 1 corners of a square, and each wheel has a
 // motor and encoder, and all wheels have their axels parallel to the front of the robot.
 // A particular drive type (such as mecanum) may decide whether to use all 4 motors or not and
-// what the force implications are of using (say) meccanum vs omni vs normal wheels.
+// what the force implications are of using (say) mecanum vs omni vs normal wheels.
 // The class keeps track of position and orientation of the center of the drive base,
 // as well as boundary point locations and robot wall (side) locations. It also keeps
 // track of the forward travel by each individual wheel (or rather, corner) since the robot was initialized,
@@ -46,6 +46,10 @@ class DriveBase {
   double cos_a; // cos(a)
   double sin_a; // sin(a)
 
+  double vx = 0; // velocity in x-direction, m/s
+  double vy = 0; // velocity in y-direction  m/s
+  double va = 0; // angular velocity along z-axis, rad/s
+
   // Motor power
   // NOTE: Forces act in a "diamond" pattern for mecanum:
   //    /\
@@ -64,7 +68,7 @@ class DriveBase {
     this.field = field;
     this.props = props;
     this.trail = new Trail(field, trailColor);
-    
+
     // Boundary points are are the position of the for corners, in field-coordinates
     boundaryPoints = new Point[]{
       new Point(), 
@@ -72,7 +76,7 @@ class DriveBase {
       new Point(), 
       new Point()
     };
-    
+
     // Robot walls  - they are as wide as the robot's side, and as thick
     // as the quarter the robot's side. Thickness comes into play when the
     // robot collides with a corner that intrudes into the robot because
@@ -110,7 +114,7 @@ class DriveBase {
     }
   }
 
-  
+
   // Read current encoder value for a particular
   // motor / corner, scaled by the value earlier
   // set in a call to setEncoderScale (or a default).
@@ -136,11 +140,33 @@ class DriveBase {
     this.sin_a = Math.sin(a);
     updateBoundaryPoints();
     updateWalls();
+
+    // Add to the trail - though this may not
+    // be added if it is too close to the previously
+    // added point.
+    trail.addPoint(cx, cy);
+  }
+
+
+  // This is called by the drive-specific physics engine (like MecanumDrive)
+  // to update the linear and angular velocities of the robot.
+  void updateVelocities(double newVx, double newVy, double newVa) {
+    vx = newVx;
+    vy = newVy;
+    va = newVa;
   }
 
 
   void setMotorPower(int index, double p) {
     power[index] = clipPower(p) * powerAdjust[index];
+  }
+
+
+  void setMotorPowerAll(double pFL, double pFR, double pBL, double pBR) {
+    power[FL] = clipPower(pFL) * powerAdjust[FL];
+    power[FR] = clipPower(pFR) * powerAdjust[FR];
+    power[BL] = clipPower(pBL) * powerAdjust[BL];
+    power[BR] = clipPower(pBR) * powerAdjust[BR];
   }
 
 
@@ -157,12 +183,19 @@ class DriveBase {
 
 
   // Convert field coordinate to robot coordinate - x component
-  private double robotX(double fx, double fy) {
+  double robotX(double fx, double fy) {
     // First translate to robot's center, then rotate by (-a)
     // to align x-axis with robot's x-axis
     return (fx - cx)*cos_a + (fy - cy)*sin_a;
   }
 
+
+  void addExtendedStatus() {
+    field.addExtendedStatus(String.format("POS     cx:%1.2f  cy:%1.2f  a:%1.2f", cx, cy, balancedAngle(a)));
+    field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", 
+      power[FL], power[FR], power[BL], power[BR]));
+    field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vx, vy, va));
+  }
 
   //
   // Private methods

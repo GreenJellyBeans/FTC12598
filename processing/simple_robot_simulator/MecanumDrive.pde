@@ -10,112 +10,21 @@
 // Author: Joseph M. Joy, FTC12598 mentor.
 //
 class MecanumDrive {
+  final DriveBase base;
   final RobotProperties props;
-  final Point[] boundaryPoints; // the 4 corners
-  final Wall[] walls; // the 4 walls of the robot
-
-  // These adjust and set the direction for each wheel
-  // Typically they are set to +1 or -1, but they could be
-  // individually tweaked to generate various unbalanced conditions.
-  final double powerAdjustFL = 1.0;
-  final double powerAdjustFR = 1.0;
-  final double powerAdjustBL = 1.0;
-  final double powerAdjustBR = 1.0;
-
   final Field field;
-  // Current position and orientation
-  double x;
-  double y;
-  double a; // in radians
-  double cos_a; // cos(a)
-  double sin_a; // sin(a)
-
-  double vx = 0; // velocity in x-direction, m/s
-  double vy = 0; // velocity in y-direction  m/s
-  double va = 0; // angular velocity along z-axis, rad/s
-
-  // Motor power
-  // Forces act in a "diamond" pattern for mecanum:
-  //    /\
-  //    \/
-  double pFL = 0;
-  double pFR = 0;
-  double pBL = 0;
-  double pBR = 0;
-
-  double markX = 0;
-  double markY = 0;
-
-  // Shows where we've been
-  Trail trail;
 
 
   // Create a robot at the specified position
-  public MecanumDrive(Field field, RobotProperties props, color trailColor) {
-    this.field = field;
-    this.props = props;
-    this.trail = new Trail(field, trailColor);
-    boundaryPoints = new Point[]{
-      new Point(), 
-      new Point(), 
-      new Point(), 
-      new Point()
-    };
-    // Robot walls  - they are as wide as the robot's side, and as thick
-    // as the quarter the robot's side. Thickness comes into play when the
-    // robot collides with a corner that intrudes into the robot because
-    // of the robot's momentum.
-    walls = new Wall[] {
-      new Wall(props.side, props.side/4), 
-      new Wall(props.side, props.side/4), 
-      new Wall(props.side, props.side/4), 
-      new Wall(props.side, props.side/4)
-    };
-
-    // Initial position and orientation - can be changed
-    // by using place().
-    place(field.BREADTH/2, field.DEPTH/2, 0);
+  public MecanumDrive(DriveBase base) {
+    this.base = base;
+    this.field = base.field;
+    this.props = base.props;
   }
 
-
-  void setPowerFL(double p) {
-    pFL = clipPower(p) * powerAdjustFL;
-  }
-
-
-  void setPowerFR(double p) {
-    pFR = clipPower(p)  * powerAdjustFR;
-  }
-
-
-  void setPowerBL(double p) {
-    pBL = clipPower(p) * powerAdjustBL;
-  }
-
-
-  void setPowerBR(double p) {
-    pBR = clipPower(p) * powerAdjustBR;
-  }
-
-  // Places the robot at the specified location and orientation.
-  // Units are meters and radians.
-  // This is typically used once - to initially position the robot
-  // somewhere on the field.
-  public void place(double x, double y, double a) {
-    this.x = x;
-    this.y = y;
-    this.a = a;
-    this.cos_a = Math.cos(a);
-    this.sin_a = Math.sin(a);
-    updateBoundaryPoints();
-    updateWalls();
-  }
 
   void stop() {
-    setPowerFL(0);
-    setPowerFR(0);
-    setPowerBL(0);
-    setPowerBR(0);
+    base.setMotorPowerAll(0, 0, 0, 0);
   }
 
 
@@ -131,14 +40,17 @@ class MecanumDrive {
 
     // Convert forces to the field's frame of reference...
     // Note: Robot is pointing in the direction of {a}. 
-    double motiveFx = frontForce*cos_a - rightForce*sin_a;
-    double motiveFy = frontForce*sin_a + rightForce*cos_a;
+    double motiveFx = frontForce*base.cos_a - rightForce*base.sin_a;
+    double motiveFy = frontForce*base.sin_a + rightForce*base.cos_a;
 
     // Apply dampening effects -  acts in a direction opposite to the current direction of travel of the robot
     // This includes the extra load produced by non-powered motors. This is a big simplification, because non-powered
     // motors and friction in general will be mostly along the the same direction as the raw forces because of the 
     // free-wheeling mecanum wheel segments.
     double dampForce  = maxDampingForce();
+    double vx = base.vx;
+    double vy = base.vy;
+    double va = base.va;
     double hyp = Math.sqrt(vx*vx + vy*vy);
     double dampFx, dampFy;
     if (!props.noSpeed(hyp)) {
@@ -168,9 +80,9 @@ class MecanumDrive {
     double collisionFx = 0;
     double collisionFy = 0;
     double collisionTorque = 0;
-    CollisionResult col = calculateCollisionImpact(this, true); // first: robot corners with outside walls
+    CollisionResult col = calculateCollisionImpact(base, true); // first: robot corners with outside walls
     if (col == null) {
-      col = calculateCollisionImpact(this, false); // next to try: robot sides with external corners
+      col = calculateCollisionImpact(base, false); // next to try: robot sides with external corners
     }
     if (col != null) {
       field.addExtendedStatus(String.format("COLLISION fx=%5.2f fy=%5.2f torque=%5.2f", col.fx, col.fy, col.torque));
@@ -190,48 +102,38 @@ class MecanumDrive {
 
     // Compute displacements, asumming linear change in between simulation steps (which 
     // follows from the assumption of constant forces and torques during this period).
-    x += dT * (vx + vxNew)/2;
-    y += dT * (vy + vyNew)/2;
-    a = normalizeAngle(a + dT * (va + vaNew)/2);
-    this.cos_a = Math.cos(a);
-    this.sin_a = Math.sin(a);
-    updateBoundaryPoints();
-    updateWalls();
-
-    // Add to the trail - though this may not
-    // be added if it is too close to the previously
-    // added point.
-    trail.addPoint(x, y);
+    double dx = dT * (vx + vxNew)/2;
+    double dy = dT * (vy + vyNew)/2;
+    double da = dT * (va + vaNew)/2;
+    base.updatePositionIncrements(dx, dy, da);
 
     // Update velocities
-    vx = vxNew;
-    vy = vyNew;
-    va = vaNew;
+    base.updateVelocities(vxNew, vyNew, vaNew);
 
     // Update status
-    field.addExtendedStatus(String.format("POS     x:%1.2f  y:%1.2f  a:%1.2f", x, y, balancedAngle(a)));
-    field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", pFL, pFR, pBL, pBR));
+    base.addExtendedStatus();
     field.addExtendedStatus(String.format("MOTIVE  MFx:%5.2f  MFy:%5.2f  MT:%5.2f", motiveFx, motiveFy, motiveTorque));
     field.addExtendedStatus(String.format("DAMPEN  DFx:%5.2f  DFy:%5.2f  DT:%5.2f", dampFx, dampFy, dampTorque));
-    field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vxNew, vyNew, vaNew));
-  }
-
-  // Convert robot coordinate to field coordinate - x component
-  double fieldX(double rx, double ry) {
-    return x + rx*cos_a - ry*sin_a;
-  }
-
-  // Convert robot coordinate to field coordinate - x component
-  double fieldY(double rx, double ry) {
-    return y + rx*sin_a + ry*cos_a;
   }
 
 
+  private double pFL() {
+    return base.power[base.FL];
+  }
 
 
-  // Clips to lie within [-1,1]
-  private double clipPower(double in) {
-    return Math.min(Math.max(in, -1), 1);
+  private double pFR() {
+    return base.power[base.FR];
+  }
+
+
+  private double pBL() {
+    return base.power[base.BL];
+  }
+
+
+  private double pBR() {
+    return base.power[base.BR];
   }
 
 
@@ -254,8 +156,8 @@ class MecanumDrive {
   // of both estimating the velocity of a wheel (all wheels the same) and of torque-RPM.
   double motiveForce(double power) {
     double dist = props.side * props.FORCE_FRAC; // dist from center to wheel in m
-    double vLin = Math.sqrt(vx*vx + vy*vy); // magnitude of linear velocity
-    double vTot = vLin + Math.abs(va * dist); // adding contriutions of angular velocity about center (see "ham handed" comment above)
+    double vLin = Math.sqrt(base.vx*base.vx + base.vy*base.vy); // magnitude of linear velocity
+    double vTot = vLin + Math.abs(base.va * dist); // adding contriutions of angular velocity about center (see "ham handed" comment above)
     double force = 0;
     double absPower = Math.abs(power);
     double maxForce = absPower * props.MAX_MOTIVE_FORCE_PER_WHEEL;
@@ -280,13 +182,13 @@ class MecanumDrive {
 
   // Motive force along the *robot's* x-axis (side-to-side), NOT including friction effects
   private  double rightMotiveForce() { 
-    return props.FORCE_FRAC*(motiveForce(pFL) - motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
+    return props.FORCE_FRAC*(motiveForce(pFL()) - motiveForce(pFR()) - motiveForce(pBL()) + motiveForce(pBR()));
   }
 
 
   // Motive force along the *robot's* y-axis (front-to-back), NOT including friction effects
   private  double frontMotiveForce() {
-    return props.FORCE_FRAC*(motiveForce(pFL) + motiveForce(pFR) + motiveForce(pBL) + motiveForce(pBR));
+    return props.FORCE_FRAC*(motiveForce(pFL()) + motiveForce(pFR()) + motiveForce(pBL()) + motiveForce(pBR()));
   }
 
 
@@ -297,30 +199,30 @@ class MecanumDrive {
     // which conveniently happens to be {this.side} * FORCE_FRAC
     // We assume +ve torque will make the robot rotate counterclockwise. 
     double dist = props.side * props.FORCE_FRAC;
-    return dist * (-motiveForce(pFL) + motiveForce(pFR) - motiveForce(pBL) + motiveForce(pBR));
+    return dist * (-motiveForce(pFL()) + motiveForce(pFR()) - motiveForce(pBL()) + motiveForce(pBR()));
   }
 
 
   // Max resistive force - a combination of friction and resistive effects of any powered-down motors
   // Return value is positive.
   double maxDampingForce() {
-    return props.weight*(props.isMoving(vx, vy) ? props.dynamicLinFriction : props.staticLinFriction) + motorDragForce();
+    return props.weight*(props.isMoving(base.vx, base.vy) ? props.dynamicLinFriction : props.staticLinFriction) + motorDragForce();
   }
 
 
   double maxDampingTorque() {
     double dist = props.side * props.FORCE_FRAC; // distance from center to each wheel (see motiveTorque comments)
-    return props.noRotation(va) ? 0 : dist*maxDampingForce()*props.dampingTorqueAdjustment;
+    return props.noRotation(base.va) ? 0 : dist*maxDampingForce()*props.dampingTorqueAdjustment;
   }
 
 
   // Resistive force in N produced by any motors that are powered off
   private double motorDragForce() {
     int numPoweredOff = 0;
-    if (props.noPower(pFL)) numPoweredOff++;
-    if (props.noPower(pFR)) numPoweredOff++;
-    if (props.noPower(pBL)) numPoweredOff++;
-    if (props.noPower(pBR)) numPoweredOff++;
+    if (props.noPower(pFL())) numPoweredOff++;
+    if (props.noPower(pFR())) numPoweredOff++;
+    if (props.noPower(pBL())) numPoweredOff++;
+    if (props.noPower(pBR())) numPoweredOff++;
     return numPoweredOff*props.MOTOR_DRAG_FORCE;
   } 
 
@@ -388,47 +290,5 @@ class MecanumDrive {
       }
     }
     return newSpeed;
-  } 
-
-
-
-  // The boundaryPoints array keeps track of the locations of
-  // the corners of the robot, in field coordinates; these change as
-  // the robot moves, so need to be updated constantly.
-  void updateBoundaryPoints() {
-    double d = props.side/2;
-    // This generates four combinations of {-d, d} X {-d, d}, which 
-    // are the corners in robot-coordinates; those then have to be tranformed
-    // to field coordinates
-    int i = 0;
-    for (int ii = -1; ii <= 1; ii+= 2) {
-      double x0  = d*ii;
-      for (int jj = -1; jj <= 1; jj+= 2) {
-        double y0  = d*jj;
-        Point p  = boundaryPoints[i];
-        p.set(fieldX(x0, y0), fieldY(x0, y0));
-        i++;
-      }
-    }
-    assert(i == 4);
-    if (field.visualizeCollisions) {
-      field.visualizeCorners(boundaryPoints);
-    }
-  };
-
-  void updateWalls() {
-    double d = props.side/2;
-    double da = Math.PI/2;
-    updateWall(walls[0], d, 0, a); // East wall - faces increasing X (in robot frame of reference, where origin is the center)
-    updateWall(walls[1], 0, -d, a - da); // South wall
-    updateWall(walls[2], -d, 0, a + 2*da); // West wall
-    updateWall(walls[3], 0, d, a + da); // North wall - faces increasing Y
-    if (field.visualizeCollisions) {
-      field.visualizeWalls(walls);
-    }
-  }
-
-  void updateWall(Wall w, double x, double y, double a1) {
-    w.reposition(fieldX(x, y), fieldY(x, y), a1);
   }
 }

@@ -2,6 +2,10 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 12, 2018-B JMJ  Finished moving non-mecanum stuff into new class DriveBase
+Had to also move velocities (`vx, vy, va1`) because they are used to in collision
+force computation. Encoder methods in `DriveBase` are implemented but not tested.
+
 ## October 12, 2018-A JMJ  Moving non-mecanum stuff out of MecanumDrive and into new class DriveBase
 The move has not yet happened, but the new class `DriveBase` has been created with the 
 required functionality. `DriveBase` keeps track of the position and orientation of the robot,
