@@ -2,6 +2,17 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 12, 2018-A JMJ  Moving non-mecanum stuff out of MecanumDrive and into new class DriveBase
+The move has not yet happened, but the new class `DriveBase` has been created with the 
+required functionality. `DriveBase` keeps track of the position and orientation of the robot,
+the location of the boundary points and walls, and the power to each of the 4 motors. It also
+has a little bit of new functionality - to keep track of forward travel of each of the 4 corners,
+and to use this information to return simulated encoder values.
+
+Class `MeccanumDrive` is still unchanged - it will need to switch over to using `DriveBase` in a
+future checkin.
+
+
 ## October 11, 2018-F JMJ  Collision of robot sides with corners is implemented!
 This is implemented in `calculateCollisionImpact`, which is now called twice, once
 to calculate the impact forces and torques due to collision between robot corners and

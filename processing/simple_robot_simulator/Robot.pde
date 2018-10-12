@@ -7,6 +7,7 @@ class Robot {
   final Field field; // Passed in during constructor - the field the robot operates within
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
+  final DriveBase base;
   final MecanumDrive drive;
   final RawSensorModule sensors;
   final RobotProperties props;
@@ -17,6 +18,7 @@ class Robot {
     this.props = new RobotProperties();
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
+    base = new DriveBase(field, props, c);
     drive = new MecanumDrive(field, props, c);
     sensors = new RawSensorModule(f, this);
   }
