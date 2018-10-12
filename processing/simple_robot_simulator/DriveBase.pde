@@ -237,7 +237,8 @@ class DriveBase {
     p.set(fieldX(rx, ry), fieldY(rx, ry));
     // Increment the amount of forward travel by the incremental distanced
     // traveled in the forward direction, i.e., along the robot's x-axis.
-    forwardTravel[index] += Math.abs(rx - oldRx);
+    // This will be -ve if the wheel is traveling backwards 
+    forwardTravel[index] += rx - oldRx;
   }
 
 

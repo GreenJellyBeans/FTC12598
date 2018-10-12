@@ -57,7 +57,11 @@ class SampleDriveTask implements DriveTask {
     if (!gamepadEnabled) {
       return; // ***** EARLY RETURN ******
     }
-
+    // If "Y" button is pressed, we clear the encoder values on all motors.
+    if (gp.y()) {
+      robot.base.resetEncoders();
+    }
+    
     if (gp.right_bumper()) {         //right bumper makes the robot spin clockwise
       robot.base.setMotorPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
     } else if (gp.left_bumper()) {    //left bumper makes the robot spin counterclockwise
