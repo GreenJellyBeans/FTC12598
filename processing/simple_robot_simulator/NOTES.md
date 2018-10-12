@@ -2,7 +2,7 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
-## October 12, 2018-B JMJ  DriveBase encoder values
+## October 12, 2018-C JMJ  DriveBase encoder values
 These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
 In particular, when strafing, the forward direction doesn't advance, and so the simulated
 encoders don't advance either, while of course the wheels themselves are rotating.
