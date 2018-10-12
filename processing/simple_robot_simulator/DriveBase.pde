@@ -195,6 +195,9 @@ class DriveBase {
     field.addExtendedStatus(String.format("POWER   PFL:%5.2f  PFR:%5.2f  PBL:%5.2f   PBR:%5.2f", 
       power[FL], power[FR], power[BL], power[BR]));
     field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vx, vy, va));
+    field.addExtendedStatus(String.format("ENCODERS EFL:%5.2f  EFR:%5.2f  EBL:%5.2f   EBR:%5.2f", 
+      readEncoder(FL), readEncoder(FR), readEncoder(BL), readEncoder(BR)
+    ));
   }
 
   //
@@ -215,19 +218,6 @@ class DriveBase {
     // This generates four combinations of {-d, d} X {-d, d}, which 
     // are the corners in robot-coordinates; those then have to be tranformed
     // to field coordinates
-    /*
-    int i = 0;
-     for (int ii = -1; ii <= 1; ii+= 2) {
-     double x0  = d*ii;
-     for (int jj = -1; jj <= 1; jj+= 2) {
-     double y0  = d*jj;
-     Point p  = boundaryPoints[i];
-     p.set(fieldX(x0, y0), fieldY(x0, y0));
-     i++;
-     }
-     }
-     assert(i == 4);
-     */
     updateBoundaryPoint(FL, d, d);
     updateBoundaryPoint(FR, d, -d);
     updateBoundaryPoint(BL, -d, d);
