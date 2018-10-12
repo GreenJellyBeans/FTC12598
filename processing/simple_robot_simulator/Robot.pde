@@ -3,22 +3,23 @@
 // It's purpose is for basic experimentation and validation
 // of robot drive control algorithms.
 class Robot {
-
   final String id; // Used to identify the robot and select which robot gets which gamepads
   final Field field; // Passed in during constructor - the field the robot operates within
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
-  final MeccanumDrive drive;
-  final DriveTask driveTask;
+  final DriveBase base;
+  final MecanumDrive drive;
   final RawSensorModule sensors;
+  final RobotProperties props;
 
   public Robot(String id, color c, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
     this.id = id;
     this.field = f;
+    this.props = new RobotProperties();
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
-    driveTask = new DriveTask(this);
-    drive = new MeccanumDrive(field, c);
+    base = new DriveBase(field, props, c);
+    drive = new MecanumDrive(base);
     sensors = new RawSensorModule(f, this);
   }
 
@@ -27,12 +28,11 @@ class Robot {
   // This is typically used once - to initially position the robot
   // somewhere on the field.
   public void place(double x, double y, double a) {
-    drive.place(x, y, a);
+    base.place(x, y, a);
   }
 
   public void init() {
     sensors.init();
-    driveTask.init();
   }
 
 
@@ -40,37 +40,22 @@ class Robot {
   }
 
 
-  public void start() {
-    driveTask.start();
-  }
-
-
-  public void stop() {
-    driveTask.stop();
-  }
-
-
-  public void loop(double t, double dT) {
-    driveTask.loop();
-  }
-
   // Updates the simulation,
   // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed
   // since previous call
   public void simloop(double t, double dT) {
     drive.simloop(t, dT);
     sensors.simloop(t, dT);
-    field.updateStatus(String.format("t:% 7.3f  x:%1.2f  y:%1.2f  a:%1.2f", t, drive.x, drive.y, drive.a));
   }
 
 
   public void draw() {
     displayGamepadStatus("GP1", gamepad1);
     displayGamepadStatus("GP2", gamepad2);
-    double x = drive.x;
-    double y = drive.y;
-    double side = drive.side;
-    double a = drive.a;
+    double x = base.cx;
+    double y = base.cy;
+    double side = props.side;
+    double a = base.a;
 
     if (x < 0 || x > field.BREADTH || y < 0 || y > field.DEPTH) {
       fill(255, 0, 0);
@@ -79,16 +64,18 @@ class Robot {
     }
 
     noStroke();
-    fill(drive.trail.c);
-    field.drawCircle(x, y, drive.side/4);
-    drive.trail.draw();
+    fill(base.trail.c);
+    field.drawCircle(x, y, props.side/4);
+    base.trail.draw();
 
     float pixSide = field.pixLen(side);
     float sx = field.screenX(x);
     float sy = field.screenY(y);
+
     pushMatrix();
+    
     translate(sx, sy);
-    rotate((float) -a);
+    rotate((float) -a); // In Processing, rotate(t) rotates the axes by -t
     fill(255, 200);
     stroke(0);
     strokeWeight(1);
@@ -97,17 +84,21 @@ class Robot {
 
     // Render Robot ID in the center
     float adj0 = 5;
-    text(id, -adj0, adj0);
+    textAlign(CENTER);
+    text(id, 0, adj0);
     // Render L and R labels on the front left and right corners
     // of the robot. Note that these are in screen coordinates, where
-    // y grows downwards!
-    final int adj = 12; // adjustment for text size
-    text("L", -pixSide/2, adj - pixSide/2);
-    text("R", pixSide/2 - adj, adj - pixSide/2);
+    // y grows downwards! Also note that after rotating to be aligned
+    // with the robot's x-axis, the robot is facing the x-axis, which is
+    // towards the right!
+    final int adj = -10; // adjustment for text size
+    text("L", pixSide/2 + adj, -1.5*adj - pixSide/2);
+    text("R", pixSide/2 + adj, pixSide/2 + 0.9*adj);
     popMatrix();
-
+    
     visualizeSensorData();
   }
+
 
   // Shows state of gamepad controls in the field's extended status area
   void displayGamepadStatus(String prefix, GamepadInterface gp) {
@@ -130,6 +121,7 @@ class Robot {
     field.addExtendedStatus(buttonStatus + dpad);
   }
 
+
   // Display/print the raw state of the sensors
   void visualizeSensorData() {
     if (sensors.numColorSensors()>0) {
@@ -141,4 +133,4 @@ class Robot {
       }
     }
   }
-};
+}

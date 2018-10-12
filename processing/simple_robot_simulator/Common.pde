@@ -2,19 +2,56 @@
 
 // Represents a 2D point - units depend on application.
 class Point {
-  final double x;
-  final double y;
+  double x;
+  double y;
+
+
+  Point() {
+    this(0, 0);
+  }
+
+
   Point(double x, double y) {
+    set(x, y);
+  }
+
+
+  void set(double x, double y) {
     this.x = x;
     this.y = y;
   }
+  
+  // Rotate the point by angle {a} about point (px, py)
+  void rotate(double a, double px, double py) {
+    double c = Math.cos(a);
+    double s = Math.sin(a);
+    
+    // Translate origin (temporarily) to (px, py)
+    double x1 = x - px;
+    double y1 = y - py;
+    x = px + c*x1 - s*y1;
+    y = py + c*y1 + s*x1;    
+  }
+  
 }
+
+// The DriveTask collects together methods that control the robot movement
+interface DriveTask {
+  void init();
+  void deinit();
+  void start();
+  void stop();
+  void loop();
+}
+
+
 
 // Returns clipped version of {in} guaranteed to between [{mn}, {mx}]
 int bound(int in, int mn, int mx) {
   assert(mn <= mx);
   return max(min(in, mx), mn);
 }
+
 
 // Double version of the above
 double bound(double in, double mn, double mx) {
@@ -29,11 +66,13 @@ boolean inBounds(int in, int mn, int mx) {
   return in >= mn && in <= mx;
 }
 
+
 // Double version of the above
 boolean inBounds(double in, double mn, double mx) {
   assert(mn <= mx);
   return in >= mn && in <= mx;
 }
+
 
 // Emulates a 2D array of colors
 // and supports blur
@@ -43,6 +82,7 @@ class PixelHelper {
   final int h;
   final color outOfBoundColor;
   final color pix[];
+
 
   // Constructs a PixelHelper that works with 
   // packed array {pix}, assumed to be row-major, with
@@ -55,20 +95,24 @@ class PixelHelper {
     this.outOfBoundColor = outOfBoundColor;
   }
 
+
   // Black is the default outOfBoundColor
   PixelHelper(color[] pix, int w, int h) {
     this(pix, w, h, 0);
   }
 
+
   color get(int x, int y) {
     return inBounds(x, 0, w) && inBounds(y, 0, h) ? pix[y*w + x] : outOfBoundColor;
   }
+
 
   void set(int x, int y, color c) {
     if (inBounds(x, 0, w) && inBounds(y, 0, h)) {
       pix[y*w + x] = c;
     }
   }
+
 
   // Returns a blurred copy. Original array remains unmodified.
   PixelHelper blurredCopy(int blurWidth) {

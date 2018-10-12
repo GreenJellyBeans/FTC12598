@@ -1,4 +1,4 @@
-import java.util.Arrays; //<>//
+import java.util.Arrays; //<>// //<>//
 
 // Class RawSensorModule collects simulated sensor information made available to robot control software.
 // Sensor errors are included in the simulation.
@@ -66,8 +66,8 @@ class RawSensorModule {
     // Update color values
     for (int i = 0; i < currentColors.length; i++) {
       Point p = colorSensorLocations[i];
-      double fx = r.drive.fieldX(p.x, p.y);
-      double fy = r.drive.fieldY(p.x, p.y);
+      double fx = r.base.fieldX(p.x, p.y);
+      double fy = r.base.fieldY(p.x, p.y);
       color c = senseFloorColor(fx, fy);
       currentColors[i] = c;
       f.addExtendedStatus(String.format("ColorSensor[%d]: (%5.1f,%5.1f,%5.1f)", i, red(c), green(c), blue(c)));
@@ -79,15 +79,15 @@ class RawSensorModule {
   //
 
   float redNoise() {
-    return (float) (255*noise((float) (redNoiseBase + r.drive.x * noiseScale), (float) (redNoiseBase + r.drive.y * noiseScale)));
+    return (float) (255*noise((float) (redNoiseBase + r.base.cx * noiseScale), (float) (redNoiseBase + r.base.cy * noiseScale)));
   }
 
   float greenNoise() {
-    return (float) (255*noise((float) (greenNoiseBase + r.drive.x * noiseScale), (float) (greenNoiseBase + r.drive.y * noiseScale)));
+    return (float) (255*noise((float) (greenNoiseBase + r.base.cx * noiseScale), (float) (greenNoiseBase + r.base.cy * noiseScale)));
   }
 
   float blueNoise() {
-    return (float) (255*noise((float) (blueNoiseBase + r.drive.x * noiseScale), (float) (blueNoiseBase + r.drive.y * noiseScale)));
+    return (float) (255*noise((float) (blueNoiseBase + r.base.cx * noiseScale), (float) (blueNoiseBase + r.base.cy * noiseScale)));
   }
 
 

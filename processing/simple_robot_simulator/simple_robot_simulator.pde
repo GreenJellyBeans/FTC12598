@@ -19,6 +19,7 @@ final String ROBOT_2 = "2";
 Field g_field; // Keeps the state of the field and field elements, not including robots
 GamepadManager g_gamepadMgr; // Manages gamepads and mappings from real to proxy gamepads
 Robot[] g_robots; // The robots on the field
+DriveTask[] g_driveTasks; // Tasks that control each robot
 long startTimeMs;
 long prevTimeMs  = 0;
 PApplet g_pa = this;
@@ -41,16 +42,31 @@ void setup() {
 
   // Create two robots, with their own unique names, colors and initial position and orientation
   g_robots = new Robot[]{
-    newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2, g_field.DEPTH/2, radians(180)), 
+    newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2, g_field.DEPTH/2, radians(90)), 
     newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.5, g_field.DEPTH/2+.5, radians(180)) 
   }; 
+
+  // Setup each robot's drive task
+  g_driveTasks = new DriveTask[]{
+    new DriveStraightTask(g_robots[0]), 
+    new SampleDriveTask(g_robots[1])
+  };
+
   startTimeMs = millis();
 
-  // Initialize and start all the robots
+  // Initialize all robots
   for (Robot r : g_robots) {
     r.init();
-    r.start();
   }
+
+  // Initialize and start all tasks
+  for (DriveTask t : g_driveTasks) {
+    t.init();
+    t.start();
+  }
+
+  //noLoop();
+  //testCollisionPhysics();
 }
 
 
@@ -60,7 +76,7 @@ void setup() {
 Robot newRobot(String robotId, color c, double x, double y, double a) {
   GamepadInterface gamepad1 = g_gamepadMgr.newProxyGamepad(robotId, ROLE_A);
   GamepadInterface gamepad2 = g_gamepadMgr.newProxyGamepad(robotId, ROLE_B); 
-  Robot r =  new Robot(robotId, c, g_field, gamepad1, gamepad2) ;
+  Robot r = new Robot(robotId, c, g_field, gamepad1, gamepad2) ;
   r.place(x, y, a);
   return r;
 }
@@ -91,17 +107,23 @@ void draw() {
   // last time draw() was called (dT) and since
   // the animation was started (t)
   long now = millis();
-  double t = (startTimeMs - now)/1000.0; // In seconds
+  double t = (now - startTimeMs)/1000.0; // In seconds
   double dT = (now - prevTimeMs)/1000.0; // In seconds
   prevTimeMs = now;
+
+  g_field.updateStatus(String.format("t:% 7.3f", t)); 
 
   // Draw the field
   g_field.draw();
 
+  assert(g_driveTasks.length == g_robots.length);
+
   // Update various aspects of each of the robots
-  for (Robot r : g_robots) {
-    g_field.addExtendedStatus("\nROBOT " + r.id + " STATUS");    
-    r.loop(t, dT); // Robot logic - analogous to FTC / FRC's loop method
+  for (int i = 0; i < g_robots.length; i++ ) {
+    Robot r = g_robots[i];
+    DriveTask task = g_driveTasks[i];
+    g_field.addExtendedStatus("\nROBOT " + r.id + " STATUS");
+    task.loop(); // Robot logic - analogous to FTC / FRC's loop method
     r.simloop(t, dT); // Physics simulation
     r.draw(); // Draw the robot on the field
   }

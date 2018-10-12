@@ -2,6 +2,231 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 12, 2018-C JMJ  DriveBase encoder values
+These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
+In particular, when strafing, the forward direction doesn't advance, and so the simulated
+encoders don't advance either, while of course the wheels themselves are rotating.
+
+But if moving purely forward, I think that mecanum drives behave more or less like normal
+drives, except perhaps the factor by which encoder ticks have to be multiplied will be 
+different, and perhaps not a simple product of wheel circumference and wheel RPM and time.
+
+NOTE: `SampleDriveTask` monitors the `Y` button - if pressed it will reset all encoders by calling
+`DriveBase.resetEncoders`.
+
+## October 12, 2018-B JMJ  Finished moving non-mecanum stuff into new class DriveBase
+Had to also move velocities (`vx, vy, va1`) because they are used to in collision
+force computation. Encoder methods in `DriveBase` are implemented but not tested.
+
+## October 12, 2018-A JMJ  Moving non-mecanum stuff out of MecanumDrive and into new class DriveBase
+The move has not yet happened, but the new class `DriveBase` has been created with the 
+required functionality. `DriveBase` keeps track of the position and orientation of the robot,
+the location of the boundary points and walls, and the power to each of the 4 motors. It also
+has a little bit of new functionality - to keep track of forward travel of each of the 4 corners,
+and to use this information to return simulated encoder values.
+
+Class `MeccanumDrive` is still unchanged - it will need to switch over to using `DriveBase` in a
+future checkin.
+
+
+## October 11, 2018-F JMJ  Collision of robot sides with corners is implemented!
+This is implemented in `calculateCollisionImpact`, which is now called twice, once
+to calculate the impact forces and torques due to collision between robot corners and
+external walls (as before) and once to do this for collision between robot sides and
+external corners.
+
+There is still some deviant behaviour around corners due to the pseudo collisions with
+adjacent walls (as explained earlier), but this effect is now tolerable.
+
+## October 11, 2018-E JMJ  Updated collision visualization; robots keep walls
+To better assist in visualizing collision physics, points of collision are now
+red when they are actually colliding, and both robot and field walls and wall boundaries
+are visualized. This visualization is enabled if `Field.visualizeCollisions` is set to true.
+
+The robot now keeps a constantly-updated set of it's own walls in it's `walls` array. This is
+for upcoming implementation of collision of robot walls with wall corners.
+
+## October 11, 2018-D JMJ  Field now keeps a list of corners block walls
+This is the first part of the support for robot sides (not corners) collision with 
+wall boundaries. This is maintained in `Field.convexCorners`.
+
+## October 11, 2018-C JMJ  Tapering thickness of non-boundary walls at their ends
+This mitigates the issue for walls that define convex objects, such as block field elements.
+(mentioned in "October 9, 2018-B JMJ" note and earlier notes. The mitigation is specifically
+designed to work for 90-degree corners - the thickness of all non-boundary walls are
+tapered by 45 degree at both ends of the wall. This is implemented in method
+`collisionMagnetude`. With this change, no part of the compound wall structure have regions
+where walls overlap. This allows for thicker walls, and that in turn reduces the case
+where the robot breaks through walls.
+
+A tapered wall is illustrated below - this one has it's normal facing upwards. If you
+visualize 4 of these walls making up a box, you can see that the walls do not overlap.
+```
+----------------------------------
+\                               /
+ \-----------------------------/
+```
+The downside is that the walls can be penetrated more easily near their corners. However in practice
+this effect is not dominant, and the net result is positive - for example, robots no longer
+simply blast through blocks. Of course there is still the issue that robots go through wall corners
+that was mentioned in earlier notes..
+
+
+## October 11, 2018-B JMJ  Field elements are now specified in two files
+File `data/field_base.txt` contains elements that define the standard field - this file shouldn't
+change once the rules of the competition are defined.
+
+Optional file `data/field_extras.txt` contains optional elements that are typically part of
+a particular team's strategy, such as autonomous paths.
+
+## October 11, 2018-A JMJ  Changed field element structure and processing
+It was a hack to try to extract angles and starting positions from the path. How
+`Element` has explicit fields for initial position (x and y) and also width, height
+and rotation. The field elements data file format is unchanged EXCEPT for the block
+format, which is now:
+
+```
+# block cx cy | w h | rot
+# where:
+#    (cx, cy) is center coordinates in feet
+#    w and h are width and height, also in feet
+#    rot is rotation amount (anticlockwise) in degrees
+block.obsticle 4 4 | 1.92 1.92 | 90
+```
+With these changes, blocks can be rendered at an arbitrary rotation specified as the 
+last number in block specification.
+
+## October 10, 2018-B JMJ  Block field elements can be positioned at an angle.
+Blocks were positioned as axis-aligned rectangles. Now they can be positioned
+at any angle. However, the input format (`files.txt`) doesn't support
+specifying an angle, so it is hardcoded at 45 degrees for now.
+
+
+## October 10, 2018-B JMJ  Added "fat_black_tape" and renamed other tapes
+Here's a sample of the new format for `field.txt`:
+
+```
+blue_tape 6 6 > 1 0 > 1 1 > 0 1 > 0 0
+red_tape 7 7 > 1 0 > 1 1 > 0 1 > 0 0
+fat_black_tape 0.5 0.5 > 0.5 0 > 1 1
+block.obsticle 4 4 | 1.92 1.92
+path 9 9 > 1 0 > 1 2.5 > 2 0 
+mark.start 9 9
+```
+Note the replacing of camel casing by underscores. "fat_black_tape" can
+be used to mark the crater boundaries in this years' competition.
+
+## October 10, 2018-A JMJ  Too many points in trail was causing delays, causing simulation to misbehave
+Previous to this checkin each trail was keeping up to 10,000 points. As time progressed and this
+limit was reached, collisions behaved oddly, in particular the asymmetric collision force was
+not having the desired effect and robotics would bounce off walls with increasing vigor. This was
+clearly because the delta between successive calls to update the simulation were increasing because 
+of the overhead of rendering all those points.
+
+With this checkin, a trail keeps far fewer points in a round-robin array, and only records new
+points if the distance from the previous point is visually some distance away, and also it 
+trims the oldest point to keep the number of points within the limit.
+
+## October 9, 2018-B JMJ  New field element: block, plus asymmetric collision physics
+A `block` is a rectangular field element that has 4 walls:
+
+```
+# block cx cy | wx wy
+block 10 20 | 30 40
+```
+In this first iteration, blocks are axis-aligned and are rendered gray.
+In future iterations, they could be at any angle, color, and potentially could
+have different resistive forces
+
+`Field.makeWalls` makes all the walls - including the boundary walls and the walls
+contributed by all the blocks among the field elements. Walls have a new parameter,
+`thickness`, that is used in determining collisions.
+
+Method `collisionMagnitude`, which determines the magnitude of a collision, if there is one,
+now implements a heavily damped collision. This is to address the issue of the robots bouncing
+off walls with way to much vigor. The method
+now takes the velocity of the robot into account. If the robot is colliding and
+moving *into* the wall, it resits with a much greater force than if it is moving *out* of the wall.
+
+There is the very annoying effect (that was anticipated) of convex objects behaving oddly
+at their corners, because a wall thinks that a robot corner is behind it when it is in fact
+just intruding into a neighboring wall. After much tweaking of wall thickness and resistive
+force, blocks now are not completely impassible - the robot can ram into them and go into them. This
+is a consequence of having thinner walls. The thinner the wall, the more localized the
+phantom intrusion effect. I had thought that with asymmetric collision forces I could now
+make the resistive force extremely large, so that there is very little intrusion, thereby
+enabling thinner walls, but this produces such a kickback that (I think) even that initial
+kick is enough to produce a big rebound. I also experimented with introducing added
+dampening forces while the robot is colliding and it was not producing any beneficial effect,
+at least in the simplistic forms I was trying.
+
+The other annoying thing is that the collision is detected only at the corners of the robots, so the
+robot can introduce into blocks if it hits the corner of the block with the side of the robot. This was discussed in entry "October 5, 2018-C JMJ  Beginning implementation of collision physics" below.
+
+## October 9, 2018-A JMJ  Fixed the motor torque-speed curve function
+It was previously slewing between -1 and 1. 
+
+New version of `motiveForce` - from the comments: Calculates the motive force in N of a single motor, given input unitless power, that ranges
+within [-1, 1]. This model is based on the description in `http://lancet.mit.edu/motors/motors3.html#tscurve`.
+For any particular input power, the relationship between torque and RPM is a line with -ve slope. The y-intercept
+is the stall torque and the x-intercept is the max RPM, AKA no-load RPM. The way this method uses power is in
+defining the line itself - so it defines a family of lines, or rather a continuum of lines, one line for each
+value of power. The line furthest from the original is the torque-RPM line described above. The remaining are
+simply the line multiplied by {power}:
+```
+ |\
+ |\\
+ |\\\
+ |\\\\
+ |---------- > RPM
+```
+With this fix, the robot speeds can now be properly controlled by the joysticks.
+
+## October 8, 2018-F JMJ  Milestone - collision impact with walls works!
+Currently, there are 4 hardcoded walls representing the 4 field boundary walls - these
+are in the `Field` object. The walls are bit too "springy"/elastic. Currently the impact force
+is linear in the distance that the robot penetrates the wall - there is no damping, i.e.,
+no loss of energy during impact, so the robot bounces back. But this is a pretty decent
+state of affairs, and good enough for now.
+
+## October 8, 2018-E JMJ  Misc enhancements for collision physics
+- Implemented `calculateCollisionImpact`, though it's not tested.
+- `MecanumDrive`: keeps track of boundary points - the corners of the robot, expressed in field-coordinates.
+
+Also:
+- `MecanumDrive`: cache the values of sin(a) and cos(a) whenever angle a is updated.
+
+## October 8, 2018-D JMJ  Fixed bug in strafe direction
+    Note: +ve strafe makes the robot go right, and with
+    the robot's front facing increasing x, "to go right"
+    means to go in the direction of decreasing y:
+    
+                    ^ y-axis
+         robot      |
+       ...... FL    |
+       .    .       --> x-axis
+       ...... FR
+
+## October 8, 2018-C JMJ  More code reorganization
+This reorganization is chiefly to allow independent development of multiple drive tasks without having to change the
+code in the main robot class, and also to allow different drive task implementations for different robot instances.
+- Defined interface `DriveTask` and the old `DriveTask` is now `SampleDriveTask` - and now implements `DriveTask`.
+- Removed `DriveTask` from `Robot` - it lives outside robot code now. The main program code in `simple_robot_simulator.pde` now
+  creates a drive task for each robot and initializes and starts each task and directly calls each task's loop method.
+  Since the robot no longer has a drive task, I also removed its `start`, `stop` and `loop` methods.
+- The list of tasks is maintained in global variable `g_driveTasks`.
+- Moved some status reporting around. In particular, position is now reported as part of each robot's properties.
+
+
+## October 8, 2018-B JMJ  Some code reorganization
+Moved several robot properties and helper methods based on those properties from `MecanumDrive` to new class `RobotProperties`. These include mass, various friction coefficients, and
+methods `newForce`, etc, that depend on the absolute mass of the robot.  These are not static constants as they vary from robot instance to instance (in principle).
+The primary motivation is to make these properties and methods available to other classes, such as `Wall`, and anyways, they were not specific to a mecanum drive.
+`RobotProperties` is currently created in the `Robot` constructor and passed in as a constructor parameter to `MecanumDrive`.
+
+## October 8, 2018-A JMJ  Fixed bug calculating forces in MecanumDrive
+`MecanumDrive.simLoop` had it's fronts and rights reversed when computing the net force along the x and y axes. This error was not detected earlier
+
 ## October 5, 2018-D JMJ  Support a non-square field
 This is really to make it viable for FRC, which has a rectangular field. Had to replace the `Field.WIDTH` with two constants,
 `Field.BREADTH` (along x-axis) and `Field.DEPTH` (along y-axis). This of course had a ripple-effect in other calculations.
@@ -237,8 +462,8 @@ It would be nice if this can be done using external data files, rather hardcodin
 
 ## September 27, 2018 JMJ Looking back at original motivations and progress
 The original motivation was and remains to allow our FTC team, and potentially other FTC teams, to do
-early prototyping and testing of autonomous programs. Since our team is trying out a meccanum-wheel based
-holonomic drive this season (2018-2019), I decided to implement a very simple 2D physics-based model of a meccanum-
+early prototyping and testing of autonomous programs. Since our team is trying out a mecanum-wheel based
+holonomic drive this season (2018-2019), I decided to implement a very simple 2D physics-based model of a mecanum-
 drive based robot
 that is integrated into an FTC field animation. I wanted to write this from scratch rather than using an existing
 2D or 3D physics library because I hoped (and still hope) for the team members to understand its inner workings
@@ -252,7 +477,7 @@ constants (such as friction forces, motor power and weight) that can be tweaked,
 serve as at least a starting point for driver practice.
 
 ### The Physics Model
-The heart of the meccanum drive simulation is in the class MeccanumDrive. It models the drive as 4 "motive" forces
+The heart of the mecanum drive simulation is in the class `MeccanumDrive`. It models the drive as 4 "motive" forces
 acting diagonally on the 4 corners of the robot, like so:
 
 ```
@@ -272,7 +497,7 @@ using a combination of weight and number of stopped motors, and this force is ap
 to the direction of motion of the *center* of the robot.
 A resistive/dampening torque is similarly applied, that is proportional
 to this aggregate friction force. This is a vast simplification, because in reality, each wheel has it's unique
-contribution to drag, taking into account it's direction (remember that these are meccanum wheels) and also
+contribution to drag, taking into account it's direction (remember that these are mecanum wheels) and also
 the relative speed of the wheels and the ground - is there slipping? If not, is the speed matching what the
 motor would have it do? So this is a very ham-handed approximation.
 2. The wheels are assumed to be perfectly located and oriented at the corners of a square.
