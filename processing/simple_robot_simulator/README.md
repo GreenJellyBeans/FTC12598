@@ -2,7 +2,7 @@
 This is a Processing-based simulator for FTC robots. It is a very simple 2D simulation environment, designed for early prototyping and testing of autonomous code by FTC team 12598 and potentially other teams. All code is free to be used
 for any purpose without attribution.
 
-![screenshot](media/intro_screenshot1.png)
+![screenshot](media/intro_screenshot1.PNG)
 
 The NOTES.md file is a set of dated informal design and implementation notes that chart the development course of this
 project. The TIDO.md file contains a list of open issues.
