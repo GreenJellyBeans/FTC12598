@@ -42,7 +42,7 @@ void setup() {
 
   // Create two robots, with their own unique names, colors and initial position and orientation
   g_robots = new Robot[]{
-    newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2, g_field.DEPTH/2, radians(90)), 
+    newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2+1, g_field.DEPTH/2+1, radians(90)), 
     newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.5, g_field.DEPTH/2+.5, radians(180)) 
   }; 
 
