@@ -21,21 +21,24 @@ fat_black_tape 7.8 0 > 0 1.4 > 0.5 2 > 1.65 2.6 > 2.4 3.4 > 3.2 4 > 4 4
 fat_black_tape .2 8 > 1.4 0 > 2 0.5 > 2.6 1.65 > 3.4 2.4 > 4 3.2 > 3.8 3.8
 
 #bottom right samples
-block.silver 9.9 3.9 | 0.1 0.1 | 0
-block.gold 9 3 | 0.1 0.1 | 0
-block.silver 8.1 2.1 | 0.1 0.1 | 0
+mark.silver 9.9 3.9 | 0.1 0.1 | 0
+mark.gold 9 3 | 0.1 0.1 | 0
+mark.silver 8.1 2.1 | 0.1 0.1 | 0
+
 #bottom left samples
-block.silver 2.1 3.9 | 0.1 0.1 | 0
-block.silver 3 3 | 0.1 0.1 | 0
-block.gold 3.9 2.1 | 0.1 0.1 | 0
+mark.silver 2.1 3.9 | 0.1 0.1 | 0
+mark.silver 3 3 | 0.1 0.1 | 0
+mark.gold 3.9 2.1 | 0.1 0.1 | 0
+
 #top right samples
-block.silver 8.1 9.9 | 0.1 0.1 | 0
-block.silver 9 9 | 0.1 0.1 | 0
-block.gold 9.9 8 | 0.1 0.1 | 0
+mark.silver 8.1 9.9 | 0.1 0.1 | 0
+mark.silver 9 9 | 0.1 0.1 | 0
+mark.gold 9.9 8 | 0.1 0.1 | 0
+
 #top left samples
-block.gold 3.9 9.9 | 0.1 0.1 | 0
-block.silver 3 9 | 0.1 0.1 | 0
-block.silver 2.1 8.1 | 0.1 0.1 | 0
+mark.gold 3.9 9.9 | 0.1 0.1 | 0
+mark.silver 3 9 | 0.1 0.1 | 0
+mark.silver 2.1 8.1 | 0.1 0.1 | 0
 
 #top left crater minerals
 
