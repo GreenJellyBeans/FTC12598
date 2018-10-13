@@ -39,12 +39,12 @@ class SampleDriveTask implements DriveTask {
     double pFwd = 0;//0.5;
     double pStrafe = 0;//0.5;
     double pTurn = 0.3;
-    MecanumDrive d = robot.drive;
+    double pFL = (pFwd + pStrafe + pTurn);
+    double pFR = (pFwd - pStrafe - pTurn);
+    double pBL = (pFwd - pStrafe + pTurn);
+    double pBR = (pFwd + pStrafe - pTurn);
+    robot.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
 
-    d.setPowerFL(pFwd + pStrafe + pTurn);
-    d.setPowerFR(pFwd - pStrafe - pTurn);
-    d.setPowerBL(pFwd - pStrafe + pTurn);
-    d.setPowerBR(pFwd + pStrafe - pTurn);
   }
 
 
@@ -57,11 +57,15 @@ class SampleDriveTask implements DriveTask {
     if (!gamepadEnabled) {
       return; // ***** EARLY RETURN ******
     }
-
+    // If "Y" button is pressed, we clear the encoder values on all motors.
+    if (gp.y()) {
+      robot.base.resetEncoders();
+    }
+    
     if (gp.right_bumper()) {         //right bumper makes the robot spin clockwise
-      setPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
+      robot.base.setMotorPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
     } else if (gp.left_bumper()) {    //left bumper makes the robot spin counterclockwise
-      setPowerAll(-0.5, 0.5, -0.5, 0.5);
+      robot.base.setMotorPowerAll(-0.5, 0.5, -0.5, 0.5);
     } else {
       double fwd  = gp.right_stick_y();
       double turn  = gp.left_stick_x();
@@ -100,7 +104,7 @@ class SampleDriveTask implements DriveTask {
     // m is the max absolute value of the individual motor power amounts. If it is too small, we stop all motors.
     double m = Math.max(Math.max(Math.abs(pFL), Math.abs(pFR)), Math.max(Math.abs(pBL), Math.abs(pBR)));
     if (m<0.1) {
-      setPowerAll(0, 0, 0, 0);
+      robot.base.setMotorPowerAll(0, 0, 0, 0);
     } else {
       // Scale everything so no magnitude exeeds 1
       double scale = Math.min(1/m, 1);
@@ -108,21 +112,14 @@ class SampleDriveTask implements DriveTask {
       pFR *= scale;
       pBL *= scale;
       pBR *= scale;
-      setPowerAll(pFL, pFR, pBL, pBR);
+      robot.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
     }
   }
+
 
   // Clips input to be within [-1, 1]
   double clipInput(double in) {
     return Math.max(Math.min(in, 1), -1);
   }
 
-
-  void setPowerAll(double pFL, double pFR, double pBL, double pBR) {
-    MecanumDrive d = robot.drive;
-    d.setPowerFL(pFL);
-    d.setPowerFR(pFR);
-    d.setPowerBL(pBL);
-    d.setPowerBR(pBR);
-  }
 }

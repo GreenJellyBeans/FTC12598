@@ -2,6 +2,100 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 12, 2018-C JMJ  DriveBase encoder values
+These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
+In particular, when strafing, the forward direction doesn't advance, and so the simulated
+encoders don't advance either, while of course the wheels themselves are rotating.
+
+But if moving purely forward, I think that mecanum drives behave more or less like normal
+drives, except perhaps the factor by which encoder ticks have to be multiplied will be 
+different, and perhaps not a simple product of wheel circumference and wheel RPM and time.
+
+NOTE: `SampleDriveTask` monitors the `Y` button - if pressed it will reset all encoders by calling
+`DriveBase.resetEncoders`.
+
+## October 12, 2018-B JMJ  Finished moving non-mecanum stuff into new class DriveBase
+Had to also move velocities (`vx, vy, va1`) because they are used to in collision
+force computation. Encoder methods in `DriveBase` are implemented but not tested.
+
+## October 12, 2018-A JMJ  Moving non-mecanum stuff out of MecanumDrive and into new class DriveBase
+The move has not yet happened, but the new class `DriveBase` has been created with the 
+required functionality. `DriveBase` keeps track of the position and orientation of the robot,
+the location of the boundary points and walls, and the power to each of the 4 motors. It also
+has a little bit of new functionality - to keep track of forward travel of each of the 4 corners,
+and to use this information to return simulated encoder values.
+
+Class `MeccanumDrive` is still unchanged - it will need to switch over to using `DriveBase` in a
+future checkin.
+
+
+## October 11, 2018-F JMJ  Collision of robot sides with corners is implemented!
+This is implemented in `calculateCollisionImpact`, which is now called twice, once
+to calculate the impact forces and torques due to collision between robot corners and
+external walls (as before) and once to do this for collision between robot sides and
+external corners.
+
+There is still some deviant behaviour around corners due to the pseudo collisions with
+adjacent walls (as explained earlier), but this effect is now tolerable.
+
+## October 11, 2018-E JMJ  Updated collision visualization; robots keep walls
+To better assist in visualizing collision physics, points of collision are now
+red when they are actually colliding, and both robot and field walls and wall boundaries
+are visualized. This visualization is enabled if `Field.visualizeCollisions` is set to true.
+
+The robot now keeps a constantly-updated set of it's own walls in it's `walls` array. This is
+for upcoming implementation of collision of robot walls with wall corners.
+
+## October 11, 2018-D JMJ  Field now keeps a list of corners block walls
+This is the first part of the support for robot sides (not corners) collision with 
+wall boundaries. This is maintained in `Field.convexCorners`.
+
+## October 11, 2018-C JMJ  Tapering thickness of non-boundary walls at their ends
+This mitigates the issue for walls that define convex objects, such as block field elements.
+(mentioned in "October 9, 2018-B JMJ" note and earlier notes. The mitigation is specifically
+designed to work for 90-degree corners - the thickness of all non-boundary walls are
+tapered by 45 degree at both ends of the wall. This is implemented in method
+`collisionMagnetude`. With this change, no part of the compound wall structure have regions
+where walls overlap. This allows for thicker walls, and that in turn reduces the case
+where the robot breaks through walls.
+
+A tapered wall is illustrated below - this one has it's normal facing upwards. If you
+visualize 4 of these walls making up a box, you can see that the walls do not overlap.
+```
+----------------------------------
+\                               /
+ \-----------------------------/
+```
+The downside is that the walls can be penetrated more easily near their corners. However in practice
+this effect is not dominant, and the net result is positive - for example, robots no longer
+simply blast through blocks. Of course there is still the issue that robots go through wall corners
+that was mentioned in earlier notes..
+
+
+## October 11, 2018-B JMJ  Field elements are now specified in two files
+File `data/field_base.txt` contains elements that define the standard field - this file shouldn't
+change once the rules of the competition are defined.
+
+Optional file `data/field_extras.txt` contains optional elements that are typically part of
+a particular team's strategy, such as autonomous paths.
+
+## October 11, 2018-A JMJ  Changed field element structure and processing
+It was a hack to try to extract angles and starting positions from the path. How
+`Element` has explicit fields for initial position (x and y) and also width, height
+and rotation. The field elements data file format is unchanged EXCEPT for the block
+format, which is now:
+
+```
+# block cx cy | w h | rot
+# where:
+#    (cx, cy) is center coordinates in feet
+#    w and h are width and height, also in feet
+#    rot is rotation amount (anticlockwise) in degrees
+block.obsticle 4 4 | 1.92 1.92 | 90
+```
+With these changes, blocks can be rendered at an arbitrary rotation specified as the 
+last number in block specification.
+
 ## October 10, 2018-B JMJ  Block field elements can be positioned at an angle.
 Blocks were positioned as axis-aligned rectangles. Now they can be positioned
 at any angle. However, the input format (`files.txt`) doesn't support

@@ -7,6 +7,7 @@ class Robot {
   final Field field; // Passed in during constructor - the field the robot operates within
   final GamepadInterface gamepad1;
   final GamepadInterface gamepad2;
+  final DriveBase base;
   final MecanumDrive drive;
   final RawSensorModule sensors;
   final RobotProperties props;
@@ -17,7 +18,8 @@ class Robot {
     this.props = new RobotProperties();
     this.gamepad1  = gamepad1;
     this.gamepad2  = gamepad2;
-    drive = new MecanumDrive(field, props, c);
+    base = new DriveBase(field, props, c);
+    drive = new MecanumDrive(base);
     sensors = new RawSensorModule(f, this);
   }
 
@@ -26,7 +28,7 @@ class Robot {
   // This is typically used once - to initially position the robot
   // somewhere on the field.
   public void place(double x, double y, double a) {
-    drive.place(x, y, a);
+    base.place(x, y, a);
   }
 
   public void init() {
@@ -50,10 +52,10 @@ class Robot {
   public void draw() {
     displayGamepadStatus("GP1", gamepad1);
     displayGamepadStatus("GP2", gamepad2);
-    double x = drive.x;
-    double y = drive.y;
+    double x = base.cx;
+    double y = base.cy;
     double side = props.side;
-    double a = drive.a;
+    double a = base.a;
 
     if (x < 0 || x > field.BREADTH || y < 0 || y > field.DEPTH) {
       fill(255, 0, 0);
@@ -62,9 +64,9 @@ class Robot {
     }
 
     noStroke();
-    fill(drive.trail.c);
+    fill(base.trail.c);
     field.drawCircle(x, y, props.side/4);
-    drive.trail.draw();
+    base.trail.draw();
 
     float pixSide = field.pixLen(side);
     float sx = field.screenX(x);

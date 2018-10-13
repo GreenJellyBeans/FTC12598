@@ -23,12 +23,19 @@ class Wall {
   double nx; // unit vector of normal - x component
   double ny; // unit vector of normal - y component
 
+  // A wall whose position and orientation will be defined later or constantly updated.
+  Wall(double len, double thickness) {
+    this.len = len;
+    this.thickness = thickness;
+    isBoundary = false;
+    reposition(0, 0, 0);
+  }
 
-  Wall(double x, double y, double len, double thickness, double aN) {
+  Wall(double x, double y, double len, double thickness, double aN, boolean boundary) {
     this.len = len;
     this.thickness = thickness;
     reposition(x, y, aN);
-    isBoundary = boundaryWall(x, y, len, aN);
+    isBoundary = boundary;
   }
 
 
@@ -40,24 +47,24 @@ class Wall {
     this.nx = Math.cos(aN);
     this.ny = Math.sin(aN);
   }
-  
+
   // Rotate entire Wall by {a} about point (px, py)
   void rotate(double a, double px, double py) {
     double c = Math.cos(a);
     double s = Math.sin(a);
-    
+
     // Translate origin (temporarily) to (px, py)
     double x1 = cx - px;
     double y1 = cy - py;
     cx = px + c*x1 - s*y1;
     cy = py + c*y1 + s*x1;
-    
+
     // Update wall angle and normals
     aN = aN + a;
     nx = Math.cos(aN);
-    ny = Math.sin(aN);    
+    ny = Math.sin(aN);
   }
-  
+
   // Calculates the magnetude of the collision
   // force - it will be normal to the wall (walls are frictionless), and simply
   // a function of how much "behind" the point is to the wall.
@@ -90,7 +97,13 @@ class Wall {
     // by (-aN).
     double xx = x * nx + y *ny;
     double yy = -x * ny + y * nx;
-    if (xx > -thickness && xx < 0 && Math.abs(yy) < len /2) {
+
+    // For non-boundary walls, we taper off thickness at corners. This helps to
+    // reduce the cases of mistaken collisions when you have neighboring walls of
+    // a convex structure. The tapering is at a 45-degree angle, that works best for
+    // right-angle corners. Results for non-right angle corners will vary...
+    double thick = isBoundary? thickness : Math.min(thickness, len/2 - Math.abs(yy));
+    if (xx > -thick && xx < 0 && Math.abs(yy) < len /2) {
       // Collision!
       // This is a damped collision - energy is not preserved. The force
       // resists motion in a direction against the wall much more than
@@ -107,19 +120,6 @@ class Wall {
       return  - xx * forceFactor; // We return a positive value always
     }
     return 0;
-  }
-
-
-  // Determines if the wall is one of the boundary walls
-  // For it to be a boundary wall it has to be right on the boundary of
-  // the field.
-  private boolean boundaryWall(double x, double y, double len, double aN) {
-    boolean bX =  sameLength(x, 0) || sameLength(x, g_field.BREADTH);
-    boolean bY =  sameLength(y, 0) || sameLength(y, g_field.DEPTH);
-    boolean bLen = sameLength(len, g_field.BREADTH) || sameLength(len, g_field.DEPTH); // slightly lax but ok
-    boolean bA = sameAngle(aN, 0) || sameAngle(aN, Math.PI/2) 
-      || sameAngle(aN, Math.PI) || sameAngle(aN, Math.PI*3/2);
-    return bX && bY && bLen && bA;
   }
 
 
@@ -147,15 +147,17 @@ class CollisionResult {
 }
 
 
-// Calculates the result of a potential impact of a set of corner points {corners} with
-// a set of walls. Net torque is computed about the point ({cx}, {cy}), which is typically
+// Calculates the result of a potential impact of a set of corner points  with
+// a set of walls. Net torque is computed about the point ({drive.x}, {drive.y}), which is
 // the center of the robot. Special case: null is returned if there is negigable net force or torque. 
-CollisionResult calculateCollisionImpact(MecanumDrive drive) {
+// If {robotCorners} then the collisions are between the corners of the robot and the walls. If !{robotCorners}
+// then the collision is computed between the corners of external walls and the sides of the robot.
+CollisionResult calculateCollisionImpact(DriveBase drive, boolean robotCorners) {
   RobotProperties props = drive.props;
-  Wall[] walls = drive.field.walls;
-  Point[]corners = drive.boundaryPoints;
-  double cx = drive.x;
-  double cy = drive.y;
+  Point[]corners = (robotCorners) ? drive.boundaryPoints : drive.field.convexCorners;
+  Wall[] walls = (robotCorners) ? drive.field.walls : drive.walls;
+  double cx = drive.cx;
+  double cy = drive.cy;
   double fx = 0;
   double fy = 0;
   double torque = 0;
@@ -164,6 +166,12 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
     return null; // ************ EARLY RETURN **************
   }
 
+  // Robot walls face outwards - in the opposite direction to normal external walls when they
+  // collide with the robot. So we have to invert directions when aggregating forces and torques.
+  // This is captured in the following variable.
+  double direction = robotCorners ? 1 : -1;
+
+
   for (Point p : corners) {
     // To calculate torque about (cx, cy), we need to first translate 
     // the origin to (p.x, p.y), the point of collision.
@@ -171,7 +179,9 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
     double cyy = cy - p.y;
 
     for (Wall w : walls) {
-      double mag = w.collisionMagnitude(p.x, p.y, drive.vx, drive.vy);
+      // Note that velocity direction also has to be reversed - this is used in computing
+      // assymetric collision reaction force.
+      double mag = w.collisionMagnitude(p.x, p.y, direction*drive.vx, direction*drive.vy);
 
       // No need to further process Wall w if it does not
       // collide with p
@@ -179,13 +189,22 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
         continue;
       }
 
+      if (g_field.visualizeCollisions) {
+        // Draw a nice red disk at the collision point.
+        fill(255, 0, 0);
+        noStroke();
+        g_field.drawCircle(p.x, p.y, 0.1);
+      }
+
       // Collision force magnetude is normal to the wall, so we
       // calculate forces in the x and y directions
       // by multiplying by the appropriate wall normal vector
       // components, w.nx and w.ny
-      fx += mag * w.nx;
-      fy += mag * w.ny;
+      // HOWEVER, if the walls are robot walls, we have to reverse the normals so that they
+      // point inwards.
 
+      fx += mag * w.nx * direction;
+      fy += mag * w.ny * direction;
 
       // Then we rotate the x-axis to be aligned with the wall normal.
       // But we only need the transformed y-coordinate becasue that is
@@ -195,7 +214,7 @@ CollisionResult calculateCollisionImpact(MecanumDrive drive) {
       // the angle of the normal to the x-axis. We want to rotate
       // by (-aN).
       double pyy = -cxx * w.ny + cyy * w.nx;
-      torque += mag * pyy;
+      torque += mag * pyy * direction;
     }
   }
 
@@ -237,9 +256,4 @@ double balancedAngle(double a) {
 }
 
 void testCollisionPhysics() {
-  final double SIZE = 10;
-  double cx = SIZE/2;
-  double cy = 0;
-  Wall w = new Wall(cx, cy, SIZE, SIZE, Math.PI/2);
-  println("MAG: " + w.collisionMagnitude(cx, cy+0.1, 0, 0));
 }
