@@ -92,7 +92,7 @@ then select the `Libraries` tab, scroll down until you see "G4P" and "Game Contr
 and press the `Install` button.
 
 
-## Running the Robot Simulator and Binding Gampads
+## Running the Robot Simulator and Binding Gamepads
 
 To run the robot simulator, just click on `simple_robot_simuator.pde` and then click on the play icon.
 The first time it is run, the program will take a while before rendering the field, because it is 
