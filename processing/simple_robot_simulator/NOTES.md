@@ -2,6 +2,35 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 14, 2018-A JMJ  Beginning to add random perturbations to the system.
+The *main* purpose of perturbations is to make simulation of control algorithms (such as
+PID applied to drive in a certain direction and distance) more realistic by
+making the robot behave less predictably and the sensor outputs have more noise.
+It also adds some randomness when the user
+drives a robot, which could be considered either annoying or entertaining, especially
+if one sets more aggressive perturbation parameters!
+
+So far I've added random perturbations to motive force and torque. The constants that
+control this are `PERTURBATION_*` in `RobotProperties`, and the force and torque
+perturbations are implemented in `MecanumDrive` methods `perturbForceX`, `perturbForceY`,
+and `perturbTorque`.
+
+*Approach:* Use Perlin noise (Processing function `noise()`), passing in the scaled version
+of the current simulated time. Several "instances" of Perlin noise are used - by starting
+at different offsets in the input space to `noise`. For perturbing any particular value
+such as the force in the x direction, two instances of noise are used, one additive and
+one multiplicative. The final perturbed value is `in + A*noise1 + B*noise2`, where `A` and
+`B` are constants, and `noise1` and `noise2` are the two different instances of noise.
+
+There are some subtleties. In the case of force, the force in either x or y directions are
+"proportional" to the force in both x and y directions, in other words to the magnitude of the force,
+slightly favoring the x-direction force. Similarly, the torque is also impacted by the
+force (see `perturbTorque`). 
+
+The whole approach is not terribly elegant, but it will suffice for now, and can be adopted
+to other perturbations, in particular to perturb the reported values of sensors - color, 
+encoder values, and absolute and relative position values.
+
 ## October 12, 2018-C JMJ  DriveBase encoder values
 These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
 In particular, when strafing, the forward direction doesn't advance, and so the simulated
