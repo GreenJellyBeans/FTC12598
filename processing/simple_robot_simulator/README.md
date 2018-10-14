@@ -1,7 +1,7 @@
 # A Simple Robot Simulator
 This is a Processing sketch that implements a simple 2D physics-based simulation of the drive
-aspect of one or more robots on a rectangular field. It is designed for concept explanation,
-and prototyping and testing of autonomous code by FTC (and potentially FRC) teams.
+aspect of one or more robots on a rectangular field. It is designed for learning robotics concepts
+and for prototyping code by FTC (and potentially FRC) teams.
 It may also be useful for new driver practice and for developing game strategy.
 
 This code is in the public domain; all code is free to be used for any purpose without
