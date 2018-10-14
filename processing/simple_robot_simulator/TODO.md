@@ -1,12 +1,8 @@
 # Known Issues and Work Items
-
-1. Support multiple gamepads
-1. Add multiple robots.
-1. Support non-square fields - for adapting to FRC
-1. Add collision physics for the 4 corners of the robot against the 4 walls (for a start). Assume frictionless
-   contact - so force is normal to the wall and pretty high in magnetude for as long as there is contact. See NOTES
-   entry September 28, 2018-C.
-1. Notify user to press "A" to enable gamepad.
+1. Block elements are not impervious to robots. If the corner of the robot is close to the
+ corner of a block, the robot can nudge inside. This is because of a quirk in collision computations
+ with walls detailed in `NOTES.md` entry "October 11, 2018-C" 
+ "Tapering thickness of non-boundary walls at their ends" and earlier notes.
+1. Add higher-level sensor access methods that report position, color sensor values and
+ encoder values, after they have been perturbed by noise.
 1. Scan code and .md files for typos
-1. Consider allowing 2 robots controlled by 2 gamepads. "Start + A" or "Start + B" can identify different gamepads,
-   and robots can be given differnt colors or labels to identify these - maybe just A and B.
