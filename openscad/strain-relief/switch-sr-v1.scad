@@ -36,7 +36,7 @@ module switch_part() {
 // Support below lugs - depth - in y-direction -  is {lug_d}
 module lugs_support(lug_d) {
     lug_w = 13; // width - x 
-    lug_h = 6; // height - z
+    lug_h = 8; // height - z
     lug_center_w = 5; // width of center protrusion
     lug_r = 1; // radii of curve in center protrusion
     lug_pad_h = 0.6; // the base of the lug is slightly elevated (z) from the switch base
@@ -64,7 +64,7 @@ module lugs_support(lug_d) {
 
 
 module switch_strain_relief() {
-    lug_d = 10; // depth - y - of lug
+    lug_d = 15; // depth - y - of lug
     lug_off = 6; // offset in x of lug position
     translate([0, lug_d, 0]) switch_part();
     translate([lug_off, 0, 0]) lugs_support(lug_d);
