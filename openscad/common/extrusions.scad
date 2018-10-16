@@ -27,8 +27,8 @@ EPSILON = 0.001; // For moving things to properly punch out holes
 // of the bounding rectangle.
 // 
 module T_channel(wb, hb, wt, ht, xoff, r, t) {
-    ow = 10*wb;
-    oh = 10*hb;
+    ow = 2*wt; // wide enough to 
+    oh = 2*(hb+ht); // high enough to descend below the shape
 
     difference() {
         cube([wt, hb+ht, t]);
@@ -77,25 +77,36 @@ module O_channel(wo, ho, wi, hi, xoff, yoff, r, t) {
 // has rounded corners with radius {r} on all 4 sides.
 // The actual radius may be reduced so keep the oblong
 // viable. {t} is the thickness (in z).
-module oblong(w, h, r, t) {
+module oblong2(w, h, r, t) {
     r = min(r, w/2-EPSILON, h/2-EPSILON);
     translate([r, r, 0])
     minkowski() {
         cube([w-2*r, h-2*r, t]);
-        cylinder(2*t, r, r);
+        cylinder(10, r, r);
+    }
+}
+module oblong(w, h, r, t) {
+    r = min(r, w/2-EPSILON, h/2-EPSILON);
+    translate([r, r, 0])
+    linear_extrude(height = t, center = false, convexity = 10) {
+        offset(r = r) square([w-2*r, h-2*r]);
     }
 }
 
 
-wb = 5;
+//
+// Example code
+//
+wb = 10;
 hb = 20;
 wt = 40;
 ht = 30;
-t = 2;
+t = 5;
 r = 5;
 ri = 5;
 xoff = 10;
-//T_channel(wb, hb, wt, ht, xoff, r, t);
-O_channel(wt, hb+ht, wb, hb+ht, xoff, xoff, ri, t);
-//oblong(11, 40, 5, 2);
+oblong(wb, hb, r, t);
+translate([wb+5, 0, 0]) T_channel(wb, hb, wt, ht, xoff, r, t);
+translate([wb+wt+10, 0, 0]) O_channel(wt, hb+ht, wb, hb, xoff, xoff, ri, t);
+
 
