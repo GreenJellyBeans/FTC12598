@@ -16,9 +16,9 @@ module switch_part() {
     wall_h = 10; // height - z - of walls - will be slightly less than switch walls
                  // so that tape or ziptie is firm against top of the switch
     switch_d = 15; // depth - y
-    ro = 1; // outside-facing radii
+    ro = 1.5; // outside-facing radii
     ri = 0.2; // radii of switch channel inside walls
-    side_w = 6; // side part of base without hole
+    side_w = 5; // side part of base without hole
     front_d = 6; // front part of base without hole
     hole_r = 5;
     hole_w = switch_w - 2 * side_w; // width of hole
@@ -38,7 +38,7 @@ module lugs_support(lug_d) {
     lug_w = 13; // width - x 
     lug_h = 8; // height - z
     lug_center_w = 5; // width of center protrusion
-    lug_r = 1; // radii of curve in center protrusion
+    lug_r = 1.5; // radii of curve in center protrusion
     lug_pad_h = 0.6; // the base of the lug is slightly elevated (z) from the switch base
     lug_gap_d = 0.5; // a small gap in x between the start of the center protrusion.
                      // This is because the lugs are slightly taller (z) where they
