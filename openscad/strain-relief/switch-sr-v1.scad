@@ -13,17 +13,24 @@ EPSILON = 0.1; // Small emount to extend so that unions and intersections are cl
 // Switch side and walls
 module switch_part() {
     switch_w = 30; // width - x
-    wall_h = 20; // height - z - of walls - will be slightly less than switch walls
+    wall_h = 10; // height - z - of walls - will be slightly less than switch walls
                  // so that tape or ziptie is firm against top of the switch
     switch_d = 30; // depth - y
     ro = 1; // outside-facing radii
     ri = 0.2; // radii of switch channel inside walls
-
+    side_w = 5; // side part of base without hole
+    front_d = 5; // front part of base without hole
+    hole_r = 5;
+    hole_w = switch_w - 2 * side_w; // width of hole
     base_w = switch_w + 2*thick;
-    translate([0, switch_d, 0]) rotate([90, 0, 0])
-        O_channel(base_w, wall_h+thick, switch_w, LARGE,
-            thick, thick, 
-            ro, ri,switch_d);  
+    difference() {
+        translate([0, switch_d, 0]) rotate([90, 0, 0])
+            O_channel(base_w, wall_h+thick, switch_w, LARGE,
+                thick, thick, 
+                ro, ri,switch_d);
+        translate([thick + side_w, front_d, -EPSILON])
+            oblong(hole_w, LARGE, hole_r, thick + 2*EPSILON);
+    }
 }
 
 // Support below lugs - depth - in y-direction -  is {lug_d}
