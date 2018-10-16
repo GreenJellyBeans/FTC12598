@@ -65,10 +65,10 @@ module T_channel(wb, hb, wt, ht, xoff, r, t) {
 // Origin is the left hand corner
 // of the bounding rectangle.
 // 
-module O_channel(wo, ho, wi, hi, xoff, yoff, r, t) {
+module O_channel(wo, ho, wi, hi, xoff, yoff, ro, ri, t) {
     difference() {
-        oblong(wo, ho, r, t);
-        translate([xoff, yoff, -EPSILON]) oblong(wi, hi, r, t+2*EPSILON);
+        oblong(wo, ho, ro, t);
+        translate([xoff, yoff, -EPSILON]) oblong(wi, hi, ri, t+2*EPSILON);
     }
 }
 
@@ -77,14 +77,6 @@ module O_channel(wo, ho, wi, hi, xoff, yoff, r, t) {
 // has rounded corners with radius {r} on all 4 sides.
 // The actual radius may be reduced so keep the oblong
 // viable. {t} is the thickness (in z).
-module oblong2(w, h, r, t) {
-    r = min(r, w/2-EPSILON, h/2-EPSILON);
-    translate([r, r, 0])
-    minkowski() {
-        cube([w-2*r, h-2*r, t]);
-        cylinder(10, r, r);
-    }
-}
 module oblong(w, h, r, t) {
     r = min(r, w/2-EPSILON, h/2-EPSILON);
     translate([r, r, 0])
@@ -103,10 +95,10 @@ wt = 40;
 ht = 30;
 t = 5;
 r = 5;
-ri = 5;
+ri = 1;
 xoff = 10;
 oblong(wb, hb, r, t);
 translate([wb+5, 0, 0]) T_channel(wb, hb, wt, ht, xoff, r, t);
-translate([wb+wt+10, 0, 0]) O_channel(wt, hb+ht, wb, hb, xoff, xoff, ri, t);
+translate([wb+wt+10, 0, 0]) O_channel(wt, hb+ht, wb, 10*hb, xoff, xoff, r, ri, t);
 
 
