@@ -44,8 +44,19 @@ module phone_strain_relief() {
     }
 }
 
+// A vertical sliver of the strain relief - to print and
+// test dimensions
+module test_slice() {
+    base_w = 55;
+    xoff = base_w/2;
 
-phone_strain_relief();
+    intersection() {
+        phone_strain_relief();
+        translate([xoff, 0, 0]) cube([2, LARGE, LARGE]);
+    }
+}
 
+//phone_strain_relief();
+test_slice();
 
 
