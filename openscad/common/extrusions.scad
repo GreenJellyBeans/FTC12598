@@ -53,9 +53,9 @@ module T_channel(wb, hb, wt, ht, xoff, ro, ri, t) {
     // Dimensions of the plate that will be cut out - it is just
     // big enough so that the inner-radii can be cut out, no more.
     wp = wb + 2*ri + 2*EPSILON; // dimensions of plate to be cut out
-    hp = ro + 2*EPSILON;
+    hp = max(ro, ri) + 2*EPSILON;
     xoffp = xoff - ri - EPSILON;
-    yoffp = hb - ro - EPSILON;
+    yoffp = hb - max(ro, ri) - EPSILON;
     difference() {
         translate([xoffp, yoffp, 0]) cube([wp, hp, t]);
         translate([xoff-ow,hb-oh,-EPSILON]) oblong(ow, oh, ri, t+2*EPSILON);
@@ -141,7 +141,7 @@ xoff = 10;
 move = 30;
 oblong(wb, hb, ro, t);
 translate([0, move, 0]) rounded_cube(wb, hb, t, 2);//, $fn=100);
-translate([move, 0, 0]) T_channel(wb, hb, wt, ht, xoff, ro, ri, t);
+!translate([move, 0, 0]) T_channel(wb, hb, wt, ht, xoff, 5, 1, t);
 translate([move, 2*move, 0]) O_channel(wt, hb+ht, wb, 10*hb, xoff, xoff, ro, ri, t);
 
 

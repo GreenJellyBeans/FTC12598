@@ -64,8 +64,20 @@ module cable_support(base_w, cable_w, d) {
     }
 }
 
+module phone_strain_relief2() {
+    cable_w = 12;
+    base_w = 55;
+    ro = 5;
+    ri = 5;
+    base_r = 5;
+    cable_d = 30;
+    T_channel(cable_w, cable_d, base_w, EPSILON, 
+                (base_w-cable_w)/2,
+                ro, ri, cable_thick);
+}
 
-module switch_strain_relief() {
+
+module phone_strain_relief() {
     base_w = 55;
     cable_w = 10;
     cable_d = 30; // depth - y - of lug
@@ -74,7 +86,7 @@ module switch_strain_relief() {
 }
 
 
-switch_strain_relief();
+phone_strain_relief2();
 // phone_part(55);
 
 
