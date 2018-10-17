@@ -138,8 +138,9 @@ ro = 5;
 ri = 2;
 xoff = 10;
 move = 30;
+$fn = 50;
 oblong(wb, hb, ro, t);
-!translate([0, move, 0]) rounded_cube(wb, hb, t, 0);//, $fn=100);
+translate([0, move, 0]) rounded_cube(wb, hb, t, ro);//, $fn=100);
 translate([move, 0, 0]) T_channel(wb, hb, wt, ht, xoff, 5, 1, t);
 translate([move, 2*move, 0]) O_channel(wt, hb+ht, wb, 10*hb, xoff, xoff, ro, ri, t);
 
