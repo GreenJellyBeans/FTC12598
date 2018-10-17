@@ -44,7 +44,6 @@ module T_channelOld(wb, hb, wt, ht, xoff, r, t) {
 
 
 module T_channel(wb, hb, wt, ht, xoff, ro, ri, t) {
-    $fn = 100;
     
     // ow and oh are used to create cutout patterns
     ow = 2*wt; // wide enough to extend to the left and right of shape
@@ -116,7 +115,7 @@ module oblong(w, h, r, t) {
 // A cube that fits within ({w}, {h}, {d}) and has
 // all corners rounded with radius r.
 module rounded_cube(w, h, d, r) {
-        r = 1; // min(r, w/2-EPSILON, h/2-EPSILON, d/2-EPSILON);
+        r =  min(r, w/2-EPSILON, h/2-EPSILON, d/2-EPSILON);
         di = 2*r;
     translate([r, r, r]) {
         minkowski() {
@@ -140,8 +139,8 @@ ri = 2;
 xoff = 10;
 move = 30;
 oblong(wb, hb, ro, t);
-translate([0, move, 0]) rounded_cube(wb, hb, t, 2);//, $fn=100);
-!translate([move, 0, 0]) T_channel(wb, hb, wt, ht, xoff, 5, 1, t);
+!translate([0, move, 0]) rounded_cube(wb, hb, t, 0);//, $fn=100);
+translate([move, 0, 0]) T_channel(wb, hb, wt, ht, xoff, 5, 1, t);
 translate([move, 2*move, 0]) O_channel(wt, hb+ht, wb, 10*hb, xoff, xoff, ro, ri, t);
 
 
