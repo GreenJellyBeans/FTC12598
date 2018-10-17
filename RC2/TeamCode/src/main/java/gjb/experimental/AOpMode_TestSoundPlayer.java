@@ -36,7 +36,7 @@ public class AOpMode_TestSoundPlayer extends OpMode{
     // WARNING: Only very small files seem to play - this is OGG at 42kbps, and
     // size 63KB. Anything larger may not play for long. It will play but not for long.
     // "gmta" stands for "good morning to all" - it's the birthday song tune.
-    int resID = R.raw.gmta_ogg_42;
+    int resID = 0;// R.raw.gmta_ogg_42;
 
     /*************** START OF OPMODE INTERFACE METHODS **********************/
 
