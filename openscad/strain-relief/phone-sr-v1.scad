@@ -6,22 +6,31 @@ use <../common/extrusions.scad>
 
 $fn = 20;
 
-thick = 3; // thickness of walls and base
 LARGE = 100; // Something larger than any demension - for O to become U
 EPSILON = 0.1; // Small emount to extend so that unions and intersections are clean
+base_thick = 1;
+cable_thick = 3;
 
-// Phone side - just the bottom
+// Phone side - just the bottom,
+// tapered up at the lower edge (in x)
 module phone_part(base_w) {
+    base_thick = 1;
     base_d = 20; // depth - y
     ro = 1; // outside-facing radii
-    cube([base_w, base_d, thick]);
+    $fn = 200;
+    difference() {
+        cube([base_w, base_d, cable_thick]);
+        translate([-EPSILON, 0, base_thick]) rotate([90,0, 90]) oblong(50, 50, 10, LARGE);
+    }
 }
 
 // Support below usb cable - depth - in y-direction -  is {d}
 module cable_support(base_w, cable_w, d) {
     //cable_w = 13; // width - x 
+    thick = cable_thick;
     cable_h = 11; // height - z
     cable_center_w = 5; // width of center protrusion
+    ro = 1;
     cable_r = 1; // radii of curve in center protrusion
     cable_pad_h = 5; // the base of the lug is slightly elevated (z) from the switch base
     cable_gap_d = 10; // a small gap in x between the start of the center protrusion.
@@ -37,16 +46,15 @@ module cable_support(base_w, cable_w, d) {
     difference() {
 
         union() {
- 
-            T_channel(cable_w, d-cyl_r, base_w, d-cable_gap_d, 
+            T_channel(cable_w, d, base_w, EPSILON, 
                 (base_w-cable_w)/2,
-                base_r, thick);
-            translate([base_w/2, 0, 0]) cylinder(r=cable_w/2,h=thick);
+                ro, base_r, thick);
             translate([cable_off, d-cable_gap_d, 0]) rotate([90, 0, 0])
-                O_channel(cable_w, cable_h, cable_center_w, LARGE, 
+                oblong(cable_w, cable_pad_h+base_thick, cable_r, d - cable_gap_d);
+                /*O_channel(cable_w, cable_h, cable_center_w, LARGE, 
                 (cable_w - cable_center_w)/2, cable_pad_h+thick,
                 cable_r, cable_r,
-                d - cable_gap_d);
+                d - cable_gap_d);*/
         }
         /*
         translate([-thick, d+EPSILON, -thick]) rotate([90, 0, 0])
@@ -67,7 +75,7 @@ module switch_strain_relief() {
 
 
 switch_strain_relief();
-//phone_part(55);
+// phone_part(55);
 
 
 

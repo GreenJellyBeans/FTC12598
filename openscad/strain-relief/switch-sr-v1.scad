@@ -35,6 +35,7 @@ module switch_part() {
 
 // Support below lugs - depth - in y-direction -  is {lug_d}
 module lugs_support(lug_d) {
+    ro = 0.5; // Convex corners rounding - for T_channel only
     lug_w = 13; // width - x 
     lug_h = 8; // height - z
     lug_center_w = 5; // width of center protrusion
@@ -53,7 +54,7 @@ module lugs_support(lug_d) {
                 rotate([90, 180, 0])
                     T_channel(lug_center_w, lug_h, lug_w, thick+lug_pad_h, 
                         (lug_w-lug_center_w)/2, 
-                        lug_r, lug_d-lug_gap_d);
+                        ro, lug_r, lug_d-lug_gap_d);
         }
         translate([-thick, lug_d+EPSILON, -thick]) rotate([90, 0, 0])
             O_channel(lug_w+2*thick, thick+thick, lug_w, LARGE, 
