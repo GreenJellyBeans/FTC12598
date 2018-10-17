@@ -6,8 +6,8 @@ class RobotProperties {
   //
   final double mass = 42/2.2; // In kg
   final double weight = mass * 9.8; // In N.
-  
-    // In reality this depends on orientation of the wheels, but we just assume it is
+
+  // In reality this depends on orientation of the wheels, but we just assume it is
   // isotropic against the prevailing direction of motion of the robot.
   final double staticLinFriction = 0.1;//0.04; // Coef. of static friction - unitless
   final double dynamicLinFriction = 0.1  ;//0.04; // Coef. of dynamic friction - unitless
@@ -28,6 +28,22 @@ class RobotProperties {
   final double FORCE_MAG_ZERO = weight/10000; // Forces < 0.01% of the weight of the robot are considered effectively no force 
   final double TORQUE_MAG_ZERO = FORCE_MAG_ZERO*side; // Base it off the zero force and side of the robot
   final double MOTOR_DRAG_FORCE = P_TO_F_SCALE*100;//4; // N. A simple approximation of the impact of the drag of an unpowered motor.
+
+  // 
+  // These parameters control the amount of noise perturbing the system
+  // something_A  - controls additive noise
+  // something_B  - controls proportional noise
+  // something_scale - controls rate of change with time - how "jittery" the noise is.
+  // It's hard to assign physical interpretations to absolute values, so just tweak them
+  // to produce the desired amount of perturbations in the system
+  //
+  final double PERTURBATION_FORCE_A = 10.0; // Suggested: 10.0
+  final double PERTURBATION_FORCE_B = 0.1;  // Suggested: 0.1
+  final double PERTURBATION_FORCE_SCALE = 2; // Suggested: 2
+  final double PERTURBATION_TORQUE_A = 1.0; // Suggested: 1.0 
+  final double PERTURBATION_TORQUE_B = 0.1; // Suggested: 0.1
+  final double PERTURBATION_TORQUE_SCALE = 0.5; // Suggested: 0.5
+
 
   boolean isMoving(double vx, double vy) {
     return Math.max(Math.abs(vx), Math.abs(vy)) > LIN_SPEED_ZERO;
@@ -76,7 +92,7 @@ class RobotProperties {
   boolean noTorque(double t) {
     return Math.abs(t) < TORQUE_MAG_ZERO;
   }
-  
+
   // A length or distance close enough to zero
   boolean noLength(double len) {
     return Math.abs(len) < DISTANCE_ZERO;

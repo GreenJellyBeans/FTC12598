@@ -17,6 +17,7 @@ import gjb.utils.AndroidRuntimeSupport;
 public class AOpMode_GoForwardTeabotNew extends LinearOpMode {
 
     /* Declare OpMode members. */
+
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
 

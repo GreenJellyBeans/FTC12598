@@ -74,6 +74,10 @@ boolean inBounds(double in, double mn, double mx) {
 }
 
 
+double meters(double feet) {
+  return feet * 0.3048;
+}
+
 // Emulates a 2D array of colors
 // and supports blur
 class PixelHelper {

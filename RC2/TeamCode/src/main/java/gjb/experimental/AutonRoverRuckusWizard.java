@@ -61,6 +61,7 @@ public class AutonRoverRuckusWizard {
 
 
 
+
     public AutonRoverRuckusWizard(RuntimeSupportInterface rt) {
         this.rt = rt;
     }
@@ -82,13 +83,13 @@ public class AutonRoverRuckusWizard {
     }
 
     public void goForward(){
-        encoderDriveMec(0.2, 10, 0); //going forward 10 inches then stopping with mecanum wheels
+        encoderDriveMec(0.2, 10, 10); //going forward 10 inches then stopping with mecanum wheels
+        //speed = 0.2
 
     }
 
     public void encoderDriveMec(double speed,
-                             double forward,
-                             double timeoutS) {
+                             double forward, double timeoutS) {// timeouts is taken out
         int newfleftTarget;
         int newfrightTarget;
         int newleftTarget;
@@ -120,7 +121,23 @@ public class AutonRoverRuckusWizard {
             drive.leftDrive.setPower(Math.abs(speed));
             drive.rightDrive.setPower(Math.abs(speed));
 
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (rt.opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (drive.leftDrive.isBusy() && drive.rightDrive.isBusy())) {
 
+                // Display it for the driver.
+                rt.telemetry().addData("TargetPosition",  "Running to %7d :%7d", newfleftTarget,  newfrightTarget);
+                rt.telemetry().addData("CurrentPosition",  "Running at %7d :%7d",
+                        drive.fleftDrive.getCurrentPosition(),
+                        drive.frightDrive.getCurrentPosition());
+                rt.telemetry().update();
+            }
 
 
             // Stop all motion;

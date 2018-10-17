@@ -26,11 +26,6 @@ class SampleDriveTask implements DriveTask {
   }
 
 
-  void loop() {
-    driveTaskLoop1();
-  }
-
-
   void deinit() {
   }
 
@@ -48,7 +43,7 @@ class SampleDriveTask implements DriveTask {
   }
 
 
-  void driveTaskLoop1() {
+  void loop() {
     GamepadInterface gp = robot.gamepad1;
     if (!gamepadEnabled && gp.a()) {
       gamepadEnabled = true;
