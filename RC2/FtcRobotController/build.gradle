@@ -19,6 +19,7 @@ android {
 }
 
 repositories {
+    google()
     flatDir {
         dirs '../libs'
     }
