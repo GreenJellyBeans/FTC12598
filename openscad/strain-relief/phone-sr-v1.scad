@@ -18,12 +18,13 @@ module phone_strain_relief0(cable_d) {
     base_d = 30;
     ro = 2;
     ri = 5;
-    cable_pad_h = 1.9; // the base of the lug is slightly elevated (z) from the switch base
+    cable_pad_h = 2.5; // the base of the lug is slightly elevated (z) from the switch base
     cable_gap_d = 1; // a small gap in x between the start of the center protrusion.
+    
     xoff = (base_w-cable_w)/2;
     support_d = cable_d - cable_gap_d;
     shorten_T_d = cable_d - cable_gap_d - EPSILON - ro;
-    translate([xoff, support_d, 0]) rotate([90, 0, 0]) oblong(cable_w, cable_thick + cable_pad_h, ro, support_d);
+    translate([xoff, support_d, 0]) rotate([90, 0, 0]) oblong(cable_w, base_thick + cable_pad_h, ro, support_d);
     translate([0, shorten_T_d, 0]) 
         T_channel(
             cable_w, cable_d - shorten_T_d,
@@ -56,7 +57,7 @@ module test_slice() {
     }
 }
 
-//phone_strain_relief();
-test_slice();
+phone_strain_relief();
+//test_slice();
 
 
