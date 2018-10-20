@@ -9,14 +9,13 @@ EPSILON = 0.1;
 
 
 module switch_cover() {
-    base_thick = 1; // Thickness of "base" plate
+    base_thick = 3; // Thickness of "base" plate
     base_ro = 2; // Outer radii of base plate
-    switch_thick = 8;
     
     // Switch dimensions
     switch_w = 28 + 0.2;
     switch_d = 16 + 0.2;
-    switch_h = 10 + 0.5; // for sticky tape or wire
+    switch_h = 10.2 + 0.8; // + space for sticky tape or wire
     
     // Nominal offset in y and x of the lower-left-corner
     // of the switch well.
@@ -38,6 +37,12 @@ module switch_cover() {
     hole_wall_thick = 3; // Min thickness of walls around a hole
     hole_r = 2.05; // Just enough for 3/32 (imperial) screws to slip through easily
     
+    // Extension to the right for lugs & wire strain relief
+    strain_r = 2;
+    strain_w = 20; // x
+    strain_d = 13; /// y
+    strain_h = base_thick + 1; // z. Extends slightly above base to be closer to lugs
+
     // These are minimum distances to check against when computing
     // how much deep (in y) to start the well for the switch - so that there is
     // enough space around each hole in the y-direction
@@ -50,27 +55,33 @@ module switch_cover() {
     bottom_gap_end_x = switch_off_w + bottom_gap_w;
     bottom_gap_end_y = switch_off_d + bottom_gap_d;
     base_d = switch_off_d + switch_d + top_wall_thick;
-    tot_thick = base_thick + switch_thick;
+    tot_thick = base_thick + switch_h;
     hole_x = hole_wall_thick + hole_r;
     hole_y = hole_wall_thick + hole_r;
     base_w = switch_off_w + switch_w + right_wall_thick; // thickness of base
     
 
     difference() {
-        oblong(base_w, base_d, base_ro, tot_thick);
+        oblong(base_w, base_d, base_ro, tot_thick); // Starting block
         translate([switch_off_w, switch_off_d, base_thick]) 
-            oblong(switch_w, switch_d, switch_r, LARGE);
+            oblong(switch_w, switch_d, switch_r, LARGE); // remove switch well
         translate([-EPSILON, switch_off_d + switch_d - top_gap_d, base_thick])
-            cube([top_gap_end_x+EPSILON, LARGE, LARGE]);
+            cube([top_gap_end_x+EPSILON, LARGE, LARGE]); // remove top gap
         translate([bottom_gap_end_x, -EPSILON, base_thick])
-            cube([LARGE, bottom_gap_end_y + 2*EPSILON, LARGE]);
+            cube([LARGE, bottom_gap_end_y + 2*EPSILON, LARGE]); // remove bottom gap
         translate([hole_x, hole_y, -EPSILON])
-            cylinder(r=hole_r, h=LARGE);
+            cylinder(r=hole_r, h=LARGE); // remove hole 1
         translate([hole_x, hole_y + hole_dist_y, -EPSILON])
-            cylinder(r=hole_r, h=LARGE);
+            cylinder(r=hole_r, h=LARGE); // remove hole 2
         translate([hole_x  + hole_dist_x, hole_y, -EPSILON])
-            cylinder(r=hole_r, h=LARGE);
+            cylinder(r=hole_r, h=LARGE); // remove hole 3
     }
+    
+    // Add the strain relief extension
+    strain_off_x = base_w - strain_r;
+    strain_off_y = switch_off_d + (switch_d - strain_d)/2;
+    translate([strain_off_x, strain_off_y, 0])
+        rotate([90, 0, 90]) oblong(strain_d, strain_h, strain_r, strain_w);
 }
 
 module trial1() {
@@ -91,6 +102,6 @@ module trial2() {
 }
 
 $fn = 50;
-//switch_cover();
-translate([60, 0, 0]) trial1();
-translate([80, 0, 0]) trial2();
+switch_cover();
+//translate([60, 0, 0]) trial1();
+//translate([80, 0, 0]) trial2();
