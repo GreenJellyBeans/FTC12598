@@ -88,6 +88,9 @@ $fn = 50;
 RHT_hex_dia = 16.304 + 0.4; // 0.4 for clearance
 center_h = 8.52 + 0.4; // 0.4 for clearance
 
+// Steel left-hand-thread (LHT) nut dimensions:
+// side: 14.17 measured) == corner 16.362  
+// nut thickness: 8.4
 center_piece(RHT_hex_dia, center_h);
 translate([block_w + 10, 0, 0]) end_piece();
-translate([0, block_w + 10, 0]) end_piece();
+// translate([0, block_w + 10, 0]) end_piece();
