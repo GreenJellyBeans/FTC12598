@@ -24,8 +24,9 @@ module switch_cover() {
     
     switch_r = 3; // inner radius of switch well    
     top_gap_w = 18.5; // width of gap on the top, from LHS
-    top_gap_d = 5; // depth (in y) of the top gap, from the top
+    top_gap_d = 3; // was 5; // depth (in y) of the top gap, from the top
     top_wall_thick = 3.5; // thickness (y) of top wall
+    top_wall_z_pad = 2; // small wall where there is a cutaway
     right_wall_thick = 3; // thickness (x) of right wall
     
     bottom_gap_w = 14; // width of bottom gap, from RHS
@@ -65,7 +66,7 @@ module switch_cover() {
         oblong(base_w, base_d, base_ro, tot_thick); // Starting block
         translate([switch_off_w, switch_off_d, base_thick]) 
             oblong(switch_w, switch_d, switch_r, LARGE); // remove switch well
-        translate([-EPSILON, switch_off_d + switch_d - top_gap_d, base_thick])
+        translate([-EPSILON, switch_off_d + switch_d - top_gap_d, base_thick + top_wall_z_pad])
             cube([top_gap_end_x+EPSILON, LARGE, LARGE]); // remove top gap
         translate([bottom_gap_end_x, -EPSILON, base_thick])
             cube([LARGE, bottom_gap_end_y + 2*EPSILON, LARGE]); // remove bottom gap
@@ -83,6 +84,22 @@ module switch_cover() {
     translate([strain_off_x, strain_off_y, 0])
         rotate([90, 0, 90]) oblong(strain_d, strain_h, strain_r, strain_w);
 }
+
+
+// Smallest possible top plate - that exactly overlaps
+// the base. This is a HACK. Need to re-factor code so that we can
+// use a common set of parameters and then to add a lip to narrow the opening
+// through which the metal switch lever protrudes.
+module minimal_top_plate() {
+    plate_w = 30; // roughly = to top_gap_w + switch_off_w
+    linear_extrude(height = 3)
+        difference() {
+            projection(cut=true) switch_cover();
+            translate([plate_w, 0]) square([LARGE, LARGE]);
+        }
+
+}
+
 
 module trial1() {
     difference() {
@@ -105,3 +122,4 @@ $fn = 50;
 switch_cover();
 //translate([60, 0, 0]) trial1();
 //translate([80, 0, 0]) trial2();
+translate([70, 0, 0]) minimal_top_plate();
