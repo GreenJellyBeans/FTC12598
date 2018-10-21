@@ -2,6 +2,24 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 20, 2018-A JMJ Thoughts on simulating Linear OpModes
+Since linear `OpModes` block during the call to `runOpMode`, they have to run in their own
+thread in Processing, and MUST NOT call any Processing animation functions.
+
+Plan:
+- Add static abstract class `OpMode`. Robot tasks, formally inheriting from `DriveTaskInterface`, 
+ will now extend `OpMode` instead. `OpMode` has the following two methods in addition to the
+ ones from `DriveTaskInterface`:
+- `boolean isLinear()` - if the task to run as linear
+- `void runOpMode()` that is called in a separate thread
+If it is a linear task, we will not call its `init`, `deinit`, `start`, `stop` and `loop`
+methods.
+`OpMode` is an abstract class instead of an interface because default interface methods
+is a Java 8 feature, not supported in Processing. Besides it could allow for simulation of
+more aspects of the FTC/FRC SDK down the road. It is a static class to help ensure that
+Processing methods do not creep into op mode code, making it harder to port back to
+real robot code.
+
 ## October 14, 2018-A JMJ  Beginning to add random perturbations to the system.
 The *main* purpose of perturbations is to make simulation of control algorithms (such as
 PID applied to drive in a certain direction and distance) more realistic by
