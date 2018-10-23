@@ -2,6 +2,33 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 22, 2018-A JMJ OpMode design
+
+Continuing the previous note...
+
+More `OpMode` methods:
+- static `registerOpMode(op)` - adds `op` to list of op modes
+- static `runAll()` - runs all op modes. What happens depends on whether or not the
+        op mode is linear or iterative. Each linear op mode has a dedicated thread from which
+        it's `unOpMode()` is called. Each iterative op mode will have it's `init` and
+        `start` methods called in the context of `runAll`, and it's loop method in the
+	context of Processing's `draw`.
+
+Concurrency considerations: the list of op modes are only accessed by the main Processing
+thread so doesn't need to be locked. The internal state of an op mode is only looked at by
+Processing code in the very beginning.
+
+The actual op mode logic (auton mode) is now in a separate thread altogether. So it needs
+to be serialized with any simulation or rendering code. This can be done by
+holding a lock while run op mode is called, releasing it briefly when special method equivalent
+to FTC's `opModeIsActive()` is called. This seems a bit draconian. Another is to
+make sure all methods called in the context of `runOpMode` are thread safe. This is 
+a lot of work as there are many such calls - to access robot methods, sensors and
+updating status.
+
+Final plan is to implement a round-robin task scheduler. It is the cleanest and most
+predictable implmentation. But details are complex. More details on that in an upcoming note.
+
 ## October 20, 2018-A JMJ Thoughts on simulating Linear OpModes
 Since linear `OpModes` block during the call to `runOpMode`, they have to run in their own
 thread in Processing, and MUST NOT call any Processing animation functions.

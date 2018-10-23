@@ -1,32 +1,38 @@
-import java.lang.Runnable;
-
+ //<>//
 static abstract class OpMode {
-  
+
+   private static List<OpMode> opModeList = new ArrayList<OpMode>(); // serialized by global_lock
+
   // Keeps track of internal state
   enum RunStatus {
-    UNINIT,
-    INIT,
-    RUNNING,
-    STOPPED,
-    DEINIT
+    UNINIT, 
+      INIT, 
+      RUNNING, 
+      STOPPED, 
+      DEINIT
   };
-  
+
   RunStatus status = RunStatus.UNINIT;
-  private Object lock = new Object();
-  
+
   public boolean isLinear() {
     return false;
   }
-  
+
   public void runOpMode() throws Exception {
   }
-  
-  public void init() {}
-  public void deinit() {}
-  public void start() {}
-  public void stop() {}
-  public void loop() {}
-  
+
+  public void init() {
+  }
+  public void deinit() {
+  }
+  public void start() {
+  }
+  public void stop() {
+  }
+  public void loop() {
+  }
+
+
   static void launch(final OpMode om) {
     assert(om.status == RunStatus.UNINIT);
     if (om.isLinear()) {
@@ -44,16 +50,21 @@ static abstract class OpMode {
       bgThread.run();
     }
   }
-  
-}
 
-class MyOpmode extends OpMode {
-  boolean isLinear() {
-    return true;
+
+  // Registers a single op mode. MUST be called
+  // before the runAll Method
+  static void registerOpMode(OpMode op) {
+
   }
-  
-  void runOpMode()  {
-    System.out.println("IN runOpMode()");
+
+
+  static void runAll() {
+
   }
-  
+
+
+  static void loopAll() {
+
+  }
 }
