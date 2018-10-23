@@ -2,6 +2,77 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 23, 2018-A JMJ A Round Robin Scheduler
+Each OpMode instance runs in a separate thread but needs to be serialized with each other and
+the main Processing animation thread (see previous note). Tackling this problem head-on,
+I decided to implement a round robin scheduler with it's self-contained interfaces that are
+not specific to the robot simulator so that it may be used else where. It proceeds in a very
+predictable way - giving each task a turn to run.
+
+Here's a snapshot of design, in the form of a skeleton of the classes and interfaces. I plan
+to use two semaphores per each instance of task to implement the blocking logic.
+
+```
+//
+// Class RoundRobinScheduler maintains a list of
+// tasks and steps through each one in turn.
+// Each task runs in it's own thread, but only
+// one task runs at a time, and all tasks
+// run only when the caller is blocked on
+// the stepAll method.
+//
+static class RoundRobinScheduler {
+
+
+  // Supplies context to a running task
+  public interface TaskContext {
+        public String name();
+        public void waitForNextStep() throws InterruptedException;
+  }
+
+
+  // Interface to client-provided task
+  public interface  Task {
+    public  abstract void run(TaskContext context);
+  }
+
+  // Adds a task with the given name to the list of
+  // round-robin tasks. The name is just to help with
+  // debugging and logging. The task will be added to
+  // the end of the list of tasks.
+  public void addTask(Task task, String name) {
+  }
+
+  // Steps once through all tasks. This is a blocking
+  // call as it will wait until each task goes through
+  // one step.
+  public void stepAll() throws InterruptedException {
+  }
+
+
+  // Cancels all tasks. If a task is still running, it will
+  // raise a InterrupedException on that task's thread.
+  public void cancelAll() {
+  }
+
+
+  // Waits for all tasks to complete OR until
+  // {waitMs} milliseconds transpires.
+  public boolean waitForAllDone(int waitMs) {
+    return true;
+  }
+
+
+}
+
+```
+Note that a couple of calls throw `InterruptedException`. The `waitForNextStep` method
+is called in the context of the`run` method of a task, which executes in its own thread. This 
+exception will be thrown if the the client cancels all tasks. This is a clean way to for the 
+blocking task logic implemented in `run` to deal with cancellation, rather than checking
+every time it blocks whether or not the task has been canceled.
+
+
 ## October 22, 2018-A JMJ OpMode design
 
 Continuing the previous note...
