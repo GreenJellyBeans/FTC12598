@@ -36,6 +36,12 @@ static SimpleLogger g_logger;
 
 
 void setup() {
+  setup_simulator();
+  //test_op_modes();
+  //noLoop();
+}
+
+void setup_simulator() {
   g_logger = new SimpleLogger();
   rectMode(CENTER);
   setFont();
@@ -70,8 +76,6 @@ void setup() {
     t.start();
   }
 
-  //noLoop();
-  //testCollisionPhysics();
 }
 
 
@@ -94,6 +98,12 @@ void setFont() {
 
 
 void draw() {
+  simulator_loop();
+}
+
+
+// Must be called from Processing's draw method
+void simulator_loop() {
 
   // Check if the user would like to re-map
   // which real gamepads are mapped to which roles on
