@@ -2,6 +2,11 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 27, 2018-A JMJ Milestone: Linear and Iterative op modes implemented!
+With this checkin, both Linear (the far more complicated) and Iterative op modes
+are working. Not extensively tested, but basic functionality is verified: the test
+code instantiates one of each type of op mode, and each type goes through multiple steps.
+
 ## October 27, 2018-A JMJ Back to implementing OpModes...
 There are three op-mode classes:
 `OpModeManager` - for registering op modes. It provides these methods:

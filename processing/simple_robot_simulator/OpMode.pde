@@ -126,9 +126,12 @@ static abstract class LinearOpMode implements RoundRobinScheduler.Task {
         active = rrsContext.waitForNextStep();
       } 
       catch (InterruptedException e) {
+        g_logger.err("LINOP", "Caught interrupt exception e:" + e);
         active = false;
       }
     }
+    g_logger.info("LINOP", "Op mode active? " + active);
+
     return active;
   }
 

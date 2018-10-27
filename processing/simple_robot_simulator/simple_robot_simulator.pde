@@ -45,14 +45,10 @@ final String CONFIG_FILE = "config.txt";
 // Configuration settings - can be overridden by settings in the config file.
 int g_numGamepads = 0; // Config setting "numGamepads" overrides this value
 
-static SimpleLogger g_logger;
-
-
-
+static SimpleLogger g_logger = new SimpleLogger();
 
 
 void setup_simulator() {
-  g_logger = new SimpleLogger();
   rectMode(CENTER);
   setFont();
   loadConfig();

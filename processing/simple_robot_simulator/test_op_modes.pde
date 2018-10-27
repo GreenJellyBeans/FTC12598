@@ -9,8 +9,12 @@ void test_op_modes() {
   OpModeManager.startAll();
 }
 
+int loop_count = 5;
 void test_op_modes_loop() {
-  OpModeManager.loopAll();
+  if (loop_count > 0) {
+    loop_count--;
+    OpModeManager.loopAll();
+  }
 }
 
 
@@ -23,40 +27,40 @@ static class TestIterativeOpMode extends IterativeOpMode {
 
   @Override
     public void init() {
-      println("A: IN INIT");
+    println("A: IN INIT");
   }
 
 
   @Override
     public void deinit() {
-      println("A: IN DEINIT");
+    println("A: IN DEINIT");
   }
 
 
   @Override
     public void start() {
-      println("A: IN START");
+    println("A: IN START");
   }
 
 
   @Override
     public void stop() {
-      println("A: IN STOP");
+    println("A: IN STOP");
   }
 
 
   @Override
     public void loop() {
-      if (count < 10) {
-        println("A: IN LOOP # " + count);
-      }
-      count++;
+    if (count < 3) {
+      println("A: IN LOOP # " + count);
+    }
+    count++;
   }
 }
 
 static class TestLinearOpMode extends LinearOpMode {
   final Robot r;
-  
+
   TestLinearOpMode(Robot r) {
     this.r = r;
   }
@@ -64,12 +68,11 @@ static class TestLinearOpMode extends LinearOpMode {
 
   @Override
     public void runOpMode() {
-      for (int i = 0; opModeIsActive() && i < 10; i++) {
-        System.out.println("B: LIN OM step: " + i);
-        my_delay(1);// Wait a tiny amount
-        
-      }     
+    for (int i = 0; opModeIsActive() && i < 3; i++) {
+      System.out.println("B: LIN OM step: " + i);
+      my_delay(1);// Wait a tiny amount
     }
+  }
 }
 
 static void my_delay(int ms) {
