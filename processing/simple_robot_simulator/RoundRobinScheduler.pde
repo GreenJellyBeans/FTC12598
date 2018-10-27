@@ -78,14 +78,14 @@ static class RoundRobinScheduler {
   // MUST NOT be called after task rundown has started (via
   // call to rundownAll)
   public void stepAll() {
-    log("entering stepAll");
+    //log("entering stepAll");
     verifyMainThread();
     verifyNotRunningDown();
     for (TaskImplementation ti : tasks) {
       log("stepping task " + ti.name());
       ti.step();
     }
-    log("exiting stepAll");
+    //log("exiting stepAll");
   }
 
 
