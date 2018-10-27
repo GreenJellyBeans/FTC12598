@@ -4,7 +4,7 @@
 
 
 static class OpModeManager {
-  
+
   static RoundRobinScheduler rrs  = new RoundRobinScheduler(); // for iterative op modes
   static List<IterativeOpMode> iterativeList = new ArrayList<IterativeOpMode>(); // for linear op modes
 
@@ -26,13 +26,13 @@ static class OpModeManager {
   // Starts all registered op-modes.
   //
   static void startAll() {
-    
+
     // Linear op modes are RoundRobinSimulator.Tasks, and they
     // will be each associated with their own thread, waiting for the first step.
     rrs.stepAll();
-    
+
     // Iterative op modes should be inited and started here.
-    for (IterativeOpMode op: iterativeList) {
+    for (IterativeOpMode op : iterativeList) {
       op.init();
       op.start();
     }
@@ -44,13 +44,13 @@ static class OpModeManager {
   // call the loop methods of all
   // registered iterative op-modes.
   static void loopAll() {
-    
+
     // Linear op mode run-time execution is managed by
     // the RoundRobinScheduler.
     rrs.stepAll();
-    
+
     // Iterative op modes run-time execution is managed directly here.
-    for (IterativeOpMode op: iterativeList) {
+    for (IterativeOpMode op : iterativeList) {
       op.loop();
     }
   }
@@ -102,9 +102,13 @@ static abstract class IterativeOpMode {
 
 static abstract class LinearOpMode implements RoundRobinScheduler.Task {
 
+  private RoundRobinScheduler.TaskContext rrsContext;
+  private boolean active = false;
+
   // Override this method to actually
   // run a linear op-mode
   abstract public void runOpMode();
+
 
   // Will yield the processor to other threads, and also
   // check if the op mode is still active. As in the FTC 
@@ -113,12 +117,26 @@ static abstract class LinearOpMode implements RoundRobinScheduler.Task {
   //      while (opModeIsActive() && _some_condition_) {
   //              _do_something_incremental_
   //      }
+  // BAD things will happen if the op mode logic
+  // (implemented in runOpMode) attempts to run 
+  // any code once opModeIsActive() returns false.
   final boolean opModeIsActive() {
-    return false;
+    if (active) {
+      try {
+        active = rrsContext.waitForNextStep();
+      } 
+      catch (InterruptedException e) {
+        active = false;
+      }
+    }
+    return active;
   }
-  
+
+  // This is part of the implementation - clients of LinearOpMode should
+  // ignore this. This provides the execution context for the op mode.
   final void run(RoundRobinScheduler.TaskContext context) {
+    rrsContext = context;
+    active = true;
+    runOpMode();
   }
-  
-  
 }
