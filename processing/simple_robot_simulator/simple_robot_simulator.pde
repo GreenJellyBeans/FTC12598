@@ -3,8 +3,24 @@
 // It's purpose is for basic experimentation and validation
 // of robot drive control algorithms.
 //
+
+
 void settings() {
   size(1500, 1000);
+}
+
+
+void setup() {
+  setup_simulator();
+  test_op_modes();
+
+}
+
+
+void draw() {
+  noLoop();
+  //simulator_loop();
+  test_op_modes_loop();
 }
 
 
@@ -35,11 +51,6 @@ static SimpleLogger g_logger;
 
 
 
-void setup() {
-  setup_simulator();
-  //test_op_modes();
-  //noLoop();
-}
 
 void setup_simulator() {
   g_logger = new SimpleLogger();
@@ -94,11 +105,6 @@ Robot newRobot(String robotId, color c, double x, double y, double a) {
 void setFont() {
   PFont font = createFont("Consolas", 14);
   textFont(font);
-}
-
-
-void draw() {
-  simulator_loop();
 }
 
 
