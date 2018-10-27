@@ -2,6 +2,83 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 26, 2018-A JMJ Round Robin Scheduler implemented in another repository...
+The Round Robin Scheduler turned out to be quite complex to implement, and I have implemented
+it in another repository - where the main version resides, periodically copying that
+implementation over to this folder. The master implementation is here:
+ `https://github.com/josephmjoy/robotics/tree/master/processing/roundrobin_scheduler`.
+Here is the outline of the class.
+
+```
+static class RoundRobinScheduler {
+ sdfwsdfsdf 
+  // Supplies context to a client-provided  task
+  public interface TaskContext {
+    public String name();
+
+    // Worker side: blocks until next step can be done.
+    // Return:  true if there will be more steps, false
+    //     if this is the final step (so cleanup may be performed).
+    // If an exception is thrown, the caller MUST NOT attempt to
+    // wait for any more steps.
+    // Once false is returned, a subsequent call to this method
+    // WILL result in an InterruptedException being thrown.
+    public boolean waitForNextStep() throws InterruptedException;
+  }
+
+  // Interface to client-provided task - similar to java.lang.Runnable,
+  // but with the added context.
+  public interface  Task {
+    public  abstract void run(TaskContext context);
+  }
+
+  public RoundRobinScheduler() {}
+
+
+  // Adds a task with the given name to the list of
+  // round-robin tasks. The name is to help with
+  // debugging and logging. The task will be added to
+  // the end of the list of tasks.
+  // MUST be called from the (single) main 
+  // thread, which is the thread that created the
+  // RoundRobinScheduler.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void addTask(Task task, String name) {}
+
+
+  // Steps once through all tasks. This is a blocking
+  // call as it will wait until each task goes through 
+  // one step.
+  // MUST be called from the (single) main thread.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void stepAll() {}
+
+
+  // Cancels all tasks.
+  // MUST be called from the single main thread.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void cancelAll() {}
+
+
+  // Waits for all tasks to complete OR until
+  // {waitMs} milliseconds transpires. No more
+  // tasks must be added after this method is called.
+  // MUST be called from the single main thread.
+  // MUST be called only once.
+  // Return: true if all tasks have completed.
+  //   false if an InterruptedException was thrown, typically
+  // indicating the timeout has expired.
+  public boolean rundownAll(int waitMs) {} 
+
+}
+```
+
+Along for the ride is a simple logging implementation called `SimpleLogger` that
+logs messages to the console.
+
 ## October 23, 2018-A JMJ A Round Robin Scheduler
 Each OpMode instance runs in a separate thread but needs to be serialized with each other and
 the main Processing animation thread (see previous note). Tackling this problem head-on,
