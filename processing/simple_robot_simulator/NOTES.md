@@ -2,6 +2,15 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 27, 2018-C JMJ Milestone: Sample linear and iterative op modes implemented!
+The old sample iterative code that lives in `SampleDriveTask` has been ported over to
+new class `SampleIterativeOpMode`. New sample code `SampleLinearOpMode` has been added - 
+currently it makes the robot drive for a few seconds. Two robots are instantiated, 
+one with each sample op mode. All works great!
+
+There is a lot of console spew from `RoundRobinScheduler` - need to move all those 
+log messages to trace messages.
+
 ## October 27, 2018-B JMJ Milestone: Linear and Iterative op modes implemented!
 With this checkin, both Linear (the far more complicated) and Iterative op modes
 are working. Not extensively tested, but basic functionality is verified: the test

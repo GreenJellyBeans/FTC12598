@@ -20,10 +20,11 @@ void new_setup_simulator() {
 
   // Setup each robot's op modes
   g_iterativeOpModes = new IterativeOpMode[]{
-    new SampleIterativeOpMode(g_robots[0]),
-    new SampleIterativeOpMode(g_robots[1])
+    new SampleIterativeOpMode(g_robots[0]), 
+    //new SampleIterativeOpMode(g_robots[1])
   };
   g_linearOpModes = new LinearOpMode[]{
+    new SampleLinearOpMode(g_robots[1])
   };
 
   assert g_robots.length == g_iterativeOpModes.length + g_linearOpModes.length;
@@ -38,6 +39,9 @@ void new_setup_simulator() {
   // Register and start all op modes
   for (IterativeOpMode op : g_iterativeOpModes) {
     OpModeManager.registerIterativeOpMode(op);
+  }
+  for (LinearOpMode op : g_linearOpModes) {
+    OpModeManager.registerLinearOpMode(op);
   }
   OpModeManager.startAll();
 }
