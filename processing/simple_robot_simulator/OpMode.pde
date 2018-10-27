@@ -130,7 +130,6 @@ static abstract class LinearOpMode implements RoundRobinScheduler.Task {
         active = false;
       }
     }
-    g_logger.info("LINOP", "Op mode active? " + active);
 
     return active;
   }
