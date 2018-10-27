@@ -1,31 +1,41 @@
-// These classes implement "FTC-style" linear and iterative op-modes. //<>//
+// These classes implement "FTC-style" linear and iterative op modes. //<>//
 // Author: Joseph M. Joy FTC 12598 and FRC 1899 mentor
 //
 
 
 static class OpModeManager {
+  
+  static RoundRobinScheduler rrs  = new RoundRobinScheduler(); // for iterative op modes
+  static List<IterativeOpMode> iterativeList = new ArrayList<IterativeOpMode>(); // for linear op modes
 
   // Registers a linear op mode. MUST be called
   // before the runAll Method
   static void registerIterativeOpMode(IterativeOpMode op) {
-    //opModeList.add(op);
+    iterativeList.add(op);
   }
 
 
   // Registers an iterative op mode. MUST be called
   // before the runAll Method
   static void registerLinearOpMode(LinearOpMode op) {
-    //opModeList.add(op);
+    rrs.addTask(op, "LIN-OP");
   }
 
 
   //
-  // Runs all registered op-modes.
+  // Starts all registered op-modes.
   //
-  static void runAll() {
-    //for (OpMode om: opModeList) {
-    //om. 
-    //}
+  static void startAll() {
+    
+    // Linear op modes are RoundRobinSimulator.Tasks, and they
+    // will be each associated with their own thread, waiting for the first step.
+    rrs.stepAll();
+    
+    // Iterative op modes should be inited and started here.
+    for (IterativeOpMode op: iterativeList) {
+      op.init();
+      op.start();
+    }
   }
 
 
@@ -34,6 +44,15 @@ static class OpModeManager {
   // call the loop methods of all
   // registered iterative op-modes.
   static void loopAll() {
+    
+    // Linear op mode run-time execution is managed by
+    // the RoundRobinScheduler.
+    rrs.stepAll();
+    
+    // Iterative op modes run-time execution is managed directly here.
+    for (IterativeOpMode op: iterativeList) {
+      op.loop();
+    }
   }
 }
 

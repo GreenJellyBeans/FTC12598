@@ -6,7 +6,7 @@ void test_op_modes() {
   LinearOpMode op2 = new TestLinearOpMode(r2);
   OpModeManager.registerIterativeOpMode(op1);
   OpModeManager.registerLinearOpMode(op2);
-  OpModeManager.runAll();
+  OpModeManager.startAll();
 }
 
 void test_op_modes_loop() {
