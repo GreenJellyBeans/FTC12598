@@ -12,15 +12,14 @@ void settings() {
 
 void setup() {
   setup_simulator();
-  test_op_modes();
+  //test_op_modes();
 
 }
 
 
 void draw() {
-  noLoop();
-  //simulator_loop();
-  test_op_modes_loop();
+  simulator_loop();
+  //test_op_modes_loop();
 }
 
 

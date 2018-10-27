@@ -2,19 +2,19 @@ void test_op_modes() {
   println("HOWDY!");
   Robot r1 = null;
   Robot r2 = null;
-  OpMode op1 = new TestIterativeOpMode(r1);
-  OpMode op2 = new TestLinearOpMode(r2);
-  OpMode.registerOpMode(op1);
-  OpMode.registerOpMode(op2);
-  OpMode.runAll();
+  IterativeOpMode op1 = new TestIterativeOpMode(r1);
+  LinearOpMode op2 = new TestLinearOpMode(r2);
+  OpModeManager.registerIterativeOpMode(op1);
+  OpModeManager.registerLinearOpMode(op2);
+  OpModeManager.runAll();
 }
 
 void test_op_modes_loop() {
-  OpMode.loopAll();
+  OpModeManager.loopAll();
 }
 
 
-static class TestIterativeOpMode extends OpMode {
+static class TestIterativeOpMode extends IterativeOpMode {
   final Robot r;
   int count = 0;
   TestIterativeOpMode(Robot r) {
@@ -54,23 +54,20 @@ static class TestIterativeOpMode extends OpMode {
   }
 }
 
-static class TestLinearOpMode extends OpMode {
+static class TestLinearOpMode extends LinearOpMode {
   final Robot r;
   
   TestLinearOpMode(Robot r) {
     this.r = r;
   }
 
-  @Override
-    public boolean isLinear() {
-    return true;
-  }
 
   @Override
     public void runOpMode() {
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; opModeIsActive() && i < 10; i++) {
         System.out.println("B: LIN OM step: " + i);
         my_delay(1);// Wait a tiny amount
+        
       }     
     }
 }

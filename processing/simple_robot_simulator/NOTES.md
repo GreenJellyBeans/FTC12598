@@ -2,6 +2,33 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 27, 2018-A JMJ Back to implementing OpModes...
+There are three op-mode classes:
+`OpModeManager` - for registering op modes. It provides these methods:
+	`registerLinearOpMode`
+	`registerIterativeOpMode`
+	`runAll`
+	`loopAll`
+
+`LinearOpMode` - Abstract class for linear (blocking) op-modes. It provides these methods:
+	`runOpMode` - abstract - must be implemented.
+	`opModeIsActive` - final - for sharing processing cycles and determining termination
+
+`IterativeOpMode` - Abstract class for iterative op-modes. It provides these methods:
+	`init`
+	`deinit`
+	`start`
+	`stop`
+	`loop`
+
+Implementation notes:
+- `LinearOpMode` extends `RoundRobinScheduler.Task`, and instances of `LinearOpMode` are
+   actually managed by `RoundRobinScheduler`
+- `LinearOpMode` and `IterativeOpMode` do not share a common parent, as they really do not
+   have anything in common.
+
+Skeleton code for all of this is part of this checkin, which replaces the old `OpMode` class.
+
 ## October 26, 2018-A JMJ Round Robin Scheduler implemented in another repository...
 The Round Robin Scheduler turned out to be quite complex to implement, and I have implemented
 it in another repository - where the main version resides, periodically copying that
@@ -11,7 +38,6 @@ Here is the outline of the class.
 
 ```
 static class RoundRobinScheduler {
- sdfwsdfsdf 
   // Supplies context to a client-provided  task
   public interface TaskContext {
     public String name();
