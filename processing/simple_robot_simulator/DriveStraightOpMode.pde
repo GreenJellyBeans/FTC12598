@@ -1,12 +1,14 @@
-class DriveStraightTask implements DriveTask {
+// This is work in progress, experimenting with PID algorithms
+// to drive straight and at a particular bearing
+class DriveStraightOpMode extends IterativeOpMode {
 
-  double targetBearing = radians(180);
+  double targetBearing = radians(0);
   double targetX = meters(1);
   double targetY = meters(6);
   Robot ra;
   final double AKp = 2;
   final double DKp = 1;
-  public DriveStraightTask(Robot r) {
+  public DriveStraightOpMode(Robot r) {
     ra=r;
   }
   void init() {

@@ -35,16 +35,6 @@ class Point {
   
 }
 
-// The DriveTask collects together methods that control the robot movement
-interface DriveTask {
-  void init();
-  void deinit();
-  void start();
-  void stop();
-  void loop();
-}
-
-
 
 // Returns clipped version of {in} guaranteed to between [{mn}, {mx}]
 int bound(int in, int mn, int mx) {

@@ -2,6 +2,10 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 27, 2018-D JMJ Completed switch over from Tasks to OpModes
+Removed the Task interface, and moved the one under-deveopment task to an IterativeOpMode and
+deleted the SampleDriveTask.
+
 ## October 27, 2018-C JMJ Milestone: Sample linear and iterative op modes implemented!
 The old sample iterative code that lives in `SampleDriveTask` has been ported over to
 new class `SampleIterativeOpMode`. New sample code `SampleLinearOpMode` has been added - 
