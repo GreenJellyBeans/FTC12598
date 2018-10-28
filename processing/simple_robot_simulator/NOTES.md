@@ -2,6 +2,272 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 27, 2018-D JMJ Completed switch over from Tasks to OpModes
+Removed the Task interface, and moved the one under-deveopment task to an IterativeOpMode and
+deleted the SampleDriveTask.
+
+## October 27, 2018-C JMJ Milestone: Sample linear and iterative op modes implemented!
+The old sample iterative code that lives in `SampleDriveTask` has been ported over to
+new class `SampleIterativeOpMode`. New sample code `SampleLinearOpMode` has been added - 
+currently it makes the robot drive for a few seconds. Two robots are instantiated, 
+one with each sample op mode. All works great!
+
+There is a lot of console spew from `RoundRobinScheduler` - need to move all those 
+log messages to trace messages.
+
+## October 27, 2018-B JMJ Milestone: Linear and Iterative op modes implemented!
+With this checkin, both Linear (the far more complicated) and Iterative op modes
+are working. Not extensively tested, but basic functionality is verified: the test
+code instantiates one of each type of op mode, and each type goes through multiple steps.
+
+## October 27, 2018-A JMJ Back to implementing OpModes...
+There are three op-mode classes:
+`OpModeManager` - for registering op modes. It provides these methods:
+	`registerLinearOpMode`
+	`registerIterativeOpMode`
+	`runAll`
+	`loopAll`
+
+`LinearOpMode` - Abstract class for linear (blocking) op-modes. It provides these methods:
+	`runOpMode` - abstract - must be implemented.
+	`opModeIsActive` - final - for sharing processing cycles and determining termination
+
+`IterativeOpMode` - Abstract class for iterative op-modes. It provides these methods:
+	`init`
+	`deinit`
+	`start`
+	`stop`
+	`loop`
+
+Implementation notes:
+- `LinearOpMode` extends `RoundRobinScheduler.Task`, and instances of `LinearOpMode` are
+   actually managed by `RoundRobinScheduler`
+- `LinearOpMode` and `IterativeOpMode` do not share a common parent, as they really do not
+   have anything in common.
+
+Skeleton code for all of this is part of this checkin, which replaces the old `OpMode` class.
+
+## October 26, 2018-A JMJ Round Robin Scheduler implemented in another repository...
+The Round Robin Scheduler turned out to be quite complex to implement, and I have implemented
+it in another repository - where the main version resides, periodically copying that
+implementation over to this folder. The master implementation is here:
+ `https://github.com/josephmjoy/robotics/tree/master/processing/roundrobin_scheduler`.
+Here is the outline of the class.
+
+```
+static class RoundRobinScheduler {
+  // Supplies context to a client-provided  task
+  public interface TaskContext {
+    public String name();
+
+    // Worker side: blocks until next step can be done.
+    // Return:  true if there will be more steps, false
+    //     if this is the final step (so cleanup may be performed).
+    // If an exception is thrown, the caller MUST NOT attempt to
+    // wait for any more steps.
+    // Once false is returned, a subsequent call to this method
+    // WILL result in an InterruptedException being thrown.
+    public boolean waitForNextStep() throws InterruptedException;
+  }
+
+  // Interface to client-provided task - similar to java.lang.Runnable,
+  // but with the added context.
+  public interface  Task {
+    public  abstract void run(TaskContext context);
+  }
+
+  public RoundRobinScheduler() {}
+
+
+  // Adds a task with the given name to the list of
+  // round-robin tasks. The name is to help with
+  // debugging and logging. The task will be added to
+  // the end of the list of tasks.
+  // MUST be called from the (single) main 
+  // thread, which is the thread that created the
+  // RoundRobinScheduler.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void addTask(Task task, String name) {}
+
+
+  // Steps once through all tasks. This is a blocking
+  // call as it will wait until each task goes through 
+  // one step.
+  // MUST be called from the (single) main thread.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void stepAll() {}
+
+
+  // Cancels all tasks.
+  // MUST be called from the single main thread.
+  // MUST NOT be called after task rundown has started (via
+  // call to rundownAll)
+  public void cancelAll() {}
+
+
+  // Waits for all tasks to complete OR until
+  // {waitMs} milliseconds transpires. No more
+  // tasks must be added after this method is called.
+  // MUST be called from the single main thread.
+  // MUST be called only once.
+  // Return: true if all tasks have completed.
+  //   false if an InterruptedException was thrown, typically
+  // indicating the timeout has expired.
+  public boolean rundownAll(int waitMs) {} 
+
+}
+```
+
+Along for the ride is a simple logging implementation called `SimpleLogger` that
+logs messages to the console.
+
+## October 23, 2018-A JMJ A Round Robin Scheduler
+Each OpMode instance runs in a separate thread but needs to be serialized with each other and
+the main Processing animation thread (see previous note). Tackling this problem head-on,
+I decided to implement a round robin scheduler with it's self-contained interfaces that are
+not specific to the robot simulator so that it may be used else where. It proceeds in a very
+predictable way - giving each task a turn to run.
+
+Here's a snapshot of design, in the form of a skeleton of the classes and interfaces. I plan
+to use two semaphores per each instance of task to implement the blocking logic.
+
+```
+//
+// Class RoundRobinScheduler maintains a list of
+// tasks and steps through each one in turn.
+// Each task runs in it's own thread, but only
+// one task runs at a time, and all tasks
+// run only when the caller is blocked on
+// the stepAll method.
+//
+static class RoundRobinScheduler {
+
+
+  // Supplies context to a running task
+  public interface TaskContext {
+        public String name();
+        public void waitForNextStep() throws InterruptedException;
+  }
+
+
+  // Interface to client-provided task
+  public interface  Task {
+    public  abstract void run(TaskContext context);
+  }
+
+  // Adds a task with the given name to the list of
+  // round-robin tasks. The name is just to help with
+  // debugging and logging. The task will be added to
+  // the end of the list of tasks.
+  public void addTask(Task task, String name) {
+  }
+
+  // Steps once through all tasks. This is a blocking
+  // call as it will wait until each task goes through
+  // one step.
+  public void stepAll() throws InterruptedException {
+  }
+
+
+  // Cancels all tasks. If a task is still running, it will
+  // raise a InterrupedException on that task's thread.
+  public void cancelAll() {
+  }
+
+
+  // Waits for all tasks to complete OR until
+  // {waitMs} milliseconds transpires.
+  public boolean waitForAllDone(int waitMs) {
+    return true;
+  }
+
+
+}
+
+```
+Note that a couple of calls throw `InterruptedException`. The `waitForNextStep` method
+is called in the context of the`run` method of a task, which executes in its own thread. This 
+exception will be thrown if the the client cancels all tasks. This is a clean way to for the 
+blocking task logic implemented in `run` to deal with cancellation, rather than checking
+every time it blocks whether or not the task has been canceled.
+
+
+## October 22, 2018-A JMJ OpMode design
+
+Continuing the previous note...
+
+More `OpMode` methods:
+- static `registerOpMode(op)` - adds `op` to list of op modes
+- static `runAll()` - runs all op modes. What happens depends on whether or not the
+        op mode is linear or iterative. Each linear op mode has a dedicated thread from which
+        it's `unOpMode()` is called. Each iterative op mode will have it's `init` and
+        `start` methods called in the context of `runAll`, and it's loop method in the
+	context of Processing's `draw`.
+
+Concurrency considerations: the list of op modes are only accessed by the main Processing
+thread so doesn't need to be locked. The internal state of an op mode is only looked at by
+Processing code in the very beginning.
+
+The actual op mode logic (auton mode) is now in a separate thread altogether. So it needs
+to be serialized with any simulation or rendering code. This can be done by
+holding a lock while run op mode is called, releasing it briefly when special method equivalent
+to FTC's `opModeIsActive()` is called. This seems a bit draconian. Another is to
+make sure all methods called in the context of `runOpMode` are thread safe. This is 
+a lot of work as there are many such calls - to access robot methods, sensors and
+updating status.
+
+Final plan is to implement a round-robin task scheduler. It is the cleanest and most
+predictable implmentation. But details are complex. More details on that in an upcoming note.
+
+## October 20, 2018-A JMJ Thoughts on simulating Linear OpModes
+Since linear `OpModes` block during the call to `runOpMode`, they have to run in their own
+thread in Processing, and MUST NOT call any Processing animation functions.
+
+Plan:
+- Add static abstract class `OpMode`. Robot tasks, formally inheriting from `DriveTaskInterface`, 
+ will now extend `OpMode` instead. `OpMode` has the following two methods in addition to the
+ ones from `DriveTaskInterface`:
+- `boolean isLinear()` - if the task to run as linear
+- `void runOpMode()` that is called in a separate thread
+If it is a linear task, we will not call its `init`, `deinit`, `start`, `stop` and `loop`
+methods.
+`OpMode` is an abstract class instead of an interface because default interface methods
+is a Java 8 feature, not supported in Processing. Besides it could allow for simulation of
+more aspects of the FTC/FRC SDK down the road. It is a static class to help ensure that
+Processing methods do not creep into op mode code, making it harder to port back to
+real robot code.
+
+## October 14, 2018-A JMJ  Beginning to add random perturbations to the system.
+The *main* purpose of perturbations is to make simulation of control algorithms (such as
+PID applied to drive in a certain direction and distance) more realistic by
+making the robot behave less predictably and the sensor outputs have more noise.
+It also adds some randomness when the user
+drives a robot, which could be considered either annoying or entertaining, especially
+if one sets more aggressive perturbation parameters!
+
+So far I've added random perturbations to motive force and torque. The constants that
+control this are `PERTURBATION_*` in `RobotProperties`, and the force and torque
+perturbations are implemented in `MecanumDrive` methods `perturbForceX`, `perturbForceY`,
+and `perturbTorque`.
+
+*Approach:* Use Perlin noise (Processing function `noise()`), passing in the scaled version
+of the current simulated time. Several "instances" of Perlin noise are used - by starting
+at different offsets in the input space to `noise`. For perturbing any particular value
+such as the force in the x direction, two instances of noise are used, one additive and
+one multiplicative. The final perturbed value is `in + A*noise1 + B*noise2`, where `A` and
+`B` are constants, and `noise1` and `noise2` are the two different instances of noise.
+
+There are some subtleties. In the case of force, the force in either x or y directions are
+"proportional" to the force in both x and y directions, in other words to the magnitude of the force,
+slightly favoring the x-direction force. Similarly, the torque is also impacted by the
+force (see `perturbTorque`). 
+
+The whole approach is not terribly elegant, but it will suffice for now, and can be adopted
+to other perturbations, in particular to perturb the reported values of sensors - color, 
+encoder values, and absolute and relative position values.
+
 ## October 12, 2018-C JMJ  DriveBase encoder values
 These seem to work, but realize that they are emulating a normal wheel, not a mecanum wheel.
 In particular, when strafing, the forward direction doesn't advance, and so the simulated

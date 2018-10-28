@@ -10,7 +10,7 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.SubSystemInterface;
 
-public class SubSysNotSoSimpleFourMotorDrive implements SubSystemInterface {
+public class SubSysMecDrive implements SubSystemInterface {
     final String THIS_COMPONENT = "S2MD"; // For "simple 2-motor drive"
     final public RuntimeSupportInterface rt;
     final public LoggingInterface log;
@@ -55,7 +55,7 @@ public class SubSysNotSoSimpleFourMotorDrive implements SubSystemInterface {
         }
     }
 
-    public SubSysNotSoSimpleFourMotorDrive(RuntimeSupportInterface rt, Config c) {
+    public SubSysMecDrive(RuntimeSupportInterface rt, Config c) {
         this.rt = rt;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
         config = c;
@@ -78,10 +78,7 @@ public class SubSysNotSoSimpleFourMotorDrive implements SubSystemInterface {
 
 
         // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        fleftDrive.setPower(0);
-        frightDrive.setPower(0);
+        setMotorPowerAll(0,0,0,0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -96,20 +93,14 @@ public class SubSysNotSoSimpleFourMotorDrive implements SubSystemInterface {
     public void deinit() {
         this.log.pri1(LoggingInterface.DEINIT_START, "");
         // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        setMotorPowerAll(0,0,0,0);
         leftDrive = rightDrive = null;
-        fleftDrive.setPower(0);
-        frightDrive.setPower(0);
         fleftDrive = frightDrive = null;
         this.log.pri1(LoggingInterface.DEINIT_END, "");
     }
     public void desableEncoders () {
         rt.telemetry().log().add("IN disableEncoders");
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        fleftDrive.setPower(0);
-        frightDrive.setPower(0);
+        setMotorPowerAll(0,0,0,0);
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fleftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -117,13 +108,59 @@ public class SubSysNotSoSimpleFourMotorDrive implements SubSystemInterface {
     }
     public void enableEncoders () {
         rt.telemetry().log().add("IN enableEncoders");
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        fleftDrive.setPower(0);
-        frightDrive.setPower(0);
+        setMotorPowerAll(0,0, 0, 0);
         leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         fleftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+    public void setHybridPower (double forward, double strafe, double turn){
+        // Let's clip anyways, incase we get faulty input
+        forward = clipInput(forward);
+        turn = clipInput(turn);
+        strafe = clipInput(strafe);
+
+        // Note: +ve strafe makes the robot go right, and with
+        // the robot's front facing increasing x, to go right
+        // means to go in the direction of decreasing y:
+        //
+        //                 ^ y-axis
+        //      robot      |
+        //    ...... FL    |
+        //    .    .       --> x-axis
+        //    ...... FR
+        //
+        double pFL = forward - strafe + turn;
+        double pFR = forward + strafe - turn;
+        double pBL = forward + strafe + turn;
+        double pBR = forward - strafe - turn;
+
+        // m is the max absolute value of the individual motor power amounts. If it is too small, we stop all motors.
+        double m = Math.max(Math.max(Math.abs(pFL), Math.abs(pFR)), Math.max(Math.abs(pBL), Math.abs(pBR)));
+        if (m<0.1) {
+            setMotorPowerAll(0, 0, 0, 0);
+        } else {
+            // Scale everything so no magnitude exeeds 1
+            double scale = Math.min(1/m, 1);
+            pFL *= scale;
+            pFR *= scale;
+            pBL *= scale;
+            pBR *= scale;
+            setMotorPowerAll(pFL, pFR, pBL, pBR);
+        }
+    }
+    // Clips input to be within [-1, 1]
+    double clipInput(double in) {
+        return Math.max(Math.min(in, 1), -1);
+    }
+
+    void setMotorPowerAll(double pFL, double pFR, double pBL, double pBR) {
+        fleftDrive.setPower(pFL);
+        frightDrive.setPower(pFR);
+        leftDrive.setPower(pBL);
+        rightDrive.setPower(pBR);
+
+
+    }
 }
+

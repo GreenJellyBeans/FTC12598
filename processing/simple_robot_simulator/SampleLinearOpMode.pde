@@ -1,78 +1,32 @@
-// A sample drive task that uses gamepad1 to control the robot. It uses the
-// left joystick's x to calculate turn amount, and the right joystick's 
-// x and y to control strafe and forward motion, respectively.
-// Also maps left and right bumpers to a fixed amount of pure turn motion.
-class SampleDriveTask implements DriveTask {
-
+static class SampleLinearOpMode extends LinearOpMode {
   final Robot robot;
-  boolean gamepadEnabled = false; // Stays disabled until "A" button is pressed
 
-  public SampleDriveTask(Robot r) {
-    robot = r;
+  SampleLinearOpMode(Robot r) {
+    this.robot = r;
   }
 
 
-  void init() {
-  }
-
-
-  void start() {
-    setStartingPower();
-  }
-
-
-  void stop() {
-    robot.drive.stop();
-  }
-
-
-  void loop() {
-    driveTaskLoop1();
-  }
-
-
-  void deinit() {
-  }
-
-
-  void setStartingPower() {
-    double pFwd = 0;//0.5;
+  @Override
+    public void runOpMode() {
+      setStartingPower();
+      long startMs = System.currentTimeMillis();
+      while (opModeIsActive() && (System.currentTimeMillis() - startMs) < 3000) {
+        // Do nothing
+      }
+      robot.base.setMotorPowerAll(0, 0, 0, 0);
+    }
+  
+    void setStartingPower() {
+    double pFwd = 0.5;
     double pStrafe = 0;//0.5;
-    double pTurn = 0.3;
+    double pTurn = 0;
     double pFL = (pFwd + pStrafe + pTurn);
     double pFR = (pFwd - pStrafe - pTurn);
     double pBL = (pFwd - pStrafe + pTurn);
     double pBR = (pFwd + pStrafe - pTurn);
     robot.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
-
   }
 
-
-  void driveTaskLoop1() {
-    GamepadInterface gp = robot.gamepad1;
-    if (!gamepadEnabled && gp.a()) {
-      gamepadEnabled = true;
-    }
-
-    if (!gamepadEnabled) {
-      return; // ***** EARLY RETURN ******
-    }
-    // If "Y" button is pressed, we clear the encoder values on all motors.
-    if (gp.y()) {
-      robot.base.resetEncoders();
-    }
-    
-    if (gp.right_bumper()) {         //right bumper makes the robot spin clockwise
-      robot.base.setMotorPowerAll(0.5, -0.5, 0.5, -0.5); // FL FR BL BR
-    } else if (gp.left_bumper()) {    //left bumper makes the robot spin counterclockwise
-      robot.base.setMotorPowerAll(-0.5, 0.5, -0.5, 0.5);
-    } else {
-      double fwd  = gp.right_stick_y();
-      double turn  = gp.left_stick_x();
-      double strafe = gp.right_stick_x();
-      setHybridPower(fwd, turn, strafe);
-    }
-  }
 
   // Sets the power to each of the 4 motors of the mecanum drive given
   // the incoming request to go forward, turn and strafe by amounts
@@ -121,5 +75,4 @@ class SampleDriveTask implements DriveTask {
   double clipInput(double in) {
     return Math.max(Math.min(in, 1), -1);
   }
-
 }

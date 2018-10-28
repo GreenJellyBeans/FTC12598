@@ -12,7 +12,7 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
 @TeleOp(name="DOpMode_MecDriveTestc", group="Pushbot")
-@Disabled
+//@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
@@ -21,7 +21,7 @@ public class DOpMode_driveOnlyTeaBotMec extends OpMode{
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during
-    private  SubSysNotSoSimpleFourMotorDrive drive;
+    private  SubSysMecDrive drive;
     private ITask_simpleDriveMec driveTask;
     private LoggingInterface log;
 
@@ -33,13 +33,13 @@ public class DOpMode_driveOnlyTeaBotMec extends OpMode{
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
         //configure the motors
-        SubSysNotSoSimpleFourMotorDrive.Config driveConfig = new SubSysNotSoSimpleFourMotorDrive.Config();
+        SubSysMecDrive.Config driveConfig = new SubSysMecDrive.Config();
         driveConfig.leftMotorName("left_drive");
         driveConfig.rightMotorName("right_drive");
         driveConfig.fleftMotorName("fleft_drive");
         driveConfig.frightMotorName("fright_drive");
 
-        drive = new SubSysNotSoSimpleFourMotorDrive(rt, driveConfig);
+        drive = new SubSysMecDrive(rt, driveConfig);
         driveTask = new ITask_simpleDriveMec(rt, drive);
 
         // Initialize the subsystem and associated task

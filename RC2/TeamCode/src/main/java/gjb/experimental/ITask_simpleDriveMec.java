@@ -10,10 +10,10 @@ import gjb.interfaces.TaskInterface;
 public class ITask_simpleDriveMec implements TaskInterface {
     final String THIS_COMPONENT = "TASK_SD"; // For "Task simple drive"
     final RuntimeSupportInterface rt;
-    final SubSysNotSoSimpleFourMotorDrive drive;
+    final SubSysMecDrive drive;
     final LoggingInterface log;
 
-    public ITask_simpleDriveMec(RuntimeSupportInterface rt, SubSysNotSoSimpleFourMotorDrive ssDrive) {
+    public ITask_simpleDriveMec(RuntimeSupportInterface rt, SubSysMecDrive ssDrive) {
         this.rt = rt;
         this.drive = ssDrive;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
@@ -53,50 +53,30 @@ public class ITask_simpleDriveMec implements TaskInterface {
         //right = adjustPower2(right);
 
         if ((fwd_bkwd <-0.25 || fwd_bkwd>0.25) &&rt_lt >-0.25 && rt_lt <0.25 ) {
-            drive.leftDrive.setPower(fwd_bkwd);
-            drive.fleftDrive.setPower(fwd_bkwd);
-            drive.frightDrive.setPower(fwd_bkwd);
-            drive.rightDrive.setPower(fwd_bkwd);
+            drive.setMotorPowerAll(fwd_bkwd,fwd_bkwd, fwd_bkwd, fwd_bkwd);
         }   //Moves motor forward and backward
 
         if ((rt_lt <-0.25 || rt_lt >0.25) && fwd_bkwd >-0.25 && fwd_bkwd<0.25){
-            drive.leftDrive.setPower(rt_lt);
-            drive.fleftDrive.setPower(-rt_lt);
-            drive.frightDrive.setPower(rt_lt);
-            drive.rightDrive.setPower(-rt_lt);
+            drive.setMotorPowerAll(-rt_lt,rt_lt, rt_lt, -rt_lt);
         }   //Moves robot side to side (strafe)
 
         if ((fwd_bkwd > 0.25 && rt_lt < -0.25) || (fwd_bkwd < -0.25 && rt_lt > 0.25)) {
-            drive.rightDrive.setPower((-rt_lt + fwd_bkwd)*2/3);
-            drive.fleftDrive.setPower((-rt_lt + fwd_bkwd)*2/3);
-            drive.leftDrive.setPower(0);
-            drive.frightDrive.setPower(0);
+            drive.setMotorPowerAll((-rt_lt + fwd_bkwd)*2/3,0, 0, (-rt_lt + fwd_bkwd)*2/3);
         }   //this moves the robot at a 45 degree angle (hence the number 45 in telemetry)
 
         if ((fwd_bkwd > 0.25 && rt_lt > 0.25) || (fwd_bkwd < -0.25 && rt_lt < -0.25)) {
-            drive.leftDrive.setPower((rt_lt + fwd_bkwd)*2/3);
-            drive.frightDrive.setPower((rt_lt + fwd_bkwd)*2/3);
-            drive.rightDrive.setPower(0);
-            drive.fleftDrive.setPower(0);
+            drive.setMotorPowerAll(0,(rt_lt + fwd_bkwd)*2/3,(rt_lt + fwd_bkwd)*2/3, 0 );
+
         }   //this moves the robt at a 135 degree angle (hence the number 135 in telemetry)
 
         if (fwd_bkwd<0.25 && fwd_bkwd>-0.25 && rt_lt<0.25 && rt_lt>-0.25 && !rt.gamepad1().right_bumper() && !rt.gamepad1().left_bumper()) {
-            drive.leftDrive.setPower(0);
-            drive.fleftDrive.setPower(0);
-            drive.frightDrive.setPower(0);
-            drive.rightDrive.setPower(0);
+            drive.setMotorPowerAll(0,0, 0, 0);
         }   //When no buttons are pressed, all motors stop
 
         if (rt.gamepad1().right_bumper()) {         //right bumper makes the robot spin clockwise
-            drive.leftDrive.setPower(0.5);
-            drive.fleftDrive.setPower(0.5);
-            drive.frightDrive.setPower(-0.5);
-            drive.rightDrive.setPower(-0.5);
+            drive.setMotorPowerAll(0.5,-0.5, 0.5, -0.5);
         }else if (rt.gamepad1().left_bumper()) {    //left bumper makes the robot spin counterclockwise
-            drive.leftDrive.setPower(-0.5);
-            drive.fleftDrive.setPower(-0.5);
-            drive.frightDrive.setPower(0.5);
-            drive.rightDrive.setPower(0.5);
+            drive.setMotorPowerAll(-0.5,0.5, -0.5, 0.5);
         }
         /*
         if (right_bumper) {

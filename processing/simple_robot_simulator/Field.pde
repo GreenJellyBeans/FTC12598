@@ -14,7 +14,7 @@ class Field {
   final FieldElements elements = new FieldElements(this); 
   Wall[] walls; // initialized in init.
   Point[] convexCorners = {}; // Corners between adjacent walls around any convex objects, if any. Initialized in makeWalls().
-  final boolean visualizeCollisions = true; // set to true to display wall normal vectors and collision points for debugging
+  final boolean visualizeCollisions = false; // set to true to display wall normal vectors and collision points for debugging
   final color collisionColor = color(0, 255, 0); // Collision visualizations have this color
   void init() {
     elements.load();

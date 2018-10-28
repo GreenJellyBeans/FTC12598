@@ -13,6 +13,11 @@ class MecanumDrive {
   final DriveBase base;
   final RobotProperties props;
   final Field field;
+  
+  // This is a random number that varies from robot instance to instance.
+  // It is used as the base to compute perlin noise.
+  final float perturbationNoiseStart = random(10000);
+
 
 
   // Create a robot at the specified position
@@ -42,6 +47,9 @@ class MecanumDrive {
     // Note: Robot is pointing in the direction of {a}. 
     double motiveFx = frontForce*base.cos_a - rightForce*base.sin_a;
     double motiveFy = frontForce*base.sin_a + rightForce*base.cos_a;
+    motiveFx = perturbForceX(motiveFx, motiveFy, t);
+    motiveFy = perturbForceY(motiveFx, motiveFy, t);
+
 
     // Apply dampening effects -  acts in a direction opposite to the current direction of travel of the robot
     // This includes the extra load produced by non-powered motors. This is a big simplification, because non-powered
@@ -74,6 +82,7 @@ class MecanumDrive {
     }
 
     double motiveTorque = motiveTorque();
+    motiveTorque = perturbTorque(motiveFx, motiveFy, motiveTorque, t);
     double dampTorque = maxDampingTorque();
 
     // Calculate collision force and torque;
@@ -290,5 +299,54 @@ class MecanumDrive {
       }
     }
     return newSpeed;
+  }
+
+  //
+  // Force and torque perturbations use noise parameters
+  // RobotProperties to randomly perturb the forces and toreques
+  // used to calculate robot motion. These make use of "Perlin noise"
+  // built into Processing. Perlin Noise is a kind of multi-spectral
+  // noise as opposed to white noise that is not correlated from sample
+  // to sample. The amplitude and scale and other parameters are controlled
+  // by constants in RobotProperties.
+  //
+
+
+  // Net force perturbation on the robot. {fx} is the
+  // "pure" force in the x-direction in N, {t} is the current time.
+  double perturbForceX(double fx, double fy, double t)
+  {
+    double mag = Math.sqrt(2*fx*fx + fy*fy);
+    float C1 = perturbationNoiseStart;
+    float C2 = perturbationNoiseStart + 100;
+    float t1 = (float) (C1 + t * props.PERTURBATION_FORCE_SCALE);
+    float t2 = (float) (C2 + t * props.PERTURBATION_FORCE_SCALE);
+    return props.PERTURBATION_FORCE_A*(noise(t1)-0.5) + fx + mag * props.PERTURBATION_FORCE_B*(noise(t2)-0.5);
+  }
+
+
+  // Net force perturbation on the robot. {fy} is the
+  // "pure" force in the y-direction in N, {t} is the current time.
+  double perturbForceY(double fx, double fy, double t)
+  {
+    double mag = Math.sqrt(fx*fx + 2*fy*fy);
+    float C1 = perturbationNoiseStart + 200;
+    float C2 = perturbationNoiseStart + 300;
+    float t1 = (float) (C1 + t * props.PERTURBATION_FORCE_SCALE);
+    float t2 = (float) (C2 + t * props.PERTURBATION_FORCE_SCALE);
+    return props.PERTURBATION_FORCE_A*(noise(t1)-0.5) + fy + mag * props.PERTURBATION_FORCE_B*(noise(t2)-0.5);
+  }
+
+  // Net force perturbation on the robot. {torque} is the
+  // "pure" torque in N-m, {t} is the current time.
+  double perturbTorque(double fx, double fy, double torque, double t) {
+    double fmag = props.side*Math.sqrt(fx*fx + fy*fy);
+    double mag = Math.sqrt(fmag*fmag + torque*torque);
+    float C1 = perturbationNoiseStart + 400;
+    float C2 = perturbationNoiseStart + 500;
+    float t1 = (float) (C1 + t * props.PERTURBATION_TORQUE_SCALE);
+    float t2 = (float) (C2 + t * props.PERTURBATION_TORQUE_SCALE);
+    // The "constant" part not really constant - it is proportional to the force magnitude.
+    return fmag*props.PERTURBATION_TORQUE_A*(noise(t1)-0.5) + torque + mag * props.PERTURBATION_TORQUE_B*(noise(t2)-0.5);
   }
 }

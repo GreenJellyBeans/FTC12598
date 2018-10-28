@@ -35,16 +35,6 @@ class Point {
   
 }
 
-// The DriveTask collects together methods that control the robot movement
-interface DriveTask {
-  void init();
-  void deinit();
-  void start();
-  void stop();
-  void loop();
-}
-
-
 
 // Returns clipped version of {in} guaranteed to between [{mn}, {mx}]
 int bound(int in, int mn, int mx) {
@@ -73,6 +63,10 @@ boolean inBounds(double in, double mn, double mx) {
   return in >= mn && in <= mx;
 }
 
+
+double meters(double feet) {
+  return feet * 0.3048;
+}
 
 // Emulates a 2D array of colors
 // and supports blur
