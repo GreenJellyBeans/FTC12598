@@ -26,6 +26,7 @@ public class AutonRoverRuckusWizard {
 
     // These are initialized during init()
     private SubSysMecDrive drive;
+    private SubSysLift lift;
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
@@ -42,6 +43,11 @@ public class AutonRoverRuckusWizard {
     ColorSensor sensorColor;
     ColorSensor rHuemanatee;
     ColorSensor lHuemanatee;
+
+    // variables for landLift method
+    int timeoutS = 5; //set value later
+    static final double LIFT_MOTOR_POWER = 0.1; //change it later
+    boolean reached = false;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -75,6 +81,7 @@ public class AutonRoverRuckusWizard {
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysMecDrive(rt, driveConfig);
+        lift = new SubSysLift(rt);
         // Initialize the subsystem and associated task
         drive.init();
 
@@ -155,7 +162,30 @@ public class AutonRoverRuckusWizard {
 
     }
 
+    public void autonTrial (){
+        boolean result = landLift();
+        if (result == true){
+            // Code to move backward etc.
+        }
+    }
+    public boolean landLift (){
+        while (rt.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                lift.limitswitch_up.getState()==false) {
+            lift.motor.setPower(LIFT_MOTOR_POWER);
+            // Display it for the driver.
+            rt.telemetry().addData("lift status", "going up");
 
+            rt.telemetry().update();
+        }
+        lift.motor.setPower(0);
+        rt.telemetry().addData("lift status", "stopped");
+        rt.telemetry().update();
+        if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) && lift.limitswitch_up.getState()==true){
+            reached = true;
+        }
+        return reached;
+    }
 
 
 
@@ -235,8 +265,7 @@ public class AutonRoverRuckusWizard {
 
 
 
-    public void encoderDrive2(double speed,
-                             double leftInches, double rightInches,
+    public void encoderDrive2(double speed, double leftInches, double rightInches,
                              double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
