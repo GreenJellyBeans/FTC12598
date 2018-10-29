@@ -21,12 +21,13 @@ public class SubSysLift implements SubSystemInterface {
 
     public static final double LIFT_UP_POWER    =  0.45 ; //was .225
     public static final double LIFT_DOWN_POWER  = -0.45 ; //was -.225
-
+    public static final double START_POS = 0; //SET ACTUAL VALUE THAT MAKES SENSE
+    public static final double DROP_POS = 0.5;// SET ACTUAL VALUE THAT MAKE SENSE
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down;
     DigitalChannel limitswitch_up;
-    public DcMotor motor;
-
+    public DcMotor motorola;
+    public Servo markerpolo;
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
     public SubSysLift(RuntimeSupportInterface rt) {
@@ -42,21 +43,22 @@ public class SubSysLift implements SubSystemInterface {
         this.log.pri1(LoggingInterface.INIT_START, "");
         // Any subsystem initialization code goes here.
         // Define and Initialize Motors
-        motor = rt.hwLookup().getDcMotor("lift_motor");
-        motor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
+        motorola = rt.hwLookup().getDcMotor("lift_motor");
+        motorola.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
         limitswitch_up  = rt.hwLookup().getDigitalChannel("limit_switch_up");
         limitswitch_up.setMode(DigitalChannel.Mode.INPUT);
         limitswitch_down  = rt.hwLookup().getDigitalChannel("limit_switch_down");
         limitswitch_down.setMode(DigitalChannel.Mode.INPUT);
-
+        markerpolo = rt.hwLookup().getServo("marker_polo");
         // Set lift motor to zero power
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor.setPower(0);
-
+        motorola.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorola.setPower(0);
+        markerpolo.setPosition(START_POS);
+        this.log.pri1(LoggingInterface.OTHER, "initialized marker servo");
 
         // Set lift motor to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorola.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
     }
@@ -67,8 +69,8 @@ public class SubSysLift implements SubSystemInterface {
         this.log.pri1(LoggingInterface.DEINIT_START, "");
         // Place any shutdown/deinitialization code here  - this is called ONCE
         // after tasks & OpModes have stopped.
-        motor.setPower(0);
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorola.setPower(0);
+        motorola.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.log.pri1(LoggingInterface.DEINIT_END, "");
 
     }
