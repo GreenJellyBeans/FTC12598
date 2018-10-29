@@ -2,9 +2,12 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 29, 2018-A JMJ Robot and task setup is now in setup_robots.pde
+This way, folks don't have to be faced with the clutter in `simple_robot_simulator.pde`
+
 ## October 27, 2018-D JMJ Completed switch over from Tasks to OpModes
-Removed the Task interface, and moved the one under-deveopment task to an IterativeOpMode and
-deleted the SampleDriveTask.
+Removed the Task interface, and moved the one under-development task to an `IterativeOpMode` and
+deleted the `SampleDriveTask`.
 
 ## October 27, 2018-C JMJ Milestone: Sample linear and iterative op modes implemented!
 The old sample iterative code that lives in `SampleDriveTask` has been ported over to

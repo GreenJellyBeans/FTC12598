@@ -5,33 +5,21 @@
 //
 
 
-void settings() {
-  size(1500, 1000);
-}
-
-
-void setup() {
-  setup_simulator();
-
-  //test_op_modes();
-
-}
-
-
-void draw() {
-  simulator_loop();
-
-  //test_op_modes_loop();
-}
-
 
 // These are the supported roles...
 final String ROLE_A = "A";
 final String ROLE_B = "B";
 
 // Thease are the supported robot IDs:
+// We are limited to 4 robots simply because
+// we use the Gamepad Hat positions N, S, E, W
+// to delect robots (see method checkGamepadMappings).
+// These can be renamed anything, but one or two characters
+// is preferable because it is rendered on the robot.
 final String ROBOT_1 = "1";
 final String ROBOT_2 = "2";  
+final String ROBOT_3 = "3";
+final String ROBOT_4 = "4";  
 
 Field g_field; // Keeps the state of the field and field elements, not including robots
 GamepadManager g_gamepadMgr; // Manages gamepads and mappings from real to proxy gamepads
@@ -48,10 +36,29 @@ int g_numGamepads = 0; // Config setting "numGamepads" overrides this value
 
 static SimpleLogger g_logger = new SimpleLogger();
 
-// Future replacement of simple_robot_simulator,
-// using op modes instead of tasks.
+// The list of op modes. These are filled out
+// in setup_robots.pde
 IterativeOpMode[] g_iterativeOpModes;
 LinearOpMode[] g_linearOpModes;
+
+
+void settings() {
+  size(1500, 1000);
+}
+
+
+void setup() {
+  setup_simulator();
+
+  //test_op_modes();
+}
+
+
+void draw() {
+  simulator_loop();
+  //test_op_modes_loop();
+}
+
 
 void setup_simulator() {
   rectMode(CENTER);
@@ -61,24 +68,7 @@ void setup_simulator() {
   g_field.init();
   g_gamepadMgr = new GamepadManager("Gamepad-F310", g_numGamepads);
   g_gamepadMgr.init();
-
-  // Create two robots, with their own unique names, colors and initial position and orientation
-  g_robots = new Robot[]{
-    newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2-0.5, g_field.DEPTH/2-0.5, radians(180)), 
-    newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.5, g_field.DEPTH/2+1.5, radians(180)) 
-  }; 
-
-  // Setup each robot's op modes
-  g_iterativeOpModes = new IterativeOpMode[]{
-    //new SampleIterativeOpMode(g_robots[0]), 
-    //new SampleIterativeOpMode(g_robots[1])
-    new DriveStraightOpMode(g_robots[0])
-  };
-  g_linearOpModes = new LinearOpMode[]{
-    new AOpMode_Forward_and_turn(g_robots[1])
-  };
-
-  assert g_robots.length == g_iterativeOpModes.length + g_linearOpModes.length;
+  setup_robots();
 
   startTimeMs = millis();
 
@@ -205,6 +195,10 @@ void checkGamepadMappings() {
         robotId = ROBOT_1;
       } else if (hatPos == 4) {
         robotId = ROBOT_2;
+      } else if (hatPos == 6) {
+        robotId = ROBOT_3;
+      } else if (hatPos == 8) {
+        robotId = ROBOT_4;
       }
       // Switch roles...
       if (rg.a()) {
