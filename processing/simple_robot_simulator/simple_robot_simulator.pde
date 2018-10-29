@@ -70,12 +70,12 @@ void setup_simulator() {
 
   // Setup each robot's op modes
   g_iterativeOpModes = new IterativeOpMode[]{
-    new SampleIterativeOpMode(g_robots[0]), 
+    //new SampleIterativeOpMode(g_robots[0]), 
     //new SampleIterativeOpMode(g_robots[1])
-    new DriveStraightOpMode(g_robots[1])
+    new DriveStraightOpMode(g_robots[0])
   };
   g_linearOpModes = new LinearOpMode[]{
-    //new SampleLinearOpMode(g_robots[1])
+    new AOpMode_Forward_and_turn(g_robots[1])
   };
 
   assert g_robots.length == g_iterativeOpModes.length + g_linearOpModes.length;
