@@ -6,9 +6,9 @@
 // the instantenous calculation of impact force.
 // Author: Joseph M. Joy, FTC12598 mentor.
 
-final double EPSILON_LENGTH = 0.001; // Length amount (meters) considered to be close enough to zero
-final double EPSILON_ANGLE = 0.001;  // Angle amount (radians) considered to be close enough to  zero
-final double TWO_PI =  2*Math.PI;
+final static double EPSILON_LENGTH = 0.001; // Length amount (meters) considered to be close enough to zero
+final static double EPSILON_ANGLE = 0.001;  // Angle amount (radians) considered to be close enough to  zero
+final static double TWO_PI =  2*Math.PI;
 
 
 // Data for a single wall
@@ -225,35 +225,33 @@ CollisionResult calculateCollisionImpact(DriveBase drive, boolean robotCorners) 
 }
 
 
-double distance(double x1, double y1, double x2, double y2) {
+static double distance(double x1, double y1, double x2, double y2) {
   double dx = x2-x1;
   double dy = y2-y1;
   return Math.sqrt(dx*dx + dy*dy);
 }
 
 
-boolean sameLength(double a, double b) {
+static boolean sameLength(double a, double b) {
   return Math.abs(a-b) < EPSILON_LENGTH;
 }
 
 
-boolean sameAngle(double a, double b) {
+static boolean sameAngle(double a, double b) {
   return Math.abs(normalizeAngle(a) - normalizeAngle(b)) < EPSILON_ANGLE;
 }
 
 
 // Returns an equivalent angle that is within [0, 2*Pi]
 // a can be negative.
-double normalizeAngle(double a) {
+static double normalizeAngle(double a) {
   return  a < 0 ?  TWO_PI - ((-a) % TWO_PI) : a % TWO_PI;
 }
 
+
 // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
-double balancedAngle(double a) {
+static double balancedAngle(double a) {
   double na = normalizeAngle(a); // always positive
   return na < Math.PI ? na : na - TWO_PI;
-}
-
-void testCollisionPhysics() {
 }
