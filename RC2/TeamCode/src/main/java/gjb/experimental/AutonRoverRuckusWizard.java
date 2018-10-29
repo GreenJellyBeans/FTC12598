@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 
 /**
@@ -23,18 +24,22 @@ public class AutonRoverRuckusWizard {
 
     final String THIS_COMPONENT = "AOpMode_SimpleAuton";
     private final RuntimeSupportInterface rt;
+    final public LoggingInterface log;
 
     // These are initialized during init()
     private SubSysMecDrive drive;
+    private SubSysLift lift;
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
     final double UP_SERVO = 0.4;
     final double DOWN_SERVO = 1.0;
+    final long WAIT_TIME = 3000; //its what we used last year
     // color sensor (add later)
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
+
 
     // values is a reference to the hsvValues array.
     //final float values[] = hsvValues;
@@ -42,6 +47,11 @@ public class AutonRoverRuckusWizard {
     ColorSensor sensorColor;
     ColorSensor rHuemanatee;
     ColorSensor lHuemanatee;
+
+    // variables for landLift method
+    int timeoutS = 5; //set value later
+    static final double LIFT_MOTOR_POWER = 0.1; //change it later
+    boolean reached = false;
 
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -64,6 +74,7 @@ public class AutonRoverRuckusWizard {
 
     public AutonRoverRuckusWizard(RuntimeSupportInterface rt) {
         this.rt = rt;
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
     }
 
     public void init() {
@@ -75,10 +86,10 @@ public class AutonRoverRuckusWizard {
                 .leftMotorName("left_drive")
                 .rightMotorName("right_drive");
         drive = new SubSysMecDrive(rt, driveConfig);
+        lift = new SubSysLift(rt);
         // Initialize the subsystem and associated task
         drive.init();
-
-
+        lift.init();
 
     }
 
@@ -155,9 +166,42 @@ public class AutonRoverRuckusWizard {
 
     }
 
+    public void autonTrial (){
+        boolean result = landLift();
+        if (result == true){
+            // Code to move backward etc.
+        }
+    }
+    public boolean landLift (){
+        while (rt.opModeIsActive() &&
+                (runtime.seconds() < timeoutS) &&
+                lift.limitswitch_up.getState()==false) {
+            lift.motorola.setPower(LIFT_MOTOR_POWER);
+            // Display it for the driver.
+            rt.telemetry().addData("lift status", "going up");
 
-
-
+            rt.telemetry().update();
+        }
+        lift.motorola.setPower(0);
+        rt.telemetry().addData("lift status", "stopped");
+        rt.telemetry().update();
+        if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) && lift.limitswitch_up.getState()==true){
+            reached = true;
+        }
+        return reached;
+    }
+    public void dropMarker (){
+        this.log.pri1(LoggingInterface.OTHER, "marker servo going down");
+        lift.markerpolo.setPosition(lift.DROP_POS);
+        this.log.pri1(LoggingInterface.OTHER, "waiting for it to slide off");
+        betterSleep(WAIT_TIME);
+        this.log.pri1(LoggingInterface.OTHER, "marker servo lift up");
+        lift.markerpolo.setPosition(lift.START_POS);
+    }
+    public void deinit(){
+        lift.deinit();
+        drive.deinit();
+    }
 
 
 
@@ -226,6 +270,13 @@ public class AutonRoverRuckusWizard {
         }
     }
 
+    public final void betterSleep(long milliseconds) {
+        double start = runtime.seconds();
+        double timeoutS = milliseconds / 1000.0;
+        while (rt.opModeIsActive() && runtime.seconds() - start < timeoutS) {
+                // do nothing;
+        }
+    }
 
 
 
@@ -235,8 +286,8 @@ public class AutonRoverRuckusWizard {
 
 
 
-    public void encoderDrive2(double speed,
-                             double leftInches, double rightInches,
+
+    public void encoderDrive2(double speed, double leftInches, double rightInches,
                              double timeoutS) {
         int newLeftTarget;
         int newRightTarget;

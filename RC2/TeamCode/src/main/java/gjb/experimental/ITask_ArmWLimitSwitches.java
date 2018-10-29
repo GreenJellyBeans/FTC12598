@@ -76,9 +76,9 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
     public void loop() {
 
         // Use gamepad left & right Bumpers to open and close the claw
-        if (rt.gamepad1().right_bumper())
+        if (rt.gamepad2().right_bumper())
             clawOffset += CLAW_SPEED;
-        else if (rt.gamepad1().left_bumper())
+        else if (rt.gamepad2().left_bumper())
             clawOffset -= CLAW_SPEED;
 
         // Move both servos to new position.  Assume servos are mirror image of each other.
@@ -92,9 +92,9 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         double power = 0;
         if (armS.limitswitch_Y.getState()) {
            // rt.telemetry().addData("limitswitch_Y", "HIGH");
-            if (rt.gamepad1().a())
+            if (rt.gamepad2().a())
                 power = armS.ARM_DOWN_POWER;
-        } else if (rt.gamepad1().y()){
+        } else if (rt.gamepad2().y()){
            // rt.telemetry().addData("LimitSwitch_Y", "LOW");
             power = armS.ARM_UP_POWER;
         }
@@ -102,9 +102,9 @@ public class ITask_ArmWLimitSwitches implements TaskInterface {
         if (armS.limitswitch_A.getState()) {
            // rt.telemetry().addData("limitswitch_A", "HIGH");
             power = 0;
-            if (rt.gamepad1().y())
+            if (rt.gamepad2().y())
                 power = armS.ARM_UP_POWER;
-        } else if (rt.gamepad1().a()){
+        } else if (rt.gamepad2().a()){
             //rt.telemetry().addData("LimitSwitch_A", "LOW");
             power = armS.ARM_DOWN_POWER;
         }
