@@ -1,56 +1,60 @@
 static class AOpMode_Forward_and_turn extends LinearOpMode {
   final Robot robot;
-  
+
 
   AOpMode_Forward_and_turn(Robot r) {
     this.robot = r;
-    
   }
 
 
   @Override
     public void runOpMode() {
-      setStartingPower(0.5,0,0);
-      long startMs = System.currentTimeMillis();
-      robot.base.resetEncoders();
-      double ticksPerMeter = 2;
-      robot.base.setEncoderScale(ticksPerMeter);
-      while (opModeIsActive() && !encoderReached(1.0)) { // (System.currentTimeMillis() - startMs) < 10000) {
-        // Do nothing
-      }
+    setStartingPower(0.5, 0, 0);
+    long startMs = System.currentTimeMillis();
+    robot.sensors.encoder_resetAll();
+    double ticksPerMeter = 2;
+    robot.sensors.encoder_setScale(ticksPerMeter);
+    while (opModeIsActive() && !encoderReached(1.0)) { // (System.currentTimeMillis() - startMs) < 10000) {
+      // Do nothing
+    }
     /*  setStartingPower(0,0,-0.5);
-      while(opModeIsActive() && !mangleReached(0)){
-      }
-      */
-      double bob = -PI/2;
-      setStartingPower(0,0, 0.5);
-      while(opModeIsActive() && !angleReached(bob)){
-        System.out.println("bob: " + bob*57.2957795 + "a: " + robot.base.a*57.2957795 + "AR: ");
-        double error = balancedAngle(robot.base.a-bob);
-        double pTurn = -error*0.5;
-        setHybridPower(0, pTurn, 0);
-      }
-      robot.base.setMotorPowerAll(0, 0, 0, 0);
+     while(opModeIsActive() && !mangleReached(0)){
+     }
+     */
+    setStartingPower(0, 0, 0.5);
+    robot.sensors.imu_reset(); // Sets current bearing to 0
+    double bob = -PI/2; // Target
+
+    while (opModeIsActive() && !angleReached(bob)) {
+      double bearing = robot.sensors.imu_bearing();
+      System.out.println("bob: " + balancedAngle(bob)*57.2957795 + "bearing: " + balancedAngle(bearing)*57.2957795);
+      double error = balancedAngle(bob - bearing);
+      final double kP = 5;
+      double pTurn = -error*kP;
+      setHybridPower(0, pTurn, 0);
     }
-    
-    // Returns true if the current encoder value reaches or
-    // exceeds {targetValue}
-    boolean encoderReached(double targetValue) {
-      // Just look up the average of the encoder values
-      double average =  (robot.base.readEncoder(robot.base.FL)+robot.base.readEncoder(robot.base.FR)+robot.base.readEncoder(robot.base.BL)+ robot.base.readEncoder(robot.base.BR))/4;
-      return  average >= targetValue;
-    }
-    boolean angleReached(double targetAngle) {
-      return Math.abs(balancedAngle(balancedAngle(robot.base.a) + targetAngle)) < 0.0001 ;
-    }
-    boolean mangleReached(double targetAngle) {
-      return balancedAngle(robot.base.a) <= targetAngle;
-    }
-  
-    void setStartingPower(double pFwd, double pStrafe, double pTurn) {
-  //  double pFwd = 0.5;
-  //  double pStrafe = 0;//0.5;
-  //  double pTurn = 0;
+    robot.base.setMotorPowerAll(0, 0, 0, 0);
+  }
+
+  // Returns true if the current encoder value reaches or
+  // exceeds {targetValue}
+  boolean encoderReached(double targetValue) {
+    // Just look up the average of the encoder values
+    double average =  (robot.sensors.encoder_FL()+robot.sensors.encoder_FR()
+      +robot.sensors.encoder_BL()+robot.sensors.encoder_BR())/4;
+    return  average >= targetValue;
+  }
+  boolean angleReached(double targetAngle) {
+    return Math.abs(balancedAngle(balancedAngle(robot.base.a) + targetAngle)) < 0.0001 ;
+  }
+  boolean mangleReached(double targetAngle) {
+    return balancedAngle(robot.base.a) <= targetAngle;
+  }
+
+  void setStartingPower(double pFwd, double pStrafe, double pTurn) {
+    //  double pFwd = 0.5;
+    //  double pStrafe = 0;//0.5;
+    //  double pTurn = 0;
     double pFL = (pFwd + pStrafe + pTurn);
     double pFR = (pFwd - pStrafe - pTurn);
     double pBL = (pFwd - pStrafe + pTurn);
