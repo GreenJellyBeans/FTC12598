@@ -125,7 +125,7 @@ class Robot {
   // Display/print the raw state of the sensors
   void visualizeSensorData() {
     if (sensors.numColorSensors()>0) {
-      fill(sensors.sred(0), sensors.sgreen(0), sensors.sblue(0));
+      fill(sensors.color_red(0), sensors.color_green(0), sensors.color_blue(0));
       if (id.equals(ROBOT_1)) {
         rect(width-120, height-50, 50, 50);
       } else if (id.equals(ROBOT_2)) {

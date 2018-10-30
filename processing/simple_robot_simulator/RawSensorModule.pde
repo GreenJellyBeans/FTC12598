@@ -38,6 +38,8 @@ class RawSensorModule {
   void init() {
     // Data used by simulated color sensors
     floorPixels = constructBlurredFloorPixels();
+    imu_reset();
+    encoder_resetAll();
   }
 
 
@@ -48,15 +50,67 @@ class RawSensorModule {
   // ALSO - don't rename thse red/green/blue because they override built-in red/green/blue
   // Processing functions and cause other RawSensorModule code to mess up
   //
-  int sred(int i) {
+  int color_red(int i) {
     return currentColors[i] >> 16 & 0xFF;
   }
-  int sgreen(int i) {
+  
+  
+  int color_green(int i) {
     return currentColors[i] >> 8 & 0xFF;
   }
-  int sblue(int i) {
+  
+  
+  int color_blue(int i) {
     return currentColors[i] & 0xFF;
   }
+
+  //
+  // IMU position and orientation.
+  // 
+  private double startBearing = 0;
+  // Reset the IMU. All readings will
+  // be relative to this location and orientation.
+  void imu_reset() {
+    startBearing = r.base.a;
+  }
+
+
+  // Bearing in radians - since last reset
+  double imu_bearing() {
+    return normalizeAngle(r.base.a - startBearing);
+  }
+
+
+  void encoder_resetAll() {
+    r.base.resetEncoders();
+  }
+
+
+  // Sets the unit of an encoder "tick".
+  void encoder_setScale(double ticksPerMeter) {
+    r.base.setEncoderScale(ticksPerMeter);
+  }
+
+
+  double encoder_FL() {
+    return r.base.readEncoder(r.base.FL);
+  }
+
+
+  double encoder_FR() {
+    return r.base.readEncoder(r.base.FR);
+  }
+
+
+  double encoder_BL() {
+    return r.base.readEncoder(r.base.BL);
+  }
+
+
+  double encoder_BR() {
+    return r.base.readEncoder(r.base.BR);
+  }
+
 
   // Updates the simulation,
   // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed
@@ -75,18 +129,23 @@ class RawSensorModule {
   }
 
   //
+  // ******* PRIVATE METHODS ********
+  //
+
+
+  //
   // redNoise, blueNoise and greenNoise return Perlin noise that is correlated with the robot's location on field. 
   //
 
-  float redNoise() {
+  private float redNoise() {
     return (float) (255*noise((float) (redNoiseBase + r.base.cx * noiseScale), (float) (redNoiseBase + r.base.cy * noiseScale)));
   }
 
-  float greenNoise() {
+  private float greenNoise() {
     return (float) (255*noise((float) (greenNoiseBase + r.base.cx * noiseScale), (float) (greenNoiseBase + r.base.cy * noiseScale)));
   }
 
-  float blueNoise() {
+  private float blueNoise() {
     return (float) (255*noise((float) (blueNoiseBase + r.base.cx * noiseScale), (float) (blueNoiseBase + r.base.cy * noiseScale)));
   }
 
@@ -95,7 +154,7 @@ class RawSensorModule {
   // Sense the floor color looking downards with a sensor that scans a region
   // of diameter {constant colorSensorDiameter}
   // at field location ({x}, {y}). All units in meters. Returns a composite color value 
-  color senseFloorColor(double x, double y) {
+  private color senseFloorColor(double x, double y) {
     final double FPM = f.elements.FLOORPIX_PER_M;
     // We have to tralsform field coordinates (x,y) to the
     // pre-rendered pixel buffer.
@@ -118,7 +177,7 @@ class RawSensorModule {
     boolean sigMatch = false;
     int sizeX = f.elements.FLOOR_PIXEL_BREADTH;
     int sizeY = f.elements.FLOOR_PIXEL_DEPTH;
-   
+
     if (sigF.exists()) {
       byte[] prevSig = loadBytes(sigFileName);
       if (prevSig != null) {

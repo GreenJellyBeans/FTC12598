@@ -2,6 +2,15 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## October 29, 2018-B JMJ Added imu and encoder methods to RawSensorModule
+Currently: `imu_reset`, `imu_bearing`, `encoder_resetAll`, `encoder_setScale`,
+`encoder_FL`, `encoder_FR`, `encoder_BL`, `encoder_BR`.
+Also renamed `sred`, etc, to `color_red`. The convention is to
+prefix the methods by the sensor type. This is lighter-weight than
+defining classes for each type of sensor. Also, for now, encoder
+information is located in the base..
+
+
 ## October 29, 2018-A JMJ Robot and task setup is now in setup_robots.pde
 This way, folks don't have to be faced with the clutter in `simple_robot_simulator.pde`
 
