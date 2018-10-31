@@ -61,10 +61,10 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         // Set the red led on the DIM based on the input digital channel state.
         if (lift.limitswitch_down.getState()) {
            // rt.telemetry().addData("limitswitch", "HIGH");
-            lift.motor.setPower(0);
+            lift.motorola.setPower(0);
         } else {
           //  rt.telemetry().addData("LimitSwitch", "LOW");
-            lift.motor.setPower(0.5);
+            lift.motorola.setPower(0.5);
         }
     }
 
@@ -101,7 +101,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
             power = lift.LIFT_DOWN_POWER;
         }
 
-        lift.motor.setPower(power);
+        lift.motorola.setPower(power);
        // rt.telemetry().addData("arm",  "power = %.2f", power);
 
         // Send telemetry message to signify robot running;
@@ -113,7 +113,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         this.log.pri1("STOP", "");
         // Place any shutdown/deinitialization code here  - this is called ONCE
         // when the task is to be stopped.
-        lift.motor.setPower(0);
+        lift.motorola.setPower(0);
     }
 
 
