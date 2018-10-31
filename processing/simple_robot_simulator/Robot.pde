@@ -9,7 +9,7 @@ class Robot {
   final GamepadInterface gamepad2;
   final DriveBase base;
   final MecanumDrive drive;
-  final RawSensorModule sensors;
+  final SensorModule sensors;
   final RobotProperties props;
 
   public Robot(String id, color c, Field f, GamepadInterface gamepad1, GamepadInterface gamepad2) {
@@ -20,7 +20,7 @@ class Robot {
     this.gamepad2  = gamepad2;
     base = new DriveBase(field, props, c);
     drive = new MecanumDrive(base);
-    sensors = new RawSensorModule(f, this);
+    sensors = new SensorModule(f, this);
   }
 
   // Places the robot at the specified location and orientation.

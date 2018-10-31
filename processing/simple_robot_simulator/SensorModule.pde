@@ -1,8 +1,8 @@
-import java.util.Arrays; //<>// //<>//
+import java.util.Arrays;
 
-// Class RawSensorModule collects simulated sensor information made available to robot control software.
+// Class SensorModule collects simulated sensor information made available to robot control software.
 // Sensor errors are included in the simulation.
-class RawSensorModule {
+class SensorModule {
 
   Robot r;
   Field f;
@@ -24,7 +24,7 @@ class RawSensorModule {
   final float blueNoiseBase = 2;
   final float noiseScale = 1; 
 
-  RawSensorModule(Field f, Robot r) {
+  SensorModule(Field f, Robot r) {
     this.f = f;
     this.r = r;
   }
