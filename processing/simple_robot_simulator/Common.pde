@@ -68,6 +68,14 @@ double meters(double feet) {
   return feet * 0.3048;
 }
 
+static double radians(double angle) {
+  return angle * 0.01745329; 
+}
+
+static double degrees(double radians) {
+  return radians / 0.01745329;
+}
+
 // Emulates a 2D array of colors
 // and supports blur
 class PixelHelper {

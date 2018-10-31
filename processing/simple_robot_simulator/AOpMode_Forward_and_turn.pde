@@ -9,30 +9,27 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
 
   @Override
     public void runOpMode() {
-    setStartingPower(0.5, 0, 0);
+    setStartingPower(-0.5, 0, 0);
     long startMs = System.currentTimeMillis();
     robot.sensors.encoder_resetAll();
     double ticksPerMeter = 2;
     robot.sensors.encoder_setScale(ticksPerMeter);
-    while (opModeIsActive() && !encoderReached(1.0)) { // (System.currentTimeMillis() - startMs) < 10000) {
+    while (opModeIsActive() && !encoderReached(-2.6 )) { // (System.currentTimeMillis() - startMs) < 10000) {
       // Do nothing
     }
-    /*  setStartingPower(0,0,-0.5);
-     while(opModeIsActive() && !mangleReached(0)){
-     }
-     */
+    
     setStartingPower(0, 0, 0.5);
     robot.sensors.imu_reset(); // Sets current bearing to 0
-    double bob = -PI/2; // Target
+    double bob = PI/2; // Target
 
-    while (opModeIsActive() && !angleReached(bob)) {
+  /*  while (opModeIsActive() && !angleReached(bob)) {
       double bearing = robot.sensors.imu_bearing();
       System.out.println("bob: " + balancedAngle(bob)*57.2957795 + "bearing: " + balancedAngle(bearing)*57.2957795);
       double error = balancedAngle(bob - bearing);
       final double kP = 5;
       double pTurn = -error*kP;
       setHybridPower(0, pTurn, 0);
-    }
+    }*/
     robot.base.setMotorPowerAll(0, 0, 0, 0);
   }
 
@@ -42,7 +39,7 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
     // Just look up the average of the encoder values
     double average =  (robot.sensors.encoder_FL()+robot.sensors.encoder_FR()
       +robot.sensors.encoder_BL()+robot.sensors.encoder_BR())/4;
-    return  average >= targetValue;
+    return  0.1 >= Math.abs(targetValue-average);
   }
   boolean angleReached(double targetAngle) {
     return Math.abs(balancedAngle(balancedAngle(robot.base.a) + targetAngle)) < 0.0001 ;
