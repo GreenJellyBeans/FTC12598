@@ -44,12 +44,11 @@ and `CollisionPhysics`.
  there is a glitch in the simulation that allows penetration under certain circumstances...).
  The main purpose of blocks (as well as simulation of collisions with walls) is to be able to
  develop code that relies on bumping into or backing into flat surfaces to properly align the robot.
-- Simulated encoder readings are available. This feature has 
-limitations - in particular it simulates "normal" wheels, not mecanum wheels, though it is
-likely that it can be used as long as the robot is moving forward, not strafing. Encoder values
-can be read using method `DriveBase.readEncoder`.
--Simulated IMU readings are available (just bearing currently, though the absolute position is of-course
- available because this is, after all, a simulator).
+- Simulated floor-facing color sensor output, IMU bearing and wheel encoder values are available. These features
+ have limitations. For example, the encoder simulates "normal" wheels, not mecanum wheels, though it is
+ likely that it can be used as long as the robot is moving forward, not strafing. Collectively, these features are
+ designed to help early development of autonomous algorithms such as line following and PID code for driving
+ in a straight line for a particular distance.
 - Random perturbations make the robot behave slightly, well, randomly. This is to better
 simulate real-world conditions. See the comments next to constants `RobotProperties.PERTUBRATION_*`
 and methods `MecanumDrive.perturb*` for details. This is a newly-introduced feature and will
@@ -117,11 +116,10 @@ in file `NOTES.md`.
 Examine the code in `simple_robot_simulator.pde`. This is the "top-level" code that,
 as mentioned previously, is implicitly enclosed in a containing class. The program uses
 three global arrays. Array `g_robots` is a global array of robots. Array `g_iterativeOpModes` defines the list
-of "iterative" op modes (FTC lingo), and array `g_linearOpModes` defines the list of "linear" op modes. Each op-mode 
-controls the behavior of a single robot for the duration of the program, so there is typically a
-one-to-one mapping between robots and op-modes, though there could be unused op modes not mapped to any robot. 
-The robots and op modes and their mapping are defined in method `setup_robots` located file `setup_robots.pde`. Here is
-a sample `setup_robots` method:
+of "iterative" op modes (FTC lingo), and array `g_linearOpModes` defines the list of "linear" op modes. Each op mode 
+controls the behavior of a single robot for the duration of the program, so there is a
+one-to-one mapping between robots and op modes.  The robots and op modes and their mapping are defined in method
+`setup_robots` located file `setup_robots.pde`. Here is a sample `setup_robots` method:
 
 ```
 void setup_robots() {
@@ -256,7 +254,7 @@ static class SampleIterativeOpMode extends IterativeOpMode {
 A linear op mode is created by defining a class that extends abstract class `LinearOpMode`. Class `SampleLinearOpMode`
 provides an example of an op mode that  implements autonomous logic. In stark contrast to iterative op modes,
 the entire execution of robot logic in a linear op mode is contained in a call to its `runOpMode` method.
-Here is a code snippet from the class
+Here is a code snippet from the class.
 
 ```
 static class SampleLinearOpMode extends LinearOpMode {
@@ -281,9 +279,9 @@ static class SampleLinearOpMode extends LinearOpMode {
 }
 ```
 The `runOpMode` method (or methods it calls) can execute a sequence of "busy loops" to wait for some condition to be true,
-but when doing so it MUST call special method `opModeIsAcive` to share processor cycles with the rest of the system, including
-the physics engine and animation threads, and the logic running on other robots. This is designed to be similar to the linear
-op modes in the FIRST FTC SDK.
+but when doing so it MUST call special inhereted method `opModeIsAcive` to share processor cycles with the rest of the system,
+including the physics engine and animation threads, and the op modes running on other robots.
+This is designed to be similar to the linear op modes in the FIRST FTC SDK.
 
 # Simulated Sensors
 Class `SensorModule` collects together various simulated sensors. It currently provides floor-facing color sensor output,
