@@ -11,7 +11,10 @@ attribution, with the usual disclaimers. Code license is here: https://github.co
 The program supports both autonomous and driver controlled robots. Both modes are controlled by
 robot code somewhat similar to the FIRST Java programming model in FTC and FRC, in that there
 are `init` and `loop` methods that can query (limited) sensor information and set the power of 
-four drive motors. The physics calculations assume a mecanum drive, though the code structure
+four drive motors. There is also a "linear" mode that supports implementation of autonomous
+logic as a sequence of blocking steps.
+
+The physics calculations assume a mecanum drive, though the code structure
 does not preclude other kinds of drives being introduced in the future. Multiple gamepads are
 supported, that can be dynamically mapped to robots using special joystick button combinations
 (including the START+A command familiar to
@@ -34,7 +37,7 @@ and `CollisionPhysics`.
   creating the field elements that represent the 2018-19 FTC Rover Ruckus competition.)
 - Colored tape on the field can be picked up by sensors on the robot. The sensors read a "blurry"
   version of the field, representing the average over a certain field of view (this is the constant
-  `BLUR_RADIUS` in class `RawSensorModule`). This is to develop and test autonomous code that
+  `BLUR_RADIUS` in class `SensorModule`). This is to develop and test autonomous code that
   reads the tape markings.
 - One supported field element is a `block` - a rectangular immovable object. The lander
  in the center of the field is implemented as a block. Robots cannot penetrate blocks (well,
@@ -45,6 +48,8 @@ and `CollisionPhysics`.
 limitations - in particular it simulates "normal" wheels, not mecanum wheels, though it is
 likely that it can be used as long as the robot is moving forward, not strafing. Encoder values
 can be read using method `DriveBase.readEncoder`.
+-Simulated IMU readings are available (just bearing currently, though the absolute position is of-course
+ available because this is, after all, a simulator).
 - Random perturbations make the robot behave slightly, well, randomly. This is to better
 simulate real-world conditions. See the comments next to constants `RobotProperties.PERTUBRATION_*`
 and methods `MecanumDrive.perturb*` for details. This is a newly-introduced feature and will
@@ -108,38 +113,62 @@ the DPad `Left` key while pressing the `A` button. More details are provided in
 design note "September 29, 2018-A" titled "Thoughts on Multiple Gamepad mapping to multiple robots"
 in file `NOTES.md`.
 
-## Defining Multiple Robots With Their Own Drive Task Code
+## Defining Multiple Robots and their Individual Run-time Logic
 Examine the code in `simple_robot_simulator.pde`. This is the "top-level" code that,
-as mentioned previously, is implicitly enclosed in a containing class. The
-`setup` method sets up the global array of robots, `g_robots` and defines another global
-array of drive tasks, `g_driveTasks`, that are mapped one-to-one to robots. Here is a code
-snippet:
+as mentioned previously, is implicitly enclosed in a containing class. The program uses
+three global arrays. Array `g_robots` is a global array of robots. Array `g_iterativeOpModes` defines the list
+of "iterative" op modes (FTC lingo), and array `g_linearOpModes` defines the list of "linear" op modes. Each op-mode 
+controls the behavior of a single robot for the duration of the program, so there is typically a
+one-to-one mapping between robots and op-modes, though there could be unused op modes not mapped to any robot. 
+The robots and op modes and their mapping are defined in method `setup_robots` located file `setup_robots.pde`. Here is
+a sample `setup_robots` method:
 
 ```
-  // Create two robots, with their own unique names, colors and initial position and orientation
+void setup_robots() {
+  // Create two robots, with their own names, colors, and initial position and orientation
+  // Name choices are: ROBOT_[1-4].
+
   g_robots = new Robot[]{
     newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2-0.5, g_field.DEPTH/2-0.5, radians(180)),
-    newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.5, g_field.DEPTH/2+.5, radians(180)) 
-  }; 
-
-  // Setup each robot's drive task
-  g_driveTasks = new DriveTask[]{
-    new SampleDriveTask(g_robots[0]), 
-    new SampleDriveTask(g_robots[1]),
+    newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.45, g_field.DEPTH/2+0.45, radians(-135))
   };
 
+  //
+  // Setup each robot's op modes
+  //
+
+  // Iterative op modes
+  g_iterativeOpModes = new IterativeOpMode[]{
+    new DriveStraightOpMode(g_robots[0])
+  };
+
+  // Linear op modes
+  g_linearOpModes = new LinearOpMode[]{
+    new AOpMode_Forward_and_turn(g_robots[1])
+  };
+}
+
 ```
 
-A drive task is a class that implements the `DriveTask` interface. It controls the actions of a 
-particular robot. The sample drive task, `SampleDriveTask` is an example of a drive task that 
-implements "driver controlled" (AKA "teleop") logic. 
-As the Green Jellybeans develop their autonomous code, we expect more drive task classes to be 
-added to this repository.
-
-Here is a snippet from from file `SampleDriveTask.pde`:
+## A Sample Iterative Op Mode
+An iterative op mode is created by defining a class that extends abstract class `IterativeOpMode`. Class `SampleIterativeOpMode`
+provides an example of an op mode that implements "driver controlled" (AKA "teleop") logic. After initialization,
+the simulator repeatedly calls the `loop` method to control the robot, and the method should not block.
+Here is a code snippet from the class.
 
 ```
-void loop() {
+static class SampleIterativeOpMode extends IterativeOpMode {
+  final Robot robot;
+  boolean gamepadEnabled = false; // Stays disabled until "A" button is pressed
+
+
+  SampleIterativeOpMode(Robot r) {
+    this.robot = r;
+  }
+
+
+  @Override
+    public void loop() {
     GamepadInterface gp = robot.gamepad1;
     if (!gamepadEnabled && gp.a()) {
       gamepadEnabled = true;
@@ -166,11 +195,23 @@ void loop() {
   }
 
 
+  void setStartingPower() {
+    double pFwd = 0;//0.5;
+    double pStrafe = 0;//0.5;
+    double pTurn = 0.3;
+    double pFL = (pFwd + pStrafe + pTurn);
+    double pFR = (pFwd - pStrafe - pTurn);
+    double pBL = (pFwd - pStrafe + pTurn);
+    double pBR = (pFwd + pStrafe - pTurn);
+    robot.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
+  }
+
+
   // Sets the power to each of the 4 motors of the mecanum drive given
   // the incoming request to go forward, turn and strafe by amounts
   // ranging within [-1, 1]
   void setHybridPower(double fwd, double turn, double strafe) {
-    // Let's clip anyways, in case we get faulty input
+    // Let's clip anyways, incase we get faulty input
     fwd = clipInput(fwd);
     turn = 0.5*clipInput(turn);
     strafe = clipInput(strafe);
@@ -207,10 +248,50 @@ void loop() {
       robot.base.setMotorPowerAll(pFL, pFR, pBL, pBR);
     }
   }
+  ... (code elided)
+ }
 ```
+
+## A Sample Linear Op Mode
+A linear op mode is created by defining a class that extends abstract class `LinearOpMode`. Class `SampleLinearOpMode`
+provides an example of an op mode that  implements autonomous logic. In stark contrast to iterative op modes,
+the entire execution of robot logic in a linear op mode is contained in a call to its `runOpMode` method.
+Here is a code snippet from the class
+
+```
+static class SampleLinearOpMode extends LinearOpMode {
+  final Robot robot;
+
+
+  SampleLinearOpMode(Robot r) {
+    this.robot = r;
+  }
+
+
+  @Override
+    public void runOpMode() {
+      setStartingPower();
+      long startMs = System.currentTimeMillis();
+      while (opModeIsActive() && (System.currentTimeMillis() - startMs) < 3000) {
+        // Do nothing
+      }
+      robot.base.setMotorPowerAll(0, 0, 0, 0);
+    }
+  ... (code elided)
+}
+```
+The `runOpMode` method (or methods it calls) can execute a sequence of "busy loops" to wait for some condition to be true,
+but when doing so it MUST call special method `opModeIsAcive` to share processor cycles with the rest of the system, including
+the physics engine and animation threads, and the logic running on other robots. This is designed to be similar to the linear
+op modes in the FIRST FTC SDK.
+
+# Simulated Sensors
+Class `SensorModule` collects together various simulated sensors. It currently provides floor-facing color sensor output,
+IMU bearing, and encoder readings from the four corners of the robot. The encoder readings are not correct for mecanum wheels
+except when the robot is driving straight forwards or backwards, assuming zero wheel slippage.
 
 # For More Information...
 
-The NOTES.md file is an informal design and implementation log that charts the
+The `NOTES.md` file is an informal design and implementation log that charts the
 development course of this project. The code is reasonably well commented and one should
 feel free to alter any of the code and explore the changes in behavior. 
