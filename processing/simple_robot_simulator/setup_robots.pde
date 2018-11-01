@@ -8,7 +8,7 @@ void setup_robots() {
 
   g_robots = new Robot[]{
     newRobot(ROBOT_1, color(0, 255, 0), g_field.BREADTH/2-0.5, g_field.DEPTH/2-0.5, radians(180)), 
-    newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.45, g_field.DEPTH/2+0.45, radians(-135))
+    newRobot(ROBOT_2, color(255, 255, 0), g_field.BREADTH/2+.45, g_field.DEPTH/2+0.45, radians(45))
   };
 
   //
