@@ -12,7 +12,7 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
     
     encoderDriveMec(0.5,1.3);
     
-    imuBearingMec(0.5, -135);
+    imuBearingMec(0.7, -135);
     
     encoderDriveMec(0.5, 2.25);
    
@@ -50,7 +50,7 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
       double error = balancedAngle(bob - bearing);
       final double kP = 5;
       double pTurn = -error*kP;
-      clipInput(pTurn, speed);
+      pTurn = clipInput(pTurn, speed);
       setHybridPower(0, 0, pTurn);
     }
   }
@@ -89,7 +89,7 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
   void setHybridPower(double fwd, double strafe, double turn) {
     // Let's clip anyways, incase we get faulty input
     fwd = clipInput(fwd);
-    turn = 0.5*clipInput(turn);
+    turn =clipInput(turn);
     strafe = clipInput(strafe);
 
     Field f = robot.field;
