@@ -68,13 +68,13 @@ public class SubSysMecDrive implements SubSystemInterface {
         // Define and Initialize Motors
         leftDrive  = rt.hwLookup().getDcMotor("left_drive");
         rightDrive = rt.hwLookup().getDcMotor("right_drive");
-        leftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        leftDrive.setDirection(DcMotor.Direction. FORWARD); // Set to REVERSE if using AndyMark motors, was FORWARD
+        rightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors, was REVERSE
 
         fleftDrive  = rt.hwLookup().getDcMotor("fleft_drive");
         frightDrive = rt.hwLookup().getDcMotor("fright_drive");
-        fleftDrive.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        frightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        fleftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors, was REVERSE
+        frightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors, was FORWARD
 
 
         // Set all motors to zero power
