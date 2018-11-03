@@ -17,7 +17,7 @@ import gjb.utils.AndroidRuntimeSupport;
 public class AOpMode_TestMarker extends LinearOpMode {
 
     /* Declare OpMode members. */
-    final String THIS_COMPONENT = "AOpMode_SimpleAuton";
+    final String THIS_COMPONENT = "TestMarker";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
 
@@ -27,17 +27,23 @@ public class AOpMode_TestMarker extends LinearOpMode {
     @Override
     public void runOpMode() {
         double timeoutS;
-
+        log("about to init apu");
         apu = new AutonRoverRuckusWizard(rt) ;
         apu.init();
 
         // Wait for the game to start (driver presses PLAY)
+        log("about to init apu");
         waitForStart();
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the BLUE alliance
         apu.dropMarker();
+        log("done dropping marker");
+
         apu.deinit();
     }
 
+    void log(String s) {
+        rt.telemetry().log().add("OpMode: " + s);
+    }
 }
