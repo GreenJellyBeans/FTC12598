@@ -9,36 +9,51 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
 
   @Override
     public void runOpMode() {
-    setStartingPower(-0.5, 0, 0);
-    long startMs = System.currentTimeMillis();
-    robot.sensors.encoder_resetAll();
-    double ticksPerMeter = 2;
-    robot.sensors.encoder_setScale(ticksPerMeter);
-    while (opModeIsActive() && !encoderReached(-2.6 )) { // (System.currentTimeMillis() - startMs) < 10000) {
-      // Do nothing
-    }
-    
-    setStartingPower(0, 0, 0.5);
-    robot.sensors.imu_reset(); // Sets current bearing to 0
-    double bob = radians(45); // Target
 
-   while (opModeIsActive() && !angleReached(bob)) {
-      double bearing = robot.sensors.imu_bearing();
-      System.out.println("bob: " + balancedAngle(bob)*57.2957795 + "bearing: " + balancedAngle(bearing)*57.2957795);
-      double error = balancedAngle(bob - bearing);
-      final double kP = 5;
-      double pTurn = -error*kP;
-      setHybridPower(0, pTurn, 0);
-    }
-    System.out.println("im done");
-    setStartingPower(0.5, 0, 0);
-     robot.sensors.encoder_resetAll();
-    while (opModeIsActive() && !encoderReached(4.5)) { // (System.currentTimeMillis() - startMs) < 10000) {
-      // Do nothing
-    }
+    encoderDriveMec(0.5, 1.3);
+
+    imuBearingMec(0.5, -135, 10000);
+
+    encoderDriveMec(0.5, 2.25);
+
+
     robot.base.setMotorPowerAll(0, 0, 0, 0);
     System.out.println("im completely done");
   }
+
+
+  // Drive forward with speed {speed} and distance {forward}
+  // Distance is in meters.
+  void encoderDriveMec (double speed, double forward) {
+    robot.sensors.encoder_resetAll();
+    setStartingPower(speed, 0, 0);
+    // long startMs = System.currentTimeMillis();
+    double ticksPerMeter = 1;
+    robot.sensors.encoder_setScale(ticksPerMeter);
+    while (opModeIsActive() && !encoderReached(forward)) { // (System.currentTimeMillis() - startMs) < 10000) {
+      // Do nothing
+    }
+    robot.base.setMotorPowerAll(0, 0, 0, 0);
+  }
+
+
+  // Turn with max speed {speed} (which must be positive)
+  // and angle {angle} in degrees. {timeout} is in milliseconds
+  void imuBearingMec (double speed, double angle, double timeoutMs) {
+    long startTime = System.currentTimeMillis();
+    robot.sensors.imu_reset(); // Sets current bearing to 0
+    double bob = radians(angle); // Target
+    while (opModeIsActive() && !angleReached(bob) && System.currentTimeMillis() - startTime < timeoutMs) {
+      double bearing = robot.sensors.imu_bearing();
+      System.out.println("bob: " + balancedAngle(bob)*57.2957795 + "bearing: " + balancedAngle(bearing)*57.2957795);
+      double error = balancedAngle(bob - bearing);
+      final double kP = 1;
+      double pTurn = -error*kP;
+      pTurn = clipInput(pTurn, speed);
+      setHybridPower(0, 0, pTurn);
+    }
+  }
+
 
   // Returns true if the current encoder value reaches or
   // exceeds {targetValue}
@@ -49,11 +64,11 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
     return  0.01 >= Math.abs(targetValue-average);
   }
   boolean angleReached(double targetAngle) {
-    return Math.abs(balancedAngle(balancedAngle(robot.sensors.imu_bearing()) - targetAngle)) < radians(2) ;
+    return Math.abs(balancedAngle(balancedAngle(robot.sensors.imu_bearing()) - targetAngle)) < radians(3) ;
   }
-//  boolean mangleReached(double targetAngle) {
-//    return balancedAngle(robot.base.a) <= targetAngle;
-//  }
+  //  boolean mangleReached(double targetAngle) {
+  //    return balancedAngle(robot.base.a) <= targetAngle;
+  //  }
 
   void setStartingPower(double pFwd, double pStrafe, double pTurn) {
     //  double pFwd = 0.5;
@@ -70,10 +85,10 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
   // Sets the power to each of the 4 motors of the mecanum drive given
   // the incoming request to go forward, turn and strafe by amounts
   // ranging within [-1, 1]
-  void setHybridPower(double fwd, double turn, double strafe) {
+  void setHybridPower(double fwd, double strafe, double turn) {
     // Let's clip anyways, incase we get faulty input
     fwd = clipInput(fwd);
-    turn = 0.5*clipInput(turn);
+    turn =clipInput(turn);
     strafe = clipInput(strafe);
 
     Field f = robot.field;
@@ -89,7 +104,7 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
     //    .    .       --> x-axis
     //    ...... FR
     //
-    double pFL = fwd - strafe + turn;
+    double pFL = fwd - strafe + turn ;
     double pFR = fwd + strafe - turn;
     double pBL = fwd + strafe + turn;
     double pBR = fwd - strafe - turn;
@@ -113,5 +128,10 @@ static class AOpMode_Forward_and_turn extends LinearOpMode {
   // Clips input to be within [-1, 1]
   double clipInput(double in) {
     return Math.max(Math.min(in, 1), -1);
+  }
+
+
+  double clipInput(double in, double mx) {
+    return Math.max(Math.min(in, mx), -mx);
   }
 }
