@@ -12,7 +12,7 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
 @TeleOp(name="DOpMode_miraidk", group="Pushbot")
-//@Disabled
+@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
