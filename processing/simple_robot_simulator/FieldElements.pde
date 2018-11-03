@@ -26,7 +26,8 @@ class FieldElements {
   final String EXTRAS_FILE_NAME = "field_extras.txt"; // Should be under ./data
 
   final String VERSION = "1.2"; // Increment to invalidate cache
-  final double FEET_TO_METERS = 0.3048;
+  final double INCHES_TO_METERS = 0.3048/12;
+
 
   class Element {
     final ElementType type;
@@ -126,7 +127,6 @@ class FieldElements {
   // the list of flements.
   private void appendLoad(List<Element> elementList, String[] fieldObjects) {
     // Input are in feet and inches
-    final double INCHES_TO_METERS = FEET_TO_METERS/12;
     final double TAPE_WIDTH = 2*INCHES_TO_METERS;
     final double FAT_TAPE_WIDTH = 5*INCHES_TO_METERS;
     final double PATH_WIDTH = 0.5*INCHES_TO_METERS;
@@ -163,8 +163,8 @@ class FieldElements {
       boolean noErrors = true;
 
       // Extract position - all shapes have a position
-      double x = in.nextDouble() * FEET_TO_METERS;
-      double y = in.nextDouble()  * FEET_TO_METERS;
+      double x = in.nextDouble() * INCHES_TO_METERS;
+      double y = in.nextDouble()  * INCHES_TO_METERS;
 
       if (shape.startsWith("red_tape")) {
         e = new Element(ElementType.TAPE, false, label, color(255, 50, 50), x, y);
@@ -245,7 +245,7 @@ class FieldElements {
       double x = s.nextDouble(); 
       double y = s.nextDouble();
       //println ("(x,y) = " + x + " " + y);
-      path.add(new Point(x*FEET_TO_METERS, y*FEET_TO_METERS));
+      path.add(new Point(x*INCHES_TO_METERS, y*INCHES_TO_METERS));
       i++;
     }
 
@@ -275,8 +275,8 @@ class FieldElements {
     b = s.next();
     if (!b.equals(BAR)) return false; // EARLY RETURN
     double rot = s.nextDouble();
-    e.w = w * FEET_TO_METERS;
-    e.h = h * FEET_TO_METERS;
+    e.w = w * INCHES_TO_METERS;
+    e.h = h * INCHES_TO_METERS;
     e.a = radians((float)rot);
     return true;
   }

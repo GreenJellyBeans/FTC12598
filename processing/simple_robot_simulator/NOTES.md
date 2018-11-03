@@ -2,6 +2,9 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 2, 2018-A JMJ Changed field linear units from feet to inches
+Inches are easier to work with on the field.
+
 ## October 29, 2018-B JMJ Added imu and encoder methods to RawSensorModule
 Currently: `imu_reset`, `imu_bearing`, `encoder_resetAll`, `encoder_setScale`,
 `encoder_FL`, `encoder_FR`, `encoder_BL`, `encoder_BR`.
