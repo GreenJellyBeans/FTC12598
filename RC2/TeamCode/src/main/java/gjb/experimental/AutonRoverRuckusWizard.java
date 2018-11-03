@@ -81,13 +81,14 @@ public class AutonRoverRuckusWizard {
         double timeoutS;
 
         SubSysMecDrive.Config driveConfig = new SubSysMecDrive.Config()
-                .fleftMotorName("fleft_drive")
-                .frightMotorName("fright_drive")
-                .leftMotorName("left_drive")
-                .rightMotorName("right_drive");
+               .fleftMotorName("fleft_drive")
+             .frightMotorName("fright_drive")
+           .leftMotorName("left_drive")
+         .rightMotorName("right_drive");
+
         drive = new SubSysMecDrive(rt, driveConfig);
         lift = new SubSysLift(rt);
-        // Initialize the subsystem and associated task
+        //Initialize the subsystem and associated task
         drive.init();
         lift.init();
 
@@ -190,13 +191,14 @@ public class AutonRoverRuckusWizard {
         }
         return reached;
     }
-    public void dropMarker (){
-        this.log.pri1(LoggingInterface.OTHER, "marker servo going down");
+       public void dropMarker (){
+        log("marker servo going down");
         lift.markerpolo.setPosition(lift.DROP_POS);
-        this.log.pri1(LoggingInterface.OTHER, "waiting for it to slide off");
+        log("waiting for it to slide off");
         betterSleep(WAIT_TIME);
-        this.log.pri1(LoggingInterface.OTHER, "marker servo lift up");
+        log("marker servo lift up");
         lift.markerpolo.setPosition(lift.START_POS);
+        betterSleep(WAIT_TIME);
     }
     public void deinit(){
         lift.deinit();
@@ -276,6 +278,10 @@ public class AutonRoverRuckusWizard {
         while (rt.opModeIsActive() && runtime.seconds() - start < timeoutS) {
                 // do nothing;
         }
+    }
+
+    void log(String s) {
+        rt.telemetry().log().add("AutonWiz: " + s);
     }
 
 
