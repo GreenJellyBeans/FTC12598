@@ -105,11 +105,11 @@ public class AutonRoverRuckusWizard {
     }
 
     public void firstPath() {
-        encoderDriveMec(0.5, 1.3, 5);
+       // encoderDriveMec(0.5, 1.3, 5);
 
-        imuBearingMec(0.5, -135, 10000);
+        imuBearingMec(0.5, 90, 100000); // -135
 
-        encoderDriveMec(0.5, 2.25, 10);
+      //  encoderDriveMec(0.5, 2.25, 10);
 
         setMotorPowerAll(0, 0, 0, 0);
     }
@@ -264,15 +264,19 @@ public class AutonRoverRuckusWizard {
         double startBearing = imu_bearing();
         imu_reset(); // Sets current bearing to 0
         double bob = angle + startBearing; // Target
+        log("startBearing:" + startBearing);
         while (rt.opModeIsActive() && !angleReached(bob) && System.currentTimeMillis() - startTime < timeoutMs) {
             double bearing = imu_bearing();
-            System.out.println("bob: " + balancedAngle(bob) * 57.2957795 + "bearing: " + balancedAngle(bearing) * 57.2957795);
+            rt.telemetry().addData("bob: ", balancedAngle(bob));
+            rt.telemetry().addData("bearing: ", balancedAngle(bearing));
             double error = balancedAngle(bob - bearing);
             final double kP = 1;
             double pTurn = -error * kP;
             pTurn = clipInput(pTurn, speed);
             setHybridPower(0, 0, pTurn);
         }
+        double endBearing = imu_bearing();
+        log("endBearing:" + endBearing);
     }
 
     boolean angleReached(double targetAngle) {
