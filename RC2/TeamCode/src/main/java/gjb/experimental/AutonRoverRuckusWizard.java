@@ -105,11 +105,13 @@ public class AutonRoverRuckusWizard {
     }
 
     public void firstPath() {
-       // encoderDriveMec(0.5, 1.3, 5);
+       encoderDriveMec(0.3, 43, 10);
 
-        imuBearingMec(0.5, 90, 100000); // -135
+       imuBearingMec(0.3, 45, 3); // -135
+        log("reached angle");
+        betterSleep(10000);
 
-      //  encoderDriveMec(0.5, 2.25, 10);
+      encoderDriveMec(0.3, -12, 5);
 
         setMotorPowerAll(0, 0, 0, 0);
     }
@@ -152,7 +154,7 @@ public class AutonRoverRuckusWizard {
         int newfrightTarget;
         int newleftTarget;
         int newrightTarget;
-
+        double startTime = runtime.seconds();
         // Ensure that the opmode is still active
         if (rt.opModeIsActive()) {
 
@@ -186,7 +188,7 @@ public class AutonRoverRuckusWizard {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (rt.opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
+                    ((runtime.seconds() - startTime)< timeoutS) &&
                     (drive.leftDrive.isBusy() && drive.rightDrive.isBusy())) {
 
                 // Display it for the driver.
@@ -259,28 +261,36 @@ public class AutonRoverRuckusWizard {
 
     // Turn with max speed {speed} (which must be positive)
     // and angle {angle} in degrees. {timeout} is in milliseconds
-    void imuBearingMec(double speed, double angle, double timeoutMs) {
-        long startTime = System.currentTimeMillis();
+    void imuBearingMec(double speed, double angle, double timeoutS) {
+        double startTime = runtime.seconds();
         double startBearing = imu_bearing();
         imu_reset(); // Sets current bearing to 0
         double bob = angle + startBearing; // Target
-        log("startBearing:" + startBearing);
-        while (rt.opModeIsActive() && !angleReached(bob) && System.currentTimeMillis() - startTime < timeoutMs) {
+        log("startBearing:" + startBearing + " bob: " + bob);
+        while (rt.opModeIsActive()  && !angleReached(bob) && (runtime.seconds() - startTime)< timeoutS) {
+            //angleReached(bob);
             double bearing = imu_bearing();
-            rt.telemetry().addData("bob: ", balancedAngle(bob));
-            rt.telemetry().addData("bearing: ", balancedAngle(bearing));
-            double error = balancedAngle(bob - bearing);
+            rt.telemetry().addData("bob: ", balancedAngleDegrees(bob));
+            rt.telemetry().addData("bearing: ", balancedAngleDegrees(bearing));
+            double error = balancedAngleDegrees(bob - bearing);
             final double kP = 1;
             double pTurn = -error * kP;
             pTurn = clipInput(pTurn, speed);
             setHybridPower(0, 0, pTurn);
+            rt.telemetry().update();
         }
+        setMotorPowerAll(0,0,0,0);
         double endBearing = imu_bearing();
+        rt.telemetry().update();
         log("endBearing:" + endBearing);
     }
 
     boolean angleReached(double targetAngle) {
-        return Math.abs(balancedAngle(balancedAngle(imu_bearing()) - targetAngle)) < 3;
+        double bearing = imu_bearing();
+        boolean ret =  Math.abs(balancedAngleDegrees(balancedAngleDegrees(imu_bearing()) - targetAngle)) < 3;
+        rt.telemetry().addData("AR:", ret);
+        rt.telemetry().addData("raw bearing", bearing);
+        return ret;
     }
 
     // Sets the power to each of the 4 motors of the mecanum drive given
@@ -357,7 +367,9 @@ public class AutonRoverRuckusWizard {
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         imu = rt.hwLookup().getIMU("Ostrich");
+        log("Going to initialize IMU");
         imu.initialize(parameters);
+        log("Done initializing IMU");
 
         //while(imu.isSystemCalibrated()) {
         //
@@ -368,9 +380,12 @@ public class AutonRoverRuckusWizard {
 
     // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
-    static double balancedAngle(double a) {
+    static double balancedAngleRadians(double a) {
         double na = normalizeAngle(a); // always positive
         return na < Math.PI ? na : na - TWO_PI;
+    }
+    double balancedAngleDegrees(double a) {
+        return degrees(balancedAngleRadians(radians(a)));
     }
 
 
@@ -400,7 +415,13 @@ public class AutonRoverRuckusWizard {
     // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
     // and named "imu".
 
+    static double radians(double angle) {
+        return angle * Math.PI/180; // * 0.01745329;
+    }
 
+    static double degrees(double radians) {
+        return radians * 180 / Math.PI; // / 0.01745329;
+    }
 
     double imu_bearing() {
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
