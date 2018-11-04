@@ -106,15 +106,47 @@ public class AutonRoverRuckusWizard {
 
     public void firstPath() {
        encoderDriveMec(0.3, 43, 10);
+       betterSleep(1000);
+       dropMarker();
 
        imuBearingMec(0.3, 45, 3); // -135
         log("reached angle");
-        betterSleep(10000);
+        betterSleep(1000);
 
-      encoderDriveMec(0.3, -12, 5);
+      encoderDriveMec(0.3, -73, 5);
 
         setMotorPowerAll(0, 0, 0, 0);
     }
+
+    public void fourthWaitPath() {
+        encoderDriveMec(0.3, 43, 10);
+        betterSleep(1000);
+        dropMarker();
+        betterSleep(10000);
+        imuBearingMec(0.3, 45, 3); // -135
+        log("reached angle");
+        betterSleep(1000);
+
+        encoderDriveMec(0.3, -73, 5);
+
+        setMotorPowerAll(0, 0, 0, 0);
+    }
+    public void secondPath() {
+        encoderDriveMec(0.3, 31, 5);
+
+        setMotorPowerAll(0,0,0,0);
+    }
+    public void thirdCrabPath() {
+        encoderDriveMec(0.3, 15.5, 5);
+
+        encoderCrabMec(0.3, 15, 3);
+
+        encoderDriveMec(0.3, 15.5, 5);
+
+        setMotorPowerAll(0,0,0,0);
+    }
+
+
 
     void composeTelemetry() {
         // At the beginning of each telemetry update, grab a bunch of data
@@ -212,7 +244,73 @@ public class AutonRoverRuckusWizard {
 
             //  sleep(250);   // optional pause after each move
         }
+    }
 
+
+    public void encoderCrabMec(double speed,
+                                double forward, double timeoutS) {// timeouts is taken out
+        int newfleftTarget;
+        int newfrightTarget;
+        int newleftTarget;
+        int newrightTarget;
+        double startTime = runtime.seconds();
+        // Ensure that the opmode is still active
+        if (rt.opModeIsActive()) {
+            final double STRAFE_COUNTS_PER_INCH = COUNTS_PER_INCH;
+            // Determine new target position, and pass to motor controller
+            newfleftTarget = drive.fleftDrive.getCurrentPosition() + (int) (forward * STRAFE_COUNTS_PER_INCH);
+            newfrightTarget = drive.frightDrive.getCurrentPosition() + (int) (-forward * STRAFE_COUNTS_PER_INCH);
+            newleftTarget = drive.leftDrive.getCurrentPosition() + (int) (-forward * STRAFE_COUNTS_PER_INCH);
+            newrightTarget = drive.rightDrive.getCurrentPosition() + (int) (forward * STRAFE_COUNTS_PER_INCH);
+            drive.fleftDrive.setTargetPosition(newfleftTarget);
+            drive.frightDrive.setTargetPosition(newfrightTarget);
+            drive.leftDrive.setTargetPosition(newleftTarget);
+            drive.rightDrive.setTargetPosition(newrightTarget);
+
+            // Turn On
+            drive.fleftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.frightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            drive.fleftDrive.setPower(Math.abs(speed));
+            drive.frightDrive.setPower(Math.abs(speed));
+            drive.leftDrive.setPower(Math.abs(speed));
+            drive.rightDrive.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (rt.opModeIsActive() &&
+                    ((runtime.seconds() - startTime) < timeoutS) &&
+                    (drive.leftDrive.isBusy() && drive.rightDrive.isBusy())) {
+
+                // Display it for the driver.
+                rt.telemetry().addData("TargetPosition", "Running to %7d :%7d", newfleftTarget, newfrightTarget);
+                rt.telemetry().addData("CurrentPosition", "Running at %7d :%7d",
+                        drive.fleftDrive.getCurrentPosition(),
+                        drive.frightDrive.getCurrentPosition());
+                rt.telemetry().update();
+            }
+
+
+            // Stop all motion;
+            drive.setMotorPowerAll(0, 0, 0, 0);
+
+
+            // Turn off RUN_TO_POSITION
+            drive.fleftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            drive.frightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            drive.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            drive.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
     }
 
     public void autonTrial() {
@@ -257,6 +355,20 @@ public class AutonRoverRuckusWizard {
         log("marker servo lift up");
         lift.markerpolo.setPosition(lift.START_POS);
         betterSleep(WAIT_TIME);
+    }
+    public void servoTest(){
+        log("putting power to servo");
+        lift.markerpolo.setPosition(0);
+        betterSleep(2000);
+        lift.markerpolo.setPosition(0.25);
+        betterSleep(2000);
+        lift.markerpolo.setPosition(0.5);
+        betterSleep(2000);
+        lift.markerpolo.setPosition(0.75);
+        betterSleep(2000);
+        lift.markerpolo.setPosition(1);
+        betterSleep(2000);
+        log("finished power");
     }
 
     // Turn with max speed {speed} (which must be positive)

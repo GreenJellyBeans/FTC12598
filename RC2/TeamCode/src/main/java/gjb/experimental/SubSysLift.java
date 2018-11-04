@@ -22,7 +22,7 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER    =  0.45 ; //was .225
     public static final double LIFT_DOWN_POWER  = -0.45 ; //was -.225
     public static final double START_POS = 0.25;
-    public static final double DROP_POS = 1.0;
+    public static final double DROP_POS = 0.9;
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down;
     DigitalChannel limitswitch_up;
