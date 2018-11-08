@@ -2,29 +2,15 @@
 use <../common/extrusions.scad>
 LARGE = 100;
 EPSILON = 0.01;
-module marker_thing() {
-    w = 4.5*25.4;
-    thick = 3;
-    d = 2*25.4;
-    h = 2*25.4;
-    ri =  3;
-    ro = 1;
-    
-     O_channel(
-    w+2*thick, h+thick, 
-    w, LARGE, 
-    thick, thick, ro, ri, d);
-    //cube([w, d, h]);
-}
 
-iw = 10; // enough to fit phone thickness
+iw = 16.5; // enough to fit phone thickness
 thick = 3; // wall thickness
 ow = iw + 2*thick;
-ri = 3; // internal curvature - should work with phone curvature
+ri = 5; // internal curvature - should work with phone curvature
 ro = 0;
-wall_height = 20; // wall height
-length = 30; // front-to-back length - along phone should be at least half phone length
-dome_r = 4;
+wall_height = 35; // wall height
+length = 60; // front-to-back length - along phone should be at least half phone length
+dome_r = 5;
 
 module U() {
     O_channel(
