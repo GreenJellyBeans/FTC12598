@@ -44,8 +44,10 @@ public class AutonRoverRuckusWizard {
     public Servo color_sorcerer;
     final double UP_SERVO = 0.4;
     final double DOWN_SERVO = 1.0;
-    final long WAIT_TIME = 3000; //its what we used last year
+    final long WAIT_TIME = 500; //its what we used last year
     // color sensor (add later)
+    final long MARKER_WAIT_TIME = 2000;
+    final double DRIVE_SPEED = 0.5;
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
@@ -60,7 +62,7 @@ public class AutonRoverRuckusWizard {
 
     // variables for landLift method
     int timeoutS = 5; //set value later
-    static final double LIFT_MOTOR_POWER = 0.1; //change it later
+    static final double LIFT_MOTOR_POWER = -0.1; //change it later
     boolean reached = false;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -105,7 +107,7 @@ public class AutonRoverRuckusWizard {
     }
 
     public void firstPath() {
-       encoderDriveMec(0.3, 43, 10);
+       encoderDriveMec(DRIVE_SPEED, 43, 10);
        betterSleep(1000);
        dropMarker();
 
@@ -113,37 +115,55 @@ public class AutonRoverRuckusWizard {
         log("reached angle");
         betterSleep(1000);
 
-      encoderDriveMec(0.3, -73, 5);
+      encoderDriveMec(DRIVE_SPEED, -73, 5);
 
         setMotorPowerAll(0, 0, 0, 0);
     }
 
     public void fourthWaitPath() {
-        encoderDriveMec(0.3, 43, 10);
-        betterSleep(1000);
+        encoderDriveMec(DRIVE_SPEED, 43, 10);
+        betterSleep(WAIT_TIME);
         dropMarker();
-        betterSleep(10000);
-        imuBearingMec(0.3, 45, 3); // -135
+        imuBearingMec(DRIVE_SPEED, 45, 3); // -135
         log("reached angle");
-        betterSleep(1000);
+        betterSleep(WAIT_TIME);
 
-        encoderDriveMec(0.3, -73, 5);
+        encoderDriveMec(DRIVE_SPEED, -73, 5);
 
         setMotorPowerAll(0, 0, 0, 0);
     }
     public void secondPath() {
-        encoderDriveMec(0.3, 31, 5);
+        encoderDriveMec(DRIVE_SPEED, 31, 5);
 
         setMotorPowerAll(0,0,0,0);
     }
     public void thirdCrabPath() {
-        encoderDriveMec(0.3, 15.5, 5);
+        encoderDriveMec(DRIVE_SPEED, 15.5, 5);
 
-        encoderCrabMec(0.3, 15, 3);
+        encoderCrabMec(DRIVE_SPEED, 15, 3);
 
-        encoderDriveMec(0.3, 15.5, 5);
+        encoderDriveMec(DRIVE_SPEED, 15.5, 5);
 
         setMotorPowerAll(0,0,0,0);
+    }
+    public void fifthCraterDepotPath() {
+        encoderDriveMec(DRIVE_SPEED, 17, 3);
+        betterSleep(WAIT_TIME);
+        encoderCrabMec(DRIVE_SPEED, -38, 6);
+        betterSleep(WAIT_TIME);
+        imuBearingMec(DRIVE_SPEED, 135, 4);
+        betterSleep(WAIT_TIME);
+        encoderCrabMec(DRIVE_SPEED,12,2);
+        betterSleep(WAIT_TIME);
+        encoderCrabMec(DRIVE_SPEED, -3, 1);
+        betterSleep(WAIT_TIME);
+        encoderDriveMec(DRIVE_SPEED, 40, 3);
+        betterSleep(WAIT_TIME);
+        dropMarker();
+        encoderDriveMec(DRIVE_SPEED, -60, 5);
+        betterSleep(WAIT_TIME);
+        setMotorPowerAll(0,0,0,0);
+
     }
 
 
@@ -351,7 +371,7 @@ public class AutonRoverRuckusWizard {
         this.log.pri1(LoggingInterface.OTHER, "marker servo going down");
         lift.markerpolo.setPosition(lift.DROP_POS);
         log("waiting for it to slide off");
-        betterSleep(WAIT_TIME);
+        betterSleep(MARKER_WAIT_TIME);
         log("marker servo lift up");
         lift.markerpolo.setPosition(lift.START_POS);
         betterSleep(WAIT_TIME);
