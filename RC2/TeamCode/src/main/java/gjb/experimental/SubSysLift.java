@@ -19,8 +19,8 @@ public class SubSysLift implements SubSystemInterface {
     final public RuntimeSupportInterface rt;
     final public LoggingInterface log;
 
-    public static final double LIFT_UP_POWER    =  0.45 ; //was .225
-    public static final double LIFT_DOWN_POWER  = -0.45 ; //was -.225
+    public static final double LIFT_DOWN_POWER    =  0.45 ; //was .225, positive power makes lift go down
+    public static final double LIFT_UP_POWER  = -0.45 ; //was -.225
     public static final double START_POS = 0.25;
     public static final double DROP_POS = 0.9;
     // Place additional instance variables here - like hardware access objects

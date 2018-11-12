@@ -77,15 +77,14 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         // Use gamepad buttons to move the arm up (Y) and down (A)
 
         double power = 0;
-
         if (lift.limitswitch_up.getState()) {
             //Can't go up anymore
            // rt.telemetry().addData("limitswitch_Y", "HIGH");
-            if (rt.gamepad1().a())
-                power = lift.LIFT_DOWN_POWER;
-        } else if (rt.gamepad1().y()){
+            if (rt.gamepad2().y()) //was a, switching since y is more intuitive for the driver
+                power = lift.LIFT_UP_POWER;
+        } else if (rt.gamepad2().a()){ //was y, switching since a is more intuitive for the driver
            // rt.telemetry().addData("LimitSwitch_Y", "LOW");
-            power = lift.LIFT_UP_POWER;
+            power = lift.LIFT_DOWN_POWER;
         }
 
 
@@ -95,11 +94,11 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
             //Can't go down anymore
            // rt.telemetry().addData("limitswitch_A", "HIGH");
             power = 0;
-            if (rt.gamepad1().y())
-                power = lift.LIFT_UP_POWER;
-        } else if (rt.gamepad1().a()){
+            if (rt.gamepad2().a()) //was y, switching since a is more intuitive for the driver
+                power = lift.LIFT_DOWN_POWER;
+        } else if (rt.gamepad2().y()){ //was a, switching since y is more intuitive for the driver
             //rt.telemetry().addData("LimitSwitch_A", "LOW");
-            power = lift.LIFT_DOWN_POWER;
+            power = lift.LIFT_UP_POWER;
         }
 
         lift.motorola.setPower(power);
