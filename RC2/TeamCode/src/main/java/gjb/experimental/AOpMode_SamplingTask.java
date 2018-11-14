@@ -32,7 +32,7 @@ public class AOpMode_SamplingTask extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        telemetry.
+
 
     }
 
