@@ -1,158 +1,149 @@
-/**
- * Created by github.com/josephmjoy (mentor for FTC#12598 & FRC#1899) on 10/3/2017.
- */
+/*
+ * Vuforia and related computer vision sub system
+ *
+ * */
 package gjb.experimental;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.prefs.BackingStoreException;
+import java.util.List;
 
-import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.SubSystemInterface;
 
 
-
 public class SubSysVision implements SubSystemInterface {
 
-    enum CameraDirection {
-        FRONT,
-        BACK
-    };
-
-    // Vision configuration
-    public class Config {
-        public final CameraDirection cameraDirection;
-        public final boolean enableDisplay; // If true, will show camera view on screen.
-        public final String trackableAssetName; // Name of the asset that contains the trackables.
-        public final String []trackableIds; // EXPECTED IDs of trackables that will be tracked. This is just to make sure that we have the right
-                                      // set of trackables here.
-        // Future: Positions x, y, z, and rotation angles a1, a2, a3 for each trackable in field, and of camera on Robot.
-        // Consider placing this in an asset file. One can have multiple asset files for various field configurations.
-
-        public Config( CameraDirection cameraDirection, boolean enableDisplay, String trackableAssetName, String[]trackableIds) {
-            this.cameraDirection = cameraDirection;
-            this.enableDisplay = enableDisplay;
-            this.trackableAssetName = trackableAssetName;
-            this.trackableIds = trackableIds;
-        }
-    }
-
-    public class VisionInfo {
-        double timestamp; // In seconds, since start of OpMode (rt.getRuntime()). A negative value indicates no information.
-        String trackableId;
-        // Future: positions x, y, z and angles a1, a2, a3
-    }
-
-    // Returns true iff {vi} is not null an it was captured within {timeWindow}
-    // of the present.
-    boolean validVisionInfo(VisionInfo vi, double timeWindow) {
-        // Note that -ve timestamp indicates invalid tracking information.
-        return vi!= null && vi.timestamp >= 0 && vi.timestamp >= (rt.getRuntime() - timeWindow);
-    }
+    private final boolean ENABLE_DISPLAY = true; // Whether or not to display camera and overlay
+    private final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.BACK; // Front or back camera
 
 
-    final String THIS_COMPONENT = "SS_VISION"; // // Replace EMPTY by short word identifying task
-    final public RuntimeSupportInterface rt;
-    final public LoggingInterface log;
-
-    // Place additional instance variables here - like hardware access objects
-    final Config cfg;
-    private boolean inited = false;
-    private boolean tracking = false;
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    VuforiaLocalizer vuforia;
-    VuforiaTrackables trackableList;
-    VuforiaTrackable trackable;
+    // Tensor flow configuration
+    private final boolean USE_TFOD = true; // Whether or not to use Tensor Flow Object Detection
+    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
+    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
 
-    // Modify this constructor to add any additional initialization parameters - see
-    // other subsystems for examples.
-    public SubSysVision(RuntimeSupportInterface rt, Config cfg) {
+    private final RuntimeSupportInterface rt;
+
+    // Vuforia engine
+    private VuforiaLocalizer vuforia;
+
+    // Tensor Flow Object Detection
+    private TFObjectDetector tfod;
+
+    public SubSysVision(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
-        this.cfg = cfg;
     }
-
-    public synchronized void  startTracking() {
-        if (!tracking) {
-            trackableList.activate();
-            tracking = true;
-        } else {
-            log.loggedAssert(false, "Attempt to start tracking when tracking has already started");
-        }
-    }
-
-
-    public synchronized void stopTracking() {
-        if (tracking) {
-            trackableList.deactivate();
-            tracking = true;
-        } else {
-            log.loggedAssert(false, "Attempt to stop tracking when tracking has already stopped");
-        }
-    }
-
 
 
     /********* START OF SUBSYSTEM INTERFACE METHODS ***************/
 
     @Override
     public void init() {
-        this.log.pri1(LoggingInterface.INIT_START, "");
+        log("init start");
         // Any subsystem initialization code goes here.
         VuforiaLocalizer.Parameters parameters;
-        if (cfg.enableDisplay) {
+        if (ENABLE_DISPLAY) {
             int cameraMonitorViewId = rt.getIdentifierFromPackage("cameraMonitorViewId", "id");
             parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
         } else {
             parameters = new VuforiaLocalizer.Parameters();
         }
-        parameters.cameraDirection = (cfg.cameraDirection == CameraDirection.FRONT)
-                ? VuforiaLocalizer.CameraDirection.FRONT
-                : VuforiaLocalizer.CameraDirection.BACK;
-                                    ;
-        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        parameters.cameraDirection = CAMERA_DIRECTION;
+        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        /**
-         * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
-         * in this data set: all three of the VuMarks in the game were created from this one template,
-         * but differ in their instance id information.
-         * @see VuMarkInstanceId
-         */
-        trackableList = this.vuforia.loadTrackablesFromAsset(cfg.trackableAssetName);
-        trackable = trackableList.get(0);
-        trackable.setName(cfg.trackableAssetName); // can help in debugging; otherwise not necessary
+        if (USE_TFOD) {
+            log("Initializing TFOD...");
+            int tfodMonitorViewId = rt.getIdentifierFromPackage("tfodMonitorViewId", "id");
+            TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+            tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+            tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+        }
 
-        this.log.pri1(LoggingInterface.INIT_END, "");
+        log("init complete");
     }
 
 
     @Override
     public void deinit() {
-        this.log.pri1(LoggingInterface.DEINIT_START, "");
+        log("deinit start");
         // Place any shutdown/deinitialization code here  - this is called ONCE
         // after tasks & OpModes have stopped.
-        if (tracking) {
-            stopTracking();
+
+        if (tfod != null) {
+            tfod.shutdown();
+            tfod = null;
         }
-
-        trackable = null;
-        trackableList = null;
-        vuforia=null;
-
-        this.log.pri1(LoggingInterface.DEINIT_END, "");
+        vuforia = null;
+        log("deinit complete");
 
     }
 
+
     /************ END OF SUBSYSTEM INTERFACE METHODS ****************/
 
+    // Activate Tensor Flow Object Detection
+    public void activateTFOD() {
+        if (tfod != null) {
+            tfod.activate();
+        }
+    }
+
+
+    // Deactivate Tensor Flow Object Detection
+    public void deactivateTFOD() {
+        if (tfod != null) {
+            tfod.deactivate();
+        }
+
+    }
+
+    public void decideMineral() {
+        while (rt.opModeIsActive()) {
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    log("# Object Detected"+ updatedRecognitions.size());
+                    if (updatedRecognitions.size() == 3) {
+                        int goldMineralX = -1;
+                        int silverMineral1X = -1;
+                        int silverMineral2X = -1;
+                        for (Recognition recognition : updatedRecognitions) {
+                            if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                goldMineralX = (int) recognition.getLeft();
+                            } else if (silverMineral1X == -1) {
+                                silverMineral1X = (int) recognition.getLeft();
+                            } else {
+                                silverMineral2X = (int) recognition.getLeft();
+                            }
+                        }
+                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                            if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                                log("Gold Mineral Position : Left");
+
+                            } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                                log("Gold Mineral Position : Right");
+                            } else {
+                                log("Gold Mineral Position : Center");
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     // Place additional helper methods here.
+    private void log(String s) {
+        rt.telemetry().log().add("VISION: " + s);
+    }
+
 }
