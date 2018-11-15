@@ -151,16 +151,21 @@ public class AutonRoverRuckusWizard {
         betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED, -38, 6);
         betterSleep(WAIT_TIME);
-        imuBearingMec(DRIVE_SPEED, 135, 4);
+        imuBearingMec(DRIVE_SPEED, 130, 4); //angle used to be 135
         betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED,12,2);
+        betterSleep(50);
+        encoderCrabMec(0.2,6,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
         betterSleep(WAIT_TIME);
-        encoderCrabMec(DRIVE_SPEED, -3, 1);
-        betterSleep(WAIT_TIME);
+        imu_reset();
         encoderDriveMec(DRIVE_SPEED, 40, 3);
         betterSleep(WAIT_TIME);
         dropMarker();
-        encoderDriveMec(DRIVE_SPEED, -60, 5);
+        //Go forward halfway through the depot
+        //imuBearingMec 90 degrees
+        //Go forward until you reach the opposing alliance servo
+        encoderDriveMec(DRIVE_SPEED, -63, 5);
         betterSleep(WAIT_TIME);
         setMotorPowerAll(0,0,0,0);
 
