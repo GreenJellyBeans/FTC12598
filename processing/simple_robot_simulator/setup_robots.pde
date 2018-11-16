@@ -25,6 +25,7 @@ void setup_robots() {
   // Linear op modes
   g_linearOpModes = new LinearOpMode[]{
     new AOpMode_Forward_and_turn(g_robots[1])
+    //new SampleLinearOpMode(g_robots[1])
   };
 
   assert g_robots.length == g_iterativeOpModes.length + g_linearOpModes.length;

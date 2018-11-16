@@ -111,6 +111,20 @@ class SensorModule {
     return r.base.readEncoder(r.base.BR);
   }
 
+  // Determines if a particular "complex" condition holds.
+  // {options} contain the list of expected conditions (one char per
+  // condition). {notFound} is returned if none of these conditions hold.
+  // All that is done is to read the keyboard - if a particular key is pressed
+  // that matches a character in {options}, that condition is considered to hold!
+  char complex_condition(String options, char notFound) {
+    char ret = notFound;
+    if (keyPressed) {
+      if (options.indexOf(key) >= 0) {
+        ret = key;
+      }
+    }
+    return ret;
+  }
 
   // Updates the simulation,
   // assuming the absoute time is {t} seconds, and {dT} seconds have elapsed

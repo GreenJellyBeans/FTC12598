@@ -2,6 +2,21 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 16, 2018-A JMJ Adding complex condition "detector" to SensorModule
+This is a very crude approximation of the kind of conditions detected by computer
+vision systems like Vuforia VuMarks and Tensor Flow or by combining sensors to
+detect collision.  Added a method
+`char complex_condition(String options, char default)` to `SensorModule`.
+For example: `char c = sm.complex_condition("LCR", '-');` would query
+the state of the keyboard and if at that instant either 'L', 'C', or 'R' is
+pressed it will return that character, else it will return '-'.
+
+This can be used to simulate the Tensor Flow detection of the gold sampling
+mineral in the 2018 Rover Ruckus FTC challenge. Similarly, it could be used
+to detect events such as collision detection events, or general conditions 
+like a particular VuMark being identified.
+
+
 ## November 2, 2018-A JMJ Changed field linear units from feet to inches
 Inches are easier to work with on the field.
 

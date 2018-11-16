@@ -11,7 +11,12 @@ static class SampleLinearOpMode extends LinearOpMode {
       setStartingPower();
       long startMs = System.currentTimeMillis();
       while (opModeIsActive() && (System.currentTimeMillis() - startMs) < 3000) {
-        // Do nothing
+        // Report whether or not a collision has been "detected". User should press the 'c'
+        // character for the robot to "detect" a collision.
+        char  d = robot.sensors.complex_condition("c", '-');
+        if (d == 'c') {
+          robot.field.addExtendedStatus("*** COLLISION DETECTED! ****");
+        }
       }
       robot.base.setMotorPowerAll(0, 0, 0, 0);
     }
