@@ -39,11 +39,12 @@ public class AutonRoverRuckusWizard {
     // These are initialized during init()
     private SubSysMecDrive drive;
     private SubSysLift lift;
+    private SubSysVision vision;
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
-    final double UP_SERVO = 0.4;
-    final double DOWN_SERVO = 1.0;
+    final double UP_SAMPLE = 0.4; //IT"S RANDOME RN
+    final double DOWN_SAMPLE = 1.0; //IT's RANDOM RN
     final long WAIT_TIME = 500; //its what we used last year
     // color sensor (add later)
     final long MARKER_WAIT_TIME = 2000;
@@ -51,6 +52,7 @@ public class AutonRoverRuckusWizard {
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
+    final double SAMPLE_FORWARD = 6.0; //IT'S A RANDOM NUMBER RIGHT NOW
     Orientation angles;
 
     // values is a reference to the hsvValues array.
@@ -94,9 +96,11 @@ public class AutonRoverRuckusWizard {
                 .rightMotorName("right_drive");
         drive = new SubSysMecDrive(rt, driveConfig);
         lift = new SubSysLift(rt);
+        vision = new SubSysVision(rt);
         //Initialize the subsystem and associated task
         drive.init();
         lift.init();
+        vision.init();
 
     }
 
@@ -473,6 +477,7 @@ public class AutonRoverRuckusWizard {
     public void deinit() {
         lift.deinit();
         drive.deinit();
+        vision.deinit();
     }
 
 
@@ -515,6 +520,39 @@ public class AutonRoverRuckusWizard {
 
     }
 
+    public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
+        vision.activateTFOD();
+        if (vision.decideMineral().equals("right")){
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            encoderCrabMec(DRIVE_SPEED, 4.0, 1.0);
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(DRIVE_SPEED, -7.0, 1.0); // negative of the two previous encoder crabs added together
+            log("reached center from right");
+
+        } else if (vision.decideMineral().equals("left")){
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            encoderCrabMec(DRIVE_SPEED, -4.0, 1.0);
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            encoderCrabMec(DRIVE_SPEED, -3.0, 1.0);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(DRIVE_SPEED,  -7,1.0); //absolute value of two previous encodercrabs combined
+            log("reached center from left");
+
+        }else if (vision.decideMineral().equals("center")){
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            encoderCrabMec(DRIVE_SPEED, 2.0, 1.0);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(DRIVE_SPEED, -2.0, 1.0);// prev encoder crab *-1
+            log("reached center from center");
+
+        } else if (vision.decideMineral()==null){
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            log("reached center from null");
+        }
+        vision.deactivateTFOD();
+    }
     // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
     static double balancedAngleRadians(double a) {
