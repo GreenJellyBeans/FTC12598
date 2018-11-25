@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gjb.interfaces.RuntimeSupportInterface;
@@ -118,7 +119,7 @@ public class SubSysVision implements SubSystemInterface {
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
                     log("# Object Detected"+ updatedRecognitions.size());
-                    if (updatedRecognitions.size() == 3) {
+                    if (updatedRecognitions.size() == 2) {
                         int goldMineralX = -1;
                         int silverMineral1X = -1;
                         int silverMineral2X = -1;
@@ -131,7 +132,8 @@ public class SubSysVision implements SubSystemInterface {
                                 silverMineral2X = (int) recognition.getLeft();
                             }
                         }
-                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+
+                        if ((goldMineralX != -1 && silverMineral1X != -1 )|| (silverMineral1X!= -1 && silverMineral2X != -1)) {
                             if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                                 log("Gold Mineral Position : Left");
                                 return GOLD_MINERAL_LEFT;
@@ -143,6 +145,7 @@ public class SubSysVision implements SubSystemInterface {
                                 return GOLD_MINERAL_CENTER;
                             }
                         }
+
                     }
 
                 }
