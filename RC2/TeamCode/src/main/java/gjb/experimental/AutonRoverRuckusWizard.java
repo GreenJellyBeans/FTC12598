@@ -48,7 +48,7 @@ public class AutonRoverRuckusWizard {
     final long WAIT_TIME = 500; //its what we used last year
     // color sensor (add later)
     final long MARKER_WAIT_TIME = 2000;
-    final double DRIVE_SPEED = 0.5;
+    final double DRIVE_SPEED = 0.7;
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
@@ -275,7 +275,7 @@ public class AutonRoverRuckusWizard {
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, 45, 2);
         encoderCrabMec(DRIVE_SPEED,12,2);
-        betterSleep(50);
+        //betterSleep(50);
         encoderCrabMec(0.2,5,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
        // encoderCrabMec(0.2, 6, 3);
@@ -290,6 +290,8 @@ public class AutonRoverRuckusWizard {
         encoderCrabMec(DRIVE_SPEED, -80, 4);
         imu_reset();
         imuBearingMec(DRIVE_SPEED, 45, 2);
+        encoderCrabMec(0.2,-8,2);
+        encoderCrabMec(DRIVE_SPEED, 4, 1);
        // encoderCrabMec(0.2, -6, 4);
         //encoderCrabMec(DRIVE_SPEED, 4, 2);
         encoderDriveMec(DRIVE_SPEED, -15, 3);
