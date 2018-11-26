@@ -177,6 +177,11 @@ public class AutonRoverRuckusWizard {
 
     }
 
+
+
+
+
+
     public void samplingCraterPath () {
         //parking in crater after sampling
         encoderCrabMec(DRIVE_SPEED, 15, 2);
@@ -224,7 +229,7 @@ public class AutonRoverRuckusWizard {
     }
 
     public void samplingDepotPath() {
-        //going to Depot after sampling
+        //going to Depot after sampling on the depot side
        // encoderCrabMec(DRIVE_SPEED, -20, 3);
         //imuBearingMec(DRIVE_SPEED, -45, 2);
        // encoderCrabMec(DRIVE_SPEED, -20, 3);
@@ -255,6 +260,10 @@ public class AutonRoverRuckusWizard {
         //going to Depot and our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,12,2);
+        betterSleep(50);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
         encoderDriveMec(DRIVE_SPEED, 15, 3);
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
@@ -265,16 +274,24 @@ public class AutonRoverRuckusWizard {
         //going to Depot and our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(0.2, 6, 3);
-        encoderCrabMec(DRIVE_SPEED, -4, 2);
-        encoderDriveMec(DRIVE_SPEED, 15, 3);
+        encoderCrabMec(DRIVE_SPEED,12,2);
+        betterSleep(50);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+       // encoderCrabMec(0.2, 6, 3);
+       // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(DRIVE_SPEED, 40, 3);//inches was 15
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -40, 5);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        imuBearingMec(DRIVE_SPEED, 27, 2);
+        encoderCrabMec(DRIVE_SPEED, -80, 4);
+        imu_reset();
         imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED, -30, 4);
-        imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(0.2, -6, 4);
-        encoderCrabMec(DRIVE_SPEED, 4, 2);
+       // encoderCrabMec(0.2, -6, 4);
+        //encoderCrabMec(DRIVE_SPEED, 4, 2);
         encoderDriveMec(DRIVE_SPEED, -15, 3);
         setMotorPowerAll(0,0,0,0);
     }
