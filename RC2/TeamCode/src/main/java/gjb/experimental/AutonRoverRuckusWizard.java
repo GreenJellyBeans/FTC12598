@@ -626,6 +626,7 @@ public class AutonRoverRuckusWizard {
 
     public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
         vision.activateTFOD();
+        encoderDriveMec(DRIVE_SPEED, 4.0, 1.0);
         if (vision.decideMineral().equals("right")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, 4.0, 1.0);
