@@ -45,10 +45,11 @@ public class AutonRoverRuckusWizard {
     public Servo color_sorcerer;
     final double UP_SAMPLE = 0.4; //IT"S RANDOME RN
     final double DOWN_SAMPLE = 1.0; //IT's RANDOM RN
-    final long WAIT_TIME = 500; //its what we used last year
+    final long WAIT_TIME = 100; //its what we used last year
     // color sensor (add later)
-    final long MARKER_WAIT_TIME = 2000;
-    final double DRIVE_SPEED = 0.7;
+    final long MARKER_WAIT_TIME = 600;
+    final double DRIVE_SPEED = 1.0;
+    final double SPIN_SPEED = 0.4;
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
@@ -229,19 +230,17 @@ public class AutonRoverRuckusWizard {
     }
 
     public void samplingDepotPath() {
-        //going to Depot after sampling on the depot side
-       // encoderCrabMec(DRIVE_SPEED, -20, 3);
-        //imuBearingMec(DRIVE_SPEED, -45, 2);
-       // encoderCrabMec(DRIVE_SPEED, -20, 3);
-      //  encoderCrabMec(0.2, -5, 2);
-      //  encoderCrabMec(DRIVE_SPEED, 3, 2);
+        //going to Depot after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
-        imuBearingMec(DRIVE_SPEED, -45, 2);
-        encoderCrabMec(0.2, -6, 3);
-        encoderCrabMec(DRIVE_SPEED, 4, 2);
-        encoderDriveMec(DRIVE_SPEED, 30, 5);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,8,2);
+        //betterSleep(50);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
+        // encoderCrabMec(0.2, 6, 3);
+        // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(1.1, 40, 3);//inches was 15
         dropMarker();
-        setMotorPowerAll(0,0,0,0);
     }
 
     public void samplingDepotOtherCraterPath() {
@@ -259,42 +258,44 @@ public class AutonRoverRuckusWizard {
     public void samplingDepotCraterPath(){
         //going to Depot and our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
-        imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED,12,2);
-        betterSleep(50);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,8,2);
+        //betterSleep(50);
         encoderCrabMec(0.2,5,2);
-        encoderCrabMec(DRIVE_SPEED, -4, 1);
-        encoderDriveMec(DRIVE_SPEED, 15, 3);
+        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
+        // encoderCrabMec(0.2, 6, 3);
+        // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(1.1, 40, 3);//inches was 15
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
         setMotorPowerAll(0,0,0,0);
     }
 
     public void samplingDepotCrabCraterPath() {
-        //going to Depot and our crater after sampling
+        //going to Depot and the side of our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
-        imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED,12,2);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,8,2);
         //betterSleep(50);
         encoderCrabMec(0.2,5,2);
-        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
        // encoderCrabMec(0.2, 6, 3);
        // encoderCrabMec(DRIVE_SPEED, -4, 2);
-        encoderDriveMec(DRIVE_SPEED, 40, 3);//inches was 15
+        encoderDriveMec(1.1, 40, 3);//inches was 15
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -40, 5);
         encoderCrabMec(0.2,5,2);
-        encoderCrabMec(DRIVE_SPEED, -4, 1);
-        encoderCrabMec(DRIVE_SPEED, -4, 1);
-        imuBearingMec(DRIVE_SPEED, 27, 2);
+       encoderCrabMec(DRIVE_SPEED, -8, 1);
+        //encoderCrabMec(DRIVE_SPEED, -4, 1);
+        imuBearingMec(SPIN_SPEED, 27, 2);
         encoderCrabMec(DRIVE_SPEED, -80, 4);
         imu_reset();
-        imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(0.2,-8,2);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(0.5,-15,2);
         encoderCrabMec(DRIVE_SPEED, 4, 1);
        // encoderCrabMec(0.2, -6, 4);
         //encoderCrabMec(DRIVE_SPEED, 4, 2);
-        encoderDriveMec(DRIVE_SPEED, -15, 3);
+        encoderDriveMec(DRIVE_SPEED, -18, 3);
         setMotorPowerAll(0,0,0,0);
     }
 
