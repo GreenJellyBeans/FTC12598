@@ -123,7 +123,7 @@ class DriveBase {
   // set in a call to setEncoderScale (or a default).
   // Note that it could return fractional "tick" values.
   double readEncoder(int index) {
-    int sign = index == FR || index == BL ? -1 : 1; // See NOTES.md note "November 27, 2018-A"
+    int sign = index == FL || index == BR ? 1 : -1; // See NOTES.md note "November 27, 2018-A"
     return (forwardTravel[index] + sign * sidewaysTravel[index]) * ticksPerMeter;
   }
 
@@ -174,13 +174,15 @@ class DriveBase {
   }
 
 
-  // Convert robot coordinate to field coordinate - x component
+  // Convert robot coordinate to field coordinate - x component,
+  // which increases towards the front of the robot.
   double fieldX(double rx, double ry) {
     return cx + rx*cos_a - ry*sin_a;
   }
 
 
-  // Convert robot coordinate to field coordinate - y component
+  // Convert robot coordinate to field coordinate - y component,
+  // which increases towards the left of the robot.
   double fieldY(double rx, double ry) {
     return cy + rx*sin_a + ry*cos_a;
   }
@@ -193,7 +195,7 @@ class DriveBase {
     return (fx - cx)*cos_a + (fy - cy)*sin_a;
   }
   
-    // Convert field coordinate to robot coordinate - x component
+    // Convert field coordinate to robot coordinate - y component
   double robotY(double fx, double fy) {
     // First translate to robot's center, then rotate by (-a)
     // to align x-axis with robot's x-axis

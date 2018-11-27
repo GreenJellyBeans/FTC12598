@@ -11,7 +11,6 @@ movements of the robot. In the first cut, I will not attempt to deal with wheel 
 (which can happen if the robot encounters an obstacle such as a wall).
 
 ###Approach
-This approach is dreamed up by JMJ without external reference so needs to be validated.
 The simulator already provides velocity at each wheel (robot corner) - x and y magnitudes, along
 the instantaneous forward (`Vf`) and sideways (`Vs`) direction of the robot. `Vs` is the 
 amount of strafe, and is used to calculate the amount the roller needs to be rolling in order
@@ -42,10 +41,20 @@ So we have have the important results:
 Wf = Vf - Vs for FR and BL wheels
 Wf = Vf + Vs for FL and BR wheels
 ```
+
 The simulator provides `Vf` and `Vs`,
 so we can compute `Wf` and use that to calculate encoder values. It turns out
 to be very simple after all! The key simplification comes from the 45 degree angle
 of the rollers.
+
+Implementation: this is implemented in class `DriveBase`, modifying existing code that
+calculates encoder values. A new array `sidewaysTravel` has been added to keep track
+of the total accumulated sideways travel. When computing the encoder readings for
+each wheel (in method `readEncoder`), this amount is added to forward travel for the FL and BR wheels
+and subtracted for the FR and BL wheels.
+
+The code was tested by implementing strafe logic in `AOpMode_Forward_and_turn` method `encoderStrafeMec`.
+It seems to work - autonomously strafing by what seems to be the correct amount. Yay!
 
 ### A Note on Floor Contact Points for Mecanum Wheels
 The wheels lays out a series of diagonal lines of contact when driving forward:
@@ -59,12 +68,11 @@ The wheels lays out a series of diagonal lines of contact when driving forward:
  \ \
 \ \ 
 ```
-The intersting thing about this is that it allows the wheel to go straight forward (no
+The interesting thing about this is that it allows the wheel to go straight forward (no
 strafing) without the rollers needing to turn at all. The points of contact
 keeps moving sideways. You can think of this as diagonal marks on a fat cylindrical wheel
 to see how this works - the curved shape of the roller mimics these diagonal marks on the
 fat (virtual) cylinder (a diagram would help, I know).
-	
 
 ## November 25, 2018-A JMJ Generating a motion path from a field element path
 Field element {path} contains the coordinates of a single path. This is not directly
