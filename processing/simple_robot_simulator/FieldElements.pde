@@ -24,6 +24,7 @@ class FieldElements {
 
   final String BASE_FILE_NAME = "field_base.txt"; // Should be under ./data
   final String EXTRAS_FILE_NAME = "field_extras.txt"; // Should be under ./data
+  final String MOTION_PATH_FILE_NAME = "motion_paths.txt"; // Should be under ./data/out
 
   final String VERSION = "1.2"; // Increment to invalidate cache
   final double INCHES_TO_METERS = 0.3048/12;
@@ -423,7 +424,7 @@ class FieldElements {
   // Generate and save the motion paths that correspond to
   // each path. 
   private void saveMotionPaths() {
-    String outFile = "./data/motion_paths.txt";
+    String outFile = "./data/out/" + MOTION_PATH_FILE_NAME;
     List<String> out = new ArrayList<String>();
     out.add("# Units: degrees and inches");
     for (Element e : fieldElements) {
@@ -441,17 +442,22 @@ class FieldElements {
     out.add("path." + e.label);
     double prevX = 0;
     double prevY = 0;
-    
+
     for (int i = 0; i < e.path.length; i++) {
       Point p = e.path[i];
       double dx = p.x - prevX;
       double dy = p.y - prevY;
-      println(String.format("x:%f  y:%f  a:%f", dx, dy, prevA)); 
       double dist = Math.sqrt(dx*dx + dy*dy);
       double angle = 0;
       if (dist > EPSILON_LENGTH) {
         // Pick arcCos or arcSin depending on which component is larger...
-        angle = Math.abs(dx) > Math.abs(dy) ? Math.acos(dx/dist) : Math.asin(dy/dist);
+        if (Math.abs(dy) > EPSILON_LENGTH) {
+          // dy is non zero
+          angle = Math.acos(dx/dist) * Math.signum(dy) ;
+        } else {
+          // dx is  non-zero
+          angle = Math.acos(dx/dist) * Math.signum(dx);
+        }
       }
       out.add(String.format("  %02d: rot %6.2f,  mov %6.2f", i+1, degrees(balancedAngle(angle-prevA)), 12*feet(dist)));
       prevA = angle;

@@ -4,16 +4,28 @@
 # not part of the standard field.
 #
 
+
 # The path and mark entities are virtual - they have no
 # effect on the robot.
-path 102.0 102.0 > 6.0 0.0 > 12.0 36.0 > 30.0 36.0
-mark.start 102.0 102.0
-mark.reorient 114.0 138.0
-mark.end 132.0 138.0
+# path 102.0 102.0 > 6.0 0.0 > 12.0 36.0 > 30.0 36.0
+# mark.start 102.0 102.0
+# mark.reorient 114.0 138.0
+# mark.end 132.0 138.0
 
-path.P1 102.0 102.0 > 34.0 -24.0 > 34.0 30.0 > 34.0 -72.0
-#sampling path from the depot to our crater
-path.P2 102.0 102.0 > 34.0 -24.0 > 34.0 20.0 > 34.0 -24.0 > -36.0 -96.0 > -10.0 -96.0
-#sampling path from the depot to our crater but strafing
  
-#
+# These are test paths to verify correct reporting of motion paths
+# path.T1 20 20 > 10 0    # rot 0
+# path.T2 20 20 > 0 10    # rot 90
+# path.T3 20 20 > -10 0   # rot -180 OR 180
+# path.T4 20 20 > 0 -10   # rot -90
+# path.T4 20 20 > 10 10   # rot 45
+# path.T4 20 20 > 10 -10  # rot -45
+# path.T4 20 20 > -10 10  # rot 135
+# path.T4 20 20 > -10 -10 # rot -135
+
+
+#sampling path from the depot to our crater
+path.P1 102.0 102.0 > 34.0 -24.0 > 34.0 30.0 > 34.0 -72.0
+
+#sampling path from the depot to our crater but strafing
+path.P2 102.0 102.0 > 34.0 -24.0 > 34.0 20.0 > 34.0 -24.0 > -36.0 -96.0 > -10.0 -96.0
