@@ -56,10 +56,11 @@ class DriveBase {
   //    \/
   double[] power = new double[NUM_CORNERS]; 
 
-  // Distance covered in the instantenous forward direction by each of the 4 corners. This is 
-  // computed incrementally. If a corner traveled a full (and exact) circle, its distance covered
+  // Distance covered in the instantenous forward and sideways directions by each of the 4 corners. These are 
+  // computed incrementally. If a corner traveled a full (and exact) circle, the forward distance covered
   // would be the circumference of that circle. This information is used by the simulated encoders.
   private double[] forwardTravel = new double[NUM_CORNERS];
+  private double[] sidewaysTravel = new double[NUM_CORNERS]; // Strafing - left is positive.
 
   private double ticksPerMeter = DEFAULT_TICKS_PER_METER; // 1mm ticks by default.
 
@@ -108,9 +109,11 @@ class DriveBase {
 
   // Set the current encoder tick value for all encoders to 0.
   void resetEncoders() {
-    // Clear accumulated forward travel on all motors.
+    // Clear accumulated forward and sideways travel on all motors.
+    assert forwardTravel.length == sidewaysTravel.length;
     for (int i = 0; i < forwardTravel.length; i++) {
       forwardTravel[i] = 0;
+      sidewaysTravel[i] = 0;
     }
   }
 
@@ -120,7 +123,8 @@ class DriveBase {
   // set in a call to setEncoderScale (or a default).
   // Note that it could return fractional "tick" values.
   double readEncoder(int index) {
-    return forwardTravel[index] * ticksPerMeter;
+    int sign = index == FR || index == BL ? -1 : 1; // See NOTES.md note "November 27, 2018-A"
+    return (forwardTravel[index] + sign * sidewaysTravel[index]) * ticksPerMeter;
   }
 
 
@@ -188,6 +192,13 @@ class DriveBase {
     // to align x-axis with robot's x-axis
     return (fx - cx)*cos_a + (fy - cy)*sin_a;
   }
+  
+    // Convert field coordinate to robot coordinate - x component
+  double robotY(double fx, double fy) {
+    // First translate to robot's center, then rotate by (-a)
+    // to align x-axis with robot's x-axis
+    return -(fx - cx)*sin_a + (fy - cy)*cos_a;
+  }
 
 
   void addExtendedStatus() {
@@ -232,13 +243,15 @@ class DriveBase {
   // coordinates ({rx}, {ry})
   private void updateBoundaryPoint(int index, double rx, double ry) {
     Point p  = boundaryPoints[index];
-    // oldRx is the previous positon of the point, in robot-coordinates.
+    // (oldRx, oldRy) is the previous positon of the point, in robot-coordinates.
     double oldRx = robotX(p.x, p.y);
+    double oldRy = robotY(p.x, p.y);
     p.set(fieldX(rx, ry), fieldY(rx, ry));
     // Increment the amount of forward travel by the incremental distanced
     // traveled in the forward direction, i.e., along the robot's x-axis.
     // This will be -ve if the wheel is traveling backwards 
     forwardTravel[index] += rx - oldRx;
+    sidewaysTravel[index] += ry - oldRy;
   }
 
 
