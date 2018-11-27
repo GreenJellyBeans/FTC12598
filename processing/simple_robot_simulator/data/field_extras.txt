@@ -10,3 +10,10 @@ path 102.0 102.0 > 6.0 0.0 > 12.0 36.0 > 30.0 36.0
 mark.start 102.0 102.0
 mark.reorient 114.0 138.0
 mark.end 132.0 138.0
+
+path.P1 102.0 102.0 > 34.0 -24.0 > 34.0 30.0 > 34.0 -72.0
+#sampling path from the depot to our crater
+path.P2 102.0 102.0 > 34.0 -24.0 > 34.0 20.0 > 34.0 -24.0 > -36.0 -96.0 > -10.0 -96.0
+#sampling path from the depot to our crater but strafing
+ 
+#

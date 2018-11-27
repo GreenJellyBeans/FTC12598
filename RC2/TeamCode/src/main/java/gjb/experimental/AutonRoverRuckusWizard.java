@@ -48,7 +48,7 @@ public class AutonRoverRuckusWizard {
     final long WAIT_TIME = 500; //its what we used last year
     // color sensor (add later)
     final long MARKER_WAIT_TIME = 2000;
-    final double DRIVE_SPEED = 0.5;
+    final double DRIVE_SPEED = 0.7;
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
@@ -177,6 +177,11 @@ public class AutonRoverRuckusWizard {
 
     }
 
+
+
+
+
+
     public void samplingCraterPath () {
         //parking in crater after sampling
         encoderCrabMec(DRIVE_SPEED, 15, 2);
@@ -224,7 +229,7 @@ public class AutonRoverRuckusWizard {
     }
 
     public void samplingDepotPath() {
-        //going to Depot after sampling
+        //going to Depot after sampling on the depot side
        // encoderCrabMec(DRIVE_SPEED, -20, 3);
         //imuBearingMec(DRIVE_SPEED, -45, 2);
        // encoderCrabMec(DRIVE_SPEED, -20, 3);
@@ -255,6 +260,10 @@ public class AutonRoverRuckusWizard {
         //going to Depot and our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,12,2);
+        betterSleep(50);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
         encoderDriveMec(DRIVE_SPEED, 15, 3);
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
@@ -265,16 +274,26 @@ public class AutonRoverRuckusWizard {
         //going to Depot and our crater after sampling
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(0.2, 6, 3);
-        encoderCrabMec(DRIVE_SPEED, -4, 2);
-        encoderDriveMec(DRIVE_SPEED, 15, 3);
+        encoderCrabMec(DRIVE_SPEED,12,2);
+        //betterSleep(50);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+       // encoderCrabMec(0.2, 6, 3);
+       // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(DRIVE_SPEED, 40, 3);//inches was 15
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -40, 5);
+        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        imuBearingMec(DRIVE_SPEED, 27, 2);
+        encoderCrabMec(DRIVE_SPEED, -80, 4);
+        imu_reset();
         imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED, -30, 4);
-        imuBearingMec(DRIVE_SPEED, 45, 2);
-        encoderCrabMec(0.2, -6, 4);
-        encoderCrabMec(DRIVE_SPEED, 4, 2);
+        encoderCrabMec(0.2,-8,2);
+        encoderCrabMec(DRIVE_SPEED, 4, 1);
+       // encoderCrabMec(0.2, -6, 4);
+        //encoderCrabMec(DRIVE_SPEED, 4, 2);
         encoderDriveMec(DRIVE_SPEED, -15, 3);
         setMotorPowerAll(0,0,0,0);
     }
@@ -626,6 +645,7 @@ public class AutonRoverRuckusWizard {
 
     public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
         vision.activateTFOD();
+        encoderDriveMec(DRIVE_SPEED, 4.0, 1.0);
         if (vision.decideMineral().equals("right")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, 4.0, 1.0);
