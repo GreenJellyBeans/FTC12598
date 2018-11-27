@@ -121,6 +121,9 @@ class FieldElements {
       appendLoad(elementList, fieldObjects);
     }
     fieldElements = elementList.toArray(new Element[elementList.size()]);
+
+    // Save motion paths, if any, to a file
+    saveMotionPaths();
   }
 
   // Add the elements represented by the text array {fieldObjects} to
@@ -414,5 +417,46 @@ class FieldElements {
   // Floor coordinates (in pixels) of field cordinate {y} (in meters)
   private float floorY(double y) {
     return (float) (FLOOR_PIXEL_DEPTH - y * FLOORPIX_PER_M); // y grows upwards, py grows downwards
+  }
+
+
+  // Generate and save the motion paths that correspond to
+  // each path. 
+  private void saveMotionPaths() {
+    String outFile = "./data/motion_paths.txt";
+    List<String> out = new ArrayList<String>();
+    out.add("# Units: degrees and inches");
+    for (Element e : fieldElements) {
+      if (e.type == ElementType.PATH) {
+        generateMotionPath(e, out);
+      }
+    }
+    saveStrings(outFile, out.toArray(new String[out.size()]));
+  }
+
+  void generateMotionPath(Element e, List<String> out) {
+    assert e.type == ElementType.PATH;
+    double prevA = 0; // previous angle.
+    out.add(""); //
+    out.add("path." + e.label);
+    double prevX = 0;
+    double prevY = 0;
+    
+    for (int i = 0; i < e.path.length; i++) {
+      Point p = e.path[i];
+      double dx = p.x - prevX;
+      double dy = p.y - prevY;
+      println(String.format("x:%f  y:%f  a:%f", dx, dy, prevA)); 
+      double dist = Math.sqrt(dx*dx + dy*dy);
+      double angle = 0;
+      if (dist > EPSILON_LENGTH) {
+        // Pick arcCos or arcSin depending on which component is larger...
+        angle = Math.abs(dx) > Math.abs(dy) ? Math.acos(dx/dist) : Math.asin(dy/dist);
+      }
+      out.add(String.format("  %02d: rot %6.2f,  mov %6.2f", i+1, degrees(balancedAngle(angle-prevA)), 12*feet(dist)));
+      prevA = angle;
+      prevX = p.x;
+      prevY = p.y;
+    }
   }
 }

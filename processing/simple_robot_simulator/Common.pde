@@ -64,8 +64,12 @@ boolean inBounds(double in, double mn, double mx) {
 }
 
 
-double meters(double feet) {
+static double meters(double feet) {
   return feet * 0.3048;
+}
+
+static double feet(double meters) {
+  return meters * 3.28084;
 }
 
 static double radians(double angle) {

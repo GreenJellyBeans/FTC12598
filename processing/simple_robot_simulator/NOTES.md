@@ -2,6 +2,31 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 25, 2018-A JMJ Generating a motion path from a field element path
+Field element {path} contains the coordinates of a single path. This is not directly
+useful to program a robot path, because the robot needs relative rotations and movements.
+The proposal is to write out robot "motion paths" for each path in the file. The motion
+path would be series of text commands like so:
+
+```
+path.P1
+  01: rot   0.00, mov   6.00
+  02: rot  80.54, mov  36.50
+  03: rot -80.54, mov  18.00
+
+```
+Where `rot 80.54` means "rotate CCW by 80.54 degrees" and `mov 6.0` means "go forward by 6 inches".
+The idea is that this information can be used to write robot code.
+These motion paths are written out to file `./data/motion_paths.txt` on load.
+IMPORTANT: The starting orientation is ASSUMED to be 0 degrees - i.e., aligned with the
+x-axis and facing to the right of field. The starting position is the first (and absolute)
+coordinate in the path. Units are degrees and inches.
+
+The implementation is in `FieldElements.saveMotionPaths`, which  calls
+`generateMotionPaths` for each path. The motion paths file is
+re-generated each time the program is run, but its content doesn't change unless the
+paths are changed, so it can be checked in.
+
 ## November 16, 2018-A JMJ Adding complex condition "detector" to SensorModule
 This is a very crude approximation of the kind of conditions detected by computer
 vision systems like Vuforia VuMarks and Tensor Flow or by combining sensors to
