@@ -2,6 +2,12 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 27, 2018-B JMJ Created class MecanumWizard for Autonomous helper methods
+Moved many of the methods in `AOpMode_Forward_and_turn` to a new class `MecanumWizard`.
+These methods were jointly developed by myself and GJB (FTC Team#12598) team members. Added
+methods to strafe by a particular amount (versions that take inches and meters), now that 
+encoder values are computed correctly when strafing.
+
 ## November 27, 2018-A JMJ Correctly Computing Encoder Values for the Mecanum Drive
 At present the encoder values assume a regular wheel, not mecanum wheel (see
 October 12, 2018-C JMJ  note). One of the GJB team members has requested using
