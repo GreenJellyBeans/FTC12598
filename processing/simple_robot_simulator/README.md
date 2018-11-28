@@ -44,9 +44,8 @@ and `CollisionPhysics`.
  there is a glitch in the simulation that allows penetration under certain circumstances...).
  The main purpose of blocks (as well as simulation of collisions with walls) is to be able to
  develop code that relies on bumping into or backing into flat surfaces to properly align the robot.
-- Simulated floor-facing color sensor output, IMU bearing and wheel encoder values are available. These features
- have limitations. For example, the encoder simulates "normal" wheels, not mecanum wheels, though it is
- likely that it can be used as long as the robot is moving forward, not strafing. Collectively, these features are
+- Simulated floor-facing color sensor output, IMU bearing and wheel encoder values are available.
+ Collectively, these features are
  designed to help early development of autonomous algorithms such as line following and PID code for driving
  in a straight line for a particular distance.
 - Random perturbations make the robot behave slightly, well, randomly. This is to better
@@ -285,8 +284,8 @@ This is designed to be similar to the linear op modes in the FIRST FTC SDK.
 
 # Simulated Sensors
 Class `SensorModule` collects together various simulated sensors. It currently provides floor-facing color sensor output,
-IMU bearing, and encoder readings from the four corners of the robot. The encoder readings are not correct for mecanum wheels
-except when the robot is driving straight forwards or backwards, assuming zero wheel slippage.
+IMU bearing, and encoder readings from the four corners of the robot. The encoder readings are
+calculated assuming mecanum wheels, and assuming zero wheel slippage.
 
 # For More Information...
 
