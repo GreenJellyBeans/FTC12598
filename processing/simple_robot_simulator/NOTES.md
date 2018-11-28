@@ -2,6 +2,10 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 28, 2018-B JMJ Report mouse position in Field Coordinates 
+Mouse position is now reported - in field coordinates - just below bottom right of
+the field. Implementation is in `Field.draw`.
+
 ## November 28, 2018-A JMJ Investigating and Fixing Pervasive Issue with Strafe Interpretation
 Even though superficially, the simulator is working, there were two unexplained behaviors in the 
 reported status data:

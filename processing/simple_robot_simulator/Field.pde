@@ -58,6 +58,13 @@ class Field {
     drawText(status, 0, 0, 0, 20);
     drawText(extendedStatus, BREADTH, DEPTH, 20, 0);
     extendedStatus = "";
+
+    // Report mouse position in field coordinates
+    double mx = fieldX(mouseX);
+    double my = fieldY(mouseY);
+    if (inBounds(mx, 0, BREADTH) && inBounds(my, 0, DEPTH)) {
+      drawText(String.format("(%5.2fin, %5.2fin)", 12*feet(mx), 12*feet(my)), BREADTH, 0, -150, 20);
+    }
   }
 
 
@@ -70,6 +77,17 @@ class Field {
   // Screen coordinates (in pixels) of field cordinate {y} (in meters)
   float screenY(double y) {
     return (float) (-FIELD_OFFSET_PIXELS + height - y * PIX_PER_M); // y grows upwards, py grows downwards
+  }
+
+
+  // Field coordinates (in meters) from screen coordinate - {x} (in pixels)
+  double  fieldX(float px) {
+    return (px - FIELD_OFFSET_PIXELS) / PIX_PER_M;
+  }
+
+  // Field coordinates (in meters) from screen coordinate - {y} (in pixels)
+  double  fieldY(float py) {
+    return (-FIELD_OFFSET_PIXELS + height - py) / PIX_PER_M;
   }
 
 
