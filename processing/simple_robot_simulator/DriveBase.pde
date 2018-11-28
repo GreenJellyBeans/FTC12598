@@ -62,7 +62,7 @@ class DriveBase {
   // the wheel may slip.
   // This information is used by the simulated encoders.
   private double[] wheelTravel = new double[NUM_CORNERS];
-  
+
   private double ticksPerMeter = DEFAULT_TICKS_PER_METER;
 
 
@@ -171,6 +171,14 @@ class DriveBase {
     power[BR] = clipPower(pBR) * powerAdjust[BR];
   }
 
+  // Recap of robot's coordinate system:
+  //
+  //                 ^ Robot's y-axis
+  //      robot      |
+  //    ...... FL    |
+  //    .    .       --> Robot's x-axis (angle a from the field's x axis)
+  //    ...... FR
+
 
   // Convert robot coordinate to field coordinate - x component,
   // which increases towards the front of the robot.
@@ -249,15 +257,15 @@ class DriveBase {
     p.set(fieldX(rx, ry), fieldY(rx, ry));
     updateWheelTravel(index, rx - oldRx, ry - oldRy);
   }
-  
-  
+
+
   // Update the amount traveled by a virtual point on the surface of the specified wheel.
   // {dRx} and {dRy} are the change in position of the point of contact with the
   // field, in robot coordinates.
   private void updateWheelTravel(int index, double dRx, double dRy) {
-    int sign = index == FL || index == BR ? 1 : -1; // See NOTES.md note "November 27, 2018-A"
+    int sign = index == FL || index == BR ? -1 : 1; // See NOTES.md note "November 27, 2018-A"
     double dRawWheelTravel = dRx + sign * dRy;
-    wheelTravel[index] += dRawWheelTravel; 
+    wheelTravel[index] += dRawWheelTravel;
   }
 
 

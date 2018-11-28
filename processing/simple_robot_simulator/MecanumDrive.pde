@@ -40,13 +40,20 @@ class MecanumDrive {
 
     // Calculate motive linear forces. These are do not include friction - just motor power,
     // and are in the robot's frame of reference, not the field's frame of reference.
-    double rightForce = rightMotiveForce();
+    double leftForce = leftMotiveForce();
     double frontForce = frontMotiveForce();
 
     // Convert forces to the field's frame of reference...
     // Note: Robot is pointing in the direction of {a}. 
-    double motiveFx = frontForce*base.cos_a - rightForce*base.sin_a;
-    double motiveFy = frontForce*base.sin_a + rightForce*base.cos_a;
+    //
+    //                 ^ Robot's y-axis
+    //      robot      |
+    //    ...... FL    |
+    //    .    .       --> Robot's x-axis
+    //    ...... FR
+
+    double motiveFx = frontForce*base.cos_a - leftForce*base.sin_a;
+    double motiveFy = frontForce*base.sin_a + leftForce*base.cos_a;
     motiveFx = perturbForceX(motiveFx, motiveFy, t);
     motiveFy = perturbForceY(motiveFx, motiveFy, t);
 
@@ -189,13 +196,13 @@ class MecanumDrive {
   //    \/
 
 
-  // Motive force along the *robot's* x-axis (side-to-side), NOT including friction effects
-  private  double rightMotiveForce() { 
-    return props.FORCE_FRAC*(motiveForce(pFL()) - motiveForce(pFR()) - motiveForce(pBL()) + motiveForce(pBR()));
+  // Motive force along the *robot's* y-axis (side-to-side), NOT including friction effects
+  private  double leftMotiveForce() { 
+    return props.FORCE_FRAC*(motiveForce(pFR()) - motiveForce(pFL()) - motiveForce(pBR()) + motiveForce(pBL()));
   }
 
 
-  // Motive force along the *robot's* y-axis (front-to-back), NOT including friction effects
+  // Motive force along the *robot's* x-axis (front-to-back), NOT including friction effects
   private  double frontMotiveForce() {
     return props.FORCE_FRAC*(motiveForce(pFL()) + motiveForce(pFR()) + motiveForce(pBL()) + motiveForce(pBR()));
   }
