@@ -56,15 +56,13 @@ class DriveBase {
   //    \/
   double[] power = new double[NUM_CORNERS]; 
 
-  // Distance covered in the instantenous forward and sideways directions by each of the 4 corners. These are 
-  // computed incrementally. If a corner traveled a full (and exact) circle, the forward distance covered
-  // would be the circumference of that circle. Wheel travel is computed from forward and side travel, with
-  // potential slip added. Units are in meters.
+  // Distance covered by a virtual point stuck to each wheel. Units are in meters.
+  // This is not the same as the distance traveled by each corner because (a)
+  // The wheel is a meccanum wheel, so strafing also results in rotation and (b)
+  // the wheel may slip.
   // This information is used by the simulated encoders.
-  private double[] forwardTravel = new double[NUM_CORNERS];
-  private double[] sidewaysTravel = new double[NUM_CORNERS]; // Strafing - left is positive.
-  private double[] wheelTravel = new double[NUM_CORNERS]; // Travel of a point stuck to the wheel.
-
+  private double[] wheelTravel = new double[NUM_CORNERS];
+  
   private double ticksPerMeter = DEFAULT_TICKS_PER_METER;
 
 
@@ -112,11 +110,9 @@ class DriveBase {
 
   // Set the current encoder tick value for all encoders to 0.
   void resetEncoders() {
-    // Clear accumulated forward and sideways travel on all motors.
-    assert forwardTravel.length == sidewaysTravel.length;
-    assert forwardTravel.length == wheelTravel.length;
-    for (int i = 0; i < forwardTravel.length; i++) {
-      forwardTravel[i] = sidewaysTravel[i] = wheelTravel[i] = 0;
+    // Clear accumulated wheel travel on all motors.
+    for (int i = 0; i < wheelTravel.length; i++) {
+      wheelTravel[i] = 0;
     }
   }
 
@@ -251,19 +247,17 @@ class DriveBase {
     double oldRx = robotX(p.x, p.y);
     double oldRy = robotY(p.x, p.y);
     p.set(fieldX(rx, ry), fieldY(rx, ry));
-    updateTravel(index, oldRx, oldRy, rx, ry);
+    updateWheelTravel(index, rx - oldRx, ry - oldRy);
   }
   
   
-  private void updateTravel(int index, double oldRx, double oldRy, double rx, double ry) {
-    // Increment the amount of forward travel by the incremental distanced
-    // traveled in the forward direction, i.e., along the robot's x-axis.
-    // This will be -ve if the wheel is traveling backwards 
-    forwardTravel[index] += rx - oldRx;
-    // Similarly, increment the amount of sideways travel and wheel travel.
-    sidewaysTravel[index] += ry - oldRy;
+  // Update the amount traveled by a virtual point on the surface of the specified wheel.
+  // {dRx} and {dRy} are the change in position of the point of contact with the
+  // field, in robot coordinates.
+  private void updateWheelTravel(int index, double dRx, double dRy) {
     int sign = index == FL || index == BR ? 1 : -1; // See NOTES.md note "November 27, 2018-A"
-    wheelTravel[index] = forwardTravel[index] + sign * sidewaysTravel[index];
+    double dRawWheelTravel = dRx + sign * dRy;
+    wheelTravel[index] += dRawWheelTravel; 
   }
 
 
