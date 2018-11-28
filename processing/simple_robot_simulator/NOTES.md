@@ -2,6 +2,47 @@
 This document contains an informal log of design and implementation decisions for this project,
 the "Simple Robot Simulator."
 
+## November 28, 2018-A JMJ Investigating and Fixing Pervasive Issue with Strafe Interpretation
+Even though superficially, the simulator is working, there were two unexplained behaviors in the 
+reported status data:
+1. Strafing left, the FL power is showing positive, It should be -ve. The FL encoder is
+   also increasing - it should be decreasing. Similarly, FR is opposite what is expected.
+2. When rotating in either direction, *both* front encoders increase very slowly, and both
+   back encoders decrease slowly. This is quite wrong. I would expect, for example,
+   FL encoder to increase going CW and decrease going CCW, and at a pace that is comparable
+   with moving forward at a good clip.
+
+On the other hand, the gamepad and autonomous code work as expected. So multiple errors seem to be
+canceling out in the code, ugh...
+
+RESOLVED! Found a pervasive error relating to the interpretation of "strafe".
+From the client's perspective, a positive strafe means the robot goes *right*. 
+This is, however, equivalent to a *negative* y-axis amount in robot coordinates. There
+was also a mistake when transforming forces from robot to field coordinates.
+
+The following methods had to be fixed in handling strafe properly:
+- `DriveBase.updateWheelTravel` - flipped sign when handling `dRy`
+- `MecanumDrive.rightMotiveForce` has been changed to `leftMotiveForce` to reflect the positive
+	y-axis direction.
+- `MecanumDrive.simloop` now calls `leftMotiveForce` - but the transformation to field
+	coordinates has been fixed (it was wrongly interpreting "left" and "right" in the
+	rotation transformation).
+- `MecanumWizard.setHybridPower` - flipped signs when handling strafe
+- `SampleIterativeOpMode.setHybridPower` - same fix as above.
+
+With these fixes, the two issues with reported data have also been fixed.
+
+## November 27, 2018-C JMJ Implementing Wheel Slipping
+When the robot bumps up against an obstacle like a wall, it will stop, but the wheels
+would presumably keep going - or they could stall. Currently, the reported encoder readings
+always behave as though the wheel is stalling - if motion stops at a particular corner, that
+wheel's encoder value will stay constant.
+
+The proposal is to simulate wheel slippage in certain conditions. In particular, if
+the motive force is close to or less than the damping force it can start slipping, but only
+of the forces are strong enough - perhaps taking into account static and dynamic friction values.
+How the encoder readings are effected needs to be defined.
+
 ## November 27, 2018-B JMJ Created class MecanumWizard for Autonomous helper methods
 Moved many of the methods in `AOpMode_Forward_and_turn` to a new class `MecanumWizard`.
 These methods were jointly developed by myself and GJB (FTC Team#12598) team members. Added
@@ -58,6 +99,10 @@ calculates encoder values. A new array `sidewaysTravel` has been added to keep t
 of the total accumulated sideways travel. When computing the encoder readings for
 each wheel (in method `readEncoder`), this amount is added to forward travel for the FL and BR wheels
 and subtracted for the FR and BL wheels.
+[UPDATE 11/28/2018] `forwardTravel` and `sidewaysTravel` has been replaced by `wheelTravel`, and there
+was confusion as to what "strafe" means. It means how much to go to the *right* - which is 
+in the *negative* y-axis in robot coordinates and this confusion resulted
+in pervasive errors. See November 28 2018 A note.
 
 The code was tested by implementing strafe logic in `AOpMode_Forward_and_turn` method `encoderStrafeMec`.
 It seems to work - autonomously strafing by what seems to be the correct amount. Yay!
