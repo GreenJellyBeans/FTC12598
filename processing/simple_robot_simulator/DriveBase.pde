@@ -58,11 +58,14 @@ class DriveBase {
 
   // Distance covered in the instantenous forward and sideways directions by each of the 4 corners. These are 
   // computed incrementally. If a corner traveled a full (and exact) circle, the forward distance covered
-  // would be the circumference of that circle. This information is used by the simulated encoders.
+  // would be the circumference of that circle. Wheel travel is computed from forward and side travel, with
+  // potential slip added. Units are in meters.
+  // This information is used by the simulated encoders.
   private double[] forwardTravel = new double[NUM_CORNERS];
   private double[] sidewaysTravel = new double[NUM_CORNERS]; // Strafing - left is positive.
+  private double[] wheelTravel = new double[NUM_CORNERS]; // Travel of a point stuck to the wheel.
 
-  private double ticksPerMeter = DEFAULT_TICKS_PER_METER; // 1mm ticks by default.
+  private double ticksPerMeter = DEFAULT_TICKS_PER_METER;
 
 
   public DriveBase(Field field, RobotProperties props, color trailColor) {
@@ -111,9 +114,9 @@ class DriveBase {
   void resetEncoders() {
     // Clear accumulated forward and sideways travel on all motors.
     assert forwardTravel.length == sidewaysTravel.length;
+    assert forwardTravel.length == wheelTravel.length;
     for (int i = 0; i < forwardTravel.length; i++) {
-      forwardTravel[i] = 0;
-      sidewaysTravel[i] = 0;
+      forwardTravel[i] = sidewaysTravel[i] = wheelTravel[i] = 0;
     }
   }
 
@@ -123,8 +126,7 @@ class DriveBase {
   // set in a call to setEncoderScale (or a default).
   // Note that it could return fractional "tick" values.
   double readEncoder(int index) {
-    int sign = index == FL || index == BR ? 1 : -1; // See NOTES.md note "November 27, 2018-A"
-    return (forwardTravel[index] + sign * sidewaysTravel[index]) * ticksPerMeter;
+    return wheelTravel[index] * ticksPerMeter;
   }
 
 
@@ -194,8 +196,8 @@ class DriveBase {
     // to align x-axis with robot's x-axis
     return (fx - cx)*cos_a + (fy - cy)*sin_a;
   }
-  
-    // Convert field coordinate to robot coordinate - y component
+
+  // Convert field coordinate to robot coordinate - y component
   double robotY(double fx, double fy) {
     // First translate to robot's center, then rotate by (-a)
     // to align x-axis with robot's x-axis
@@ -210,7 +212,7 @@ class DriveBase {
     field.addExtendedStatus(String.format("SPEED   Vx:%5.2f   Vy:%5.2f   w:%5.2f", vx, vy, va));
     field.addExtendedStatus(String.format("ENCODERS EFL:%5.2f  EFR:%5.2f  EBL:%5.2f   EBR:%5.2f", 
       readEncoder(FL), readEncoder(FR), readEncoder(BL), readEncoder(BR)
-    ));
+      ));
   }
 
   //
@@ -249,11 +251,19 @@ class DriveBase {
     double oldRx = robotX(p.x, p.y);
     double oldRy = robotY(p.x, p.y);
     p.set(fieldX(rx, ry), fieldY(rx, ry));
+    updateTravel(index, oldRx, oldRy, rx, ry);
+  }
+  
+  
+  private void updateTravel(int index, double oldRx, double oldRy, double rx, double ry) {
     // Increment the amount of forward travel by the incremental distanced
     // traveled in the forward direction, i.e., along the robot's x-axis.
     // This will be -ve if the wheel is traveling backwards 
     forwardTravel[index] += rx - oldRx;
+    // Similarly, increment the amount of sideways travel and wheel travel.
     sidewaysTravel[index] += ry - oldRy;
+    int sign = index == FL || index == BR ? 1 : -1; // See NOTES.md note "November 27, 2018-A"
+    wheelTravel[index] = forwardTravel[index] + sign * sidewaysTravel[index];
   }
 
 
