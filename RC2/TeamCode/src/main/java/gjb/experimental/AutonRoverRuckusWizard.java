@@ -43,8 +43,8 @@ public class AutonRoverRuckusWizard {
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
-    final double UP_SAMPLE = 0.4; //IT"S RANDOME RN
-    final double DOWN_SAMPLE = 1.0; //IT's RANDOM RN
+    final double UP_SAMPLE = 0.4;
+    final double DOWN_SAMPLE = 1.0;
     final long WAIT_TIME = 100; //its what we used last year
     // color sensor (add later)
     final long MARKER_WAIT_TIME = 600;
@@ -53,7 +53,7 @@ public class AutonRoverRuckusWizard {
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
-    final double SAMPLE_FORWARD = 6.0; //IT'S A RANDOM NUMBER RIGHT NOW
+    final double SAMPLE_FORWARD = 13.5;
     Orientation angles;
 
     // values is a reference to the hsvValues array.
@@ -212,30 +212,33 @@ public class AutonRoverRuckusWizard {
     }
     public void samplingCraterDepotOurCraterPath(){
         //going to Depot and our crater after sampling
+        knockSampling();
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
-        imuBearingMec(DRIVE_SPEED, 130, 4); //angle used to be 135
+        imuBearingMec(SPIN_SPEED, 130, 4); //angle used to be 135
         betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED,12,2);
         betterSleep(50);
-        encoderCrabMec(0.2,6,2);
+        encoderCrabMec(0.2,8,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
         betterSleep(WAIT_TIME);
         imu_reset();
         encoderDriveMec(DRIVE_SPEED, 40, 3);
         betterSleep(WAIT_TIME);
         dropMarker();
-        encoderDriveMec(DRIVE_SPEED, -63, 5);
+        encoderCrabMec(0.2,4,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        encoderDriveMec(DRIVE_SPEED, -66, 5);
         betterSleep(WAIT_TIME);
         setMotorPowerAll(0,0,0,0);
     }
 
     public void samplingDepotPath() {
         //going to Depot after sampling
-        encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
-        imuBearingMec(SPIN_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED,8,2);
+        encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
+        imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderCrabMec(DRIVE_SPEED,-9,2);
         //betterSleep(50);
-        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(0.2,10,2);
         encoderCrabMec(DRIVE_SPEED, -2, 0.5);
         // encoderCrabMec(0.2, 6, 3);
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
@@ -245,10 +248,10 @@ public class AutonRoverRuckusWizard {
 
     public void samplingDepotOtherCraterPath() {
         //going to Depot and other crater after sampling
-        encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
+        encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(DRIVE_SPEED, -45, 2);
         encoderCrabMec(0.2, -6, 3);
-        encoderCrabMec(DRIVE_SPEED, 4, 2);
+        encoderCrabMec(DRIVE_SPEED, 5.5, 2);
         encoderDriveMec(DRIVE_SPEED, 30, 5);
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
@@ -257,17 +260,18 @@ public class AutonRoverRuckusWizard {
 
     public void samplingDepotCraterPath(){
         //going to Depot and our crater after sampling
+        knockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 45, 2);
-        encoderCrabMec(DRIVE_SPEED,8,2);
+        encoderCrabMec(DRIVE_SPEED,9,2);
         //betterSleep(50);
-        encoderCrabMec(0.2,5,2);
+        encoderCrabMec(0.2,10,2);
         encoderCrabMec(DRIVE_SPEED, -2, 0.5);
         // encoderCrabMec(0.2, 6, 3);
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
         encoderDriveMec(1.1, 40, 3);//inches was 15
         dropMarker();
-        encoderDriveMec(DRIVE_SPEED, -63, 6);
+        encoderDriveMec(DRIVE_SPEED, -60, 6);
         setMotorPowerAll(0,0,0,0);
     }
 
@@ -510,18 +514,23 @@ public class AutonRoverRuckusWizard {
         betterSleep(WAIT_TIME);
     }
     public void servoTest(){
-        log("putting power to servo");
-        lift.markerpolo.setPosition(0);
+        /*log("putting power to servo");
+        vision.minerservor.setPosition(0);
         betterSleep(2000);
-        lift.markerpolo.setPosition(0.25);
+        vision.minerservor.setPosition(0.25);
         betterSleep(2000);
-        lift.markerpolo.setPosition(0.5);
+        vision.minerservor.setPosition(0.5);
         betterSleep(2000);
-        lift.markerpolo.setPosition(0.75);
+        vision.minerservor.setPosition(0.75);
         betterSleep(2000);
-        lift.markerpolo.setPosition(1);
+        vision.minerservor.setPosition(1);
         betterSleep(2000);
-        log("finished power");
+        log("finished power");*/
+        vision.minerservor.setPosition(0.25);
+        betterSleep(500);
+        vision.minerservor.setPosition(1.0);
+        encoderCrabMec(0.3,-10.0, 2);
+        log("finished secodtest");
     }
 
     // Turn with max speed {speed} (which must be positive)
@@ -645,31 +654,39 @@ public class AutonRoverRuckusWizard {
     }
 
     public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
+        vision.lightsOn();
         vision.activateTFOD();
-        encoderDriveMec(DRIVE_SPEED, 4.0, 1.0);
+
         if (vision.decideMineral().equals("right")){
+
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
-            encoderCrabMec(DRIVE_SPEED, 4.0, 1.0);
             vision.minerservor.setPosition(DOWN_SAMPLE);
+            betterSleep(250);
+            encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(DRIVE_SPEED, -7.0, 1.0); // negative of the two previous encoder crabs added together
+            encoderCrabMec(0.5, -15.0, 1.0); // negative of the two previous encoder crabs added together
+            //Changed from DRIVE_SPEED to 0.5
             log("reached center from right");
 
         } else if (vision.decideMineral().equals("left")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
-            encoderCrabMec(DRIVE_SPEED, -4.0, 1.0);
+            encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            encoderCrabMec(DRIVE_SPEED, -3.0, 1.0);
+            betterSleep(250);
+            encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(DRIVE_SPEED,  -7,1.0); //absolute value of two previous encodercrabs combined
+            encoderCrabMec(0.5,  26.0,1.0); //absolute value of two previous encodercrabs combined
+            //Changed from DRIVE_SPEED to 0.5
             log("reached center from left");
 
         }else if (vision.decideMineral().equals("center")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            encoderCrabMec(DRIVE_SPEED, 2.0, 1.0);
+            betterSleep(250);
+            encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(DRIVE_SPEED, -2.0, 1.0);// prev encoder crab *-1
+            encoderCrabMec(0.5, 15.0, 1.0);// prev encoder crab *-1
+            //Changed from DRIVE_SPEED to 0.5
             log("reached center from center");
 
         } else if (vision.decideMineral()==null){
@@ -677,6 +694,7 @@ public class AutonRoverRuckusWizard {
             log("reached center from null");
         }
         vision.deactivateTFOD();
+        vision.lightsOff();
     }
     // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
