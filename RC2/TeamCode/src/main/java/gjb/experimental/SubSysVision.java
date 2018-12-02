@@ -126,8 +126,8 @@ public class SubSysVision implements SubSystemInterface {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                updatedRecognitions = filterRecognitions(updatedRecognitions);
                 if (updatedRecognitions != null) {
+                    updatedRecognitions = filterRecognitions(updatedRecognitions);
                     log("# Object Detected"+ updatedRecognitions.size());
                     if (updatedRecognitions.size() == 2) {
                         int goldMineralX = -1;
