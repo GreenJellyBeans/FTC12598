@@ -127,6 +127,7 @@ public class SubSysVision implements SubSystemInterface {
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
+                    updatedRecognitions = filterRecognitions(updatedRecognitions);
                     log("# Object Detected"+ updatedRecognitions.size());
                     if (updatedRecognitions.size() == 2) {
                         int goldMineralX = -1;
@@ -134,6 +135,7 @@ public class SubSysVision implements SubSystemInterface {
                         int silverMineral2X = -1;
                         for (Recognition recognition : updatedRecognitions) {
                             if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                log ("Gold Mineral Width:" + recognition.getWidth());
                                 goldMineralX = (int) recognition.getLeft();
                                 log("there is a gold");
                             } else if (silverMineral1X == -1) {
@@ -174,6 +176,25 @@ public class SubSysVision implements SubSystemInterface {
     public void lightsOff() {
         lumine.setPower(0);
     }
+
+    // Return a list that has any known bogus cases removed.
+    List<Recognition> filterRecognitions(List<Recognition> input) {
+        ArrayList<Recognition> output = new ArrayList<Recognition>();
+        for(Recognition r: input) {
+            if (goodMineral(r)){
+                output.add(r);
+            }
+        }
+        return output;
+    }
+
+
+    boolean goodMineral( Recognition r) {
+        final double MIN_WIDTH = 0;
+        final double MAX_WIDTH = 10000;
+        return r.getWidth()<MAX_WIDTH && r.getWidth()>MIN_WIDTH;
+    }
+
 
     // Place additional helper methods here.
     private void log(String s) {
