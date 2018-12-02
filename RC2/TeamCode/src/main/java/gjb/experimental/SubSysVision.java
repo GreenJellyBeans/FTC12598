@@ -4,6 +4,7 @@
  * */
 package gjb.experimental;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -21,7 +22,7 @@ import gjb.interfaces.SubSystemInterface;
 public class SubSysVision implements SubSystemInterface {
 
     private final boolean ENABLE_DISPLAY = true; // Whether or not to display camera and overlay
-    private final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.BACK; // Front or back camera
+    private final VuforiaLocalizer.CameraDirection CAMERA_DIRECTION = VuforiaLocalizer.CameraDirection.FRONT; // Front or back camera
 
 
     // Tensor flow configuration
@@ -36,6 +37,7 @@ public class SubSysVision implements SubSystemInterface {
     private final RuntimeSupportInterface rt;
     //Servo to knock of sample
     public Servo minerservor = null;
+    public DcMotor lumine = null;
 
     // Vuforia engine
     private VuforiaLocalizer vuforia;
@@ -56,7 +58,10 @@ public class SubSysVision implements SubSystemInterface {
         // Any subsystem initialization code goes here.
         VuforiaLocalizer.Parameters parameters;
         minerservor = rt.hwLookup().getServo("miner_servor");
-        minerservor.setPosition(0.0);
+        lumine = rt.hwLookup().getDcMotor("lumine");
+        lumine.setDirection(DcMotor.Direction. FORWARD);
+        lumine.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        minerservor.setPosition(0.25);
         if (ENABLE_DISPLAY) {
             int cameraMonitorViewId = rt.getIdentifierFromPackage("cameraMonitorViewId", "id");
             parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -83,6 +88,7 @@ public class SubSysVision implements SubSystemInterface {
     @Override
     public void deinit() {
         log("deinit start");
+        lumine.setPower(0);
         // Place any shutdown/deinitialization code here  - this is called ONCE
         // after tasks & OpModes have stopped.
         deactivateTFOD();
@@ -111,6 +117,9 @@ public class SubSysVision implements SubSystemInterface {
 
     }
 
+    // TODO: Add comments to the parts that are not obvious, like robot expected
+    // position, the camera being flipped, and realizing that special value -1 is less
+    // than any valid reading.
     public String decideMineral() {
         while (rt.opModeIsActive()) {
             if (tfod != null) {
@@ -126,10 +135,12 @@ public class SubSysVision implements SubSystemInterface {
                         for (Recognition recognition : updatedRecognitions) {
                             if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                 goldMineralX = (int) recognition.getLeft();
+                                log("there is a gold");
                             } else if (silverMineral1X == -1) {
                                 silverMineral1X = (int) recognition.getLeft();
                             } else {
                                 silverMineral2X = (int) recognition.getLeft();
+                                log("There is no gold");
                             }
                         }
 
@@ -140,6 +151,7 @@ public class SubSysVision implements SubSystemInterface {
                             } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
                                 log("Gold Mineral Position : Right");
                                 return GOLD_MINERAL_RIGHT;
+
                             } else {
                                 log("Gold Mineral Position : Center");
                                 return GOLD_MINERAL_CENTER;
@@ -152,6 +164,15 @@ public class SubSysVision implements SubSystemInterface {
             }
         }
         return null;
+    }
+    //method for switching on the headlight on the front of MelonBot
+    public void lightsOn() {
+        lumine.setPower(0.75); //we put a small number to be cautious
+    }
+
+    //method for switching on the headlight off the front of MelonBot
+    public void lightsOff() {
+        lumine.setPower(0);
     }
 
     // Place additional helper methods here.
