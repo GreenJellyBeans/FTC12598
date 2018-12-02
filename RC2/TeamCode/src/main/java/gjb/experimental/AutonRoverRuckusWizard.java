@@ -250,15 +250,34 @@ public class AutonRoverRuckusWizard {
         //going to Depot and other crater after sampling
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
-        encoderCrabMec(0.2, -6, 3);
-        encoderCrabMec(DRIVE_SPEED, 5.5, 2);
-        encoderDriveMec(DRIVE_SPEED, 30, 5);
+        encoderCrabMec(DRIVE_SPEED, -9, 3);
+        encoderCrabMec(0.2, -10, 3);
+
+        encoderCrabMec(DRIVE_SPEED, 2.5, 2);
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
         setMotorPowerAll(0,0,0,0);
     }
 
     public void samplingDepotCraterPath(){
+        //going to Depot and our crater after sampling
+        knockSampling();
+        encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,9,2);
+        //betterSleep(50);
+        encoderCrabMec(0.2,10,2);
+        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
+        // encoderCrabMec(0.2, 6, 3);
+        // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(1.1, 40, 3);//inches was 15
+        dropMarker();
+        encoderDriveMec(DRIVE_SPEED, -60, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
+
+    public void samplingDepotCut(){
         //going to Depot and our crater after sampling
         knockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
@@ -661,7 +680,7 @@ public class AutonRoverRuckusWizard {
 
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5, -15.0, 1.0); // negative of the two previous encoder crabs added together
@@ -672,7 +691,7 @@ public class AutonRoverRuckusWizard {
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5,  26.0,1.0); //absolute value of two previous encodercrabs combined
@@ -682,7 +701,7 @@ public class AutonRoverRuckusWizard {
         }else if (vision.decideMineral().equals("center")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5, 15.0, 1.0);// prev encoder crab *-1
