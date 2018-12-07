@@ -204,7 +204,7 @@ public class AutonRoverRuckusWizard {
         encoderDriveMec(DRIVE_SPEED, 40, 3);
         betterSleep(WAIT_TIME);
         dropMarker();
-        imuBearingMec(SPIN_SPEED, 45,2);
+        imuBearingMec(SPIN_SPEED, 130,2);
         encoderDriveMec(DRIVE_SPEED, 15, 3);
         imuBearingMec(SPIN_SPEED, 45,2);
         encoderDriveMec(DRIVE_SPEED, 40, 5);
