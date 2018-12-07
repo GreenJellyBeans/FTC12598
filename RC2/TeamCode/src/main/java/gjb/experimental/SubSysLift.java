@@ -19,13 +19,13 @@ public class SubSysLift implements SubSystemInterface {
     final public RuntimeSupportInterface rt;
     final public LoggingInterface log;
 
-    public static final double LIFT_DOWN_POWER    =  0.45 ; //was .225, positive power makes lift go down
-    public static final double LIFT_UP_POWER  = -0.45 ; //was -.225
+    public static final double LIFT_DOWN_POWER    =  -0.75 ; //was .225, negative power means it goes down
+    public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.25;
     public static final double DROP_POS = 0.9;
     // Place additional instance variables here - like hardware access objects
-    DigitalChannel limitswitch_down;
-    DigitalChannel limitswitch_up;
+    DigitalChannel limitswitch_down; //prevents further downward motion
+    DigitalChannel limitswitch_up; //prevents further upward motion
     public DcMotor motorola;
     public Servo markerpolo;
     // Modify this constructor to add any additional initialization parameters - see
