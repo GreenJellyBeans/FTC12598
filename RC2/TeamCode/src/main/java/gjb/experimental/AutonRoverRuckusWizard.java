@@ -107,6 +107,11 @@ public class AutonRoverRuckusWizard {
 
     }
 
+     public void GOFORWARD (){
+        encoderDriveMec(DRIVE_SPEED, 12, 2);
+     }
+
+
     public void goForward() {
         encoderDriveMec(0.2, 10, 10); //going forward 10 inches then stopping with mecanum wheels
         //speed = 0.2
@@ -661,7 +666,7 @@ public class AutonRoverRuckusWizard {
 
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5, -15.0, 1.0); // negative of the two previous encoder crabs added together
@@ -672,7 +677,7 @@ public class AutonRoverRuckusWizard {
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5,  26.0,1.0); //absolute value of two previous encodercrabs combined
@@ -682,7 +687,7 @@ public class AutonRoverRuckusWizard {
         }else if (vision.decideMineral().equals("center")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(DOWN_SAMPLE);
-            betterSleep(250);
+            betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
             encoderCrabMec(0.5, 15.0, 1.0);// prev encoder crab *-1
