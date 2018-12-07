@@ -255,15 +255,34 @@ public class AutonRoverRuckusWizard {
         //going to Depot and other crater after sampling
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
-        encoderCrabMec(0.2, -6, 3);
-        encoderCrabMec(DRIVE_SPEED, 5.5, 2);
-        encoderDriveMec(DRIVE_SPEED, 30, 5);
+        encoderCrabMec(DRIVE_SPEED, -9, 3);
+        encoderCrabMec(0.2, -10, 3);
+
+        encoderCrabMec(DRIVE_SPEED, 2.5, 2);
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
         encoderDriveMec(DRIVE_SPEED, -63, 6);
         setMotorPowerAll(0,0,0,0);
     }
 
     public void samplingDepotCraterPath(){
+        //going to Depot and our crater after sampling
+        knockSampling();
+        encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
+        imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderCrabMec(DRIVE_SPEED,9,2);
+        //betterSleep(50);
+        encoderCrabMec(0.2,10,2);
+        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
+        // encoderCrabMec(0.2, 6, 3);
+        // encoderCrabMec(DRIVE_SPEED, -4, 2);
+        encoderDriveMec(1.1, 40, 3);//inches was 15
+        dropMarker();
+        encoderDriveMec(DRIVE_SPEED, -60, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
+
+    public void samplingDepotCut(){
         //going to Depot and our crater after sampling
         knockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
