@@ -674,9 +674,8 @@ public class AutonRoverRuckusWizard {
         vision.activateTFOD();
 
         if (vision.decideMineral().equals("right")){
-
-            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(MID_SAMPLE);
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
@@ -687,9 +686,9 @@ public class AutonRoverRuckusWizard {
             log("reached center from right");
 
         } else if (vision.decideMineral().equals("left")){
+            vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
-            vision.minerservor.setPosition(MID_SAMPLE);
             betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
@@ -700,8 +699,8 @@ public class AutonRoverRuckusWizard {
             log("reached center from left");
 
         }else if (vision.decideMineral().equals("center")){
-            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             vision.minerservor.setPosition(MID_SAMPLE);
+            encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
