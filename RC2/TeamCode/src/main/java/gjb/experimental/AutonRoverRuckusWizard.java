@@ -192,7 +192,6 @@ public class AutonRoverRuckusWizard {
     public void samplingCraterPath () {
         //parking in crater after sampling
         knockSampling();
-        encoderCrabMec(DRIVE_SPEED, 15, 2);
         encoderDriveMec(DRIVE_SPEED, 15, 2); //change forward later
 
     }
@@ -202,19 +201,24 @@ public class AutonRoverRuckusWizard {
         knockSampling();
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 130, 4); //angle used to be 135
-        betterSleep(WAIT_TIME);
+        //betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED,12,2);
         betterSleep(50);
         encoderCrabMec(0.2,6,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
         betterSleep(WAIT_TIME);
         imu_reset();
-        encoderDriveMec(DRIVE_SPEED, 40, 3);
+        encoderDriveMec(DRIVE_SPEED, 45, 3);
         betterSleep(WAIT_TIME);
         dropMarker();
-        imuBearingMec(SPIN_SPEED, 130,2);
+        encoderCrabMec(0.2,4,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
+        encoderCrabMec(0.5, -2,2);
+        imuBearingMec(SPIN_SPEED, 45,2);
         encoderDriveMec(DRIVE_SPEED, 15, 3);
         imuBearingMec(SPIN_SPEED, 45,2);
+        encoderCrabMec(0.2,4,2);
+        encoderCrabMec(DRIVE_SPEED, -4, 1);
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         setMotorPowerAll(0,0,0,0);
     }
@@ -243,15 +247,16 @@ public class AutonRoverRuckusWizard {
     public void samplingDepotPath() {
         //going to Depot after sampling
         knockSampling();
+        encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
-        encoderCrabMec(DRIVE_SPEED,-9,2);
+        encoderCrabMec(DRIVE_SPEED,-9,3);
         //betterSleep(50);
-        encoderCrabMec(0.2,10,2);
-        encoderCrabMec(DRIVE_SPEED, -2, 0.5);
+        encoderCrabMec(0.2,-10,2);
+        encoderCrabMec(DRIVE_SPEED, 2.5, 2);
         // encoderCrabMec(0.2, 6, 3);
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
-        encoderDriveMec(1.1, 40, 3);//inches was 15
+        encoderDriveMec(DRIVE_SPEED, 40, 5);//inches was 15
         dropMarker();
     }
 
