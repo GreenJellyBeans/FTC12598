@@ -44,6 +44,7 @@ public class AutonRoverRuckusWizard {
     // servo
     public Servo color_sorcerer;
     final double UP_SAMPLE = 0.4;
+    final double MID_SAMPLE = 0.8;
     final double DOWN_SAMPLE = 1.0;
     final long WAIT_TIME = 100; //its what we used last year
     // color sensor (add later)
@@ -680,6 +681,8 @@ public class AutonRoverRuckusWizard {
         if (vision.decideMineral().equals("right")){
 
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            vision.minerservor.setPosition(MID_SAMPLE);
+            betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
@@ -691,6 +694,8 @@ public class AutonRoverRuckusWizard {
         } else if (vision.decideMineral().equals("left")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
+            vision.minerservor.setPosition(MID_SAMPLE);
+            betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
@@ -701,6 +706,8 @@ public class AutonRoverRuckusWizard {
 
         }else if (vision.decideMineral().equals("center")){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
+            vision.minerservor.setPosition(MID_SAMPLE);
+            betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
