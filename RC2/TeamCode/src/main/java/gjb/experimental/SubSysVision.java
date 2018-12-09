@@ -178,7 +178,7 @@ public class SubSysVision implements SubSystemInterface {
     }
 
     // Return a list that has any known bogus cases removed.
-    List<Recognition> filterRecognitions(List<Recognition> input) {
+    List<Recognition>  filterRecognitions(List<Recognition> input) {
         ArrayList<Recognition> output = new ArrayList<Recognition>();
         for(Recognition r: input) {
             if (goodMineral(r)){

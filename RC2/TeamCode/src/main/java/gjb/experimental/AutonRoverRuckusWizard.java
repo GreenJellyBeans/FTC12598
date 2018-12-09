@@ -37,9 +37,9 @@ public class AutonRoverRuckusWizard {
     final public LoggingInterface log;
 
     // These are initialized during init()
-    private SubSysMecDrive drive;
-    private SubSysLift lift;
-    private SubSysVision vision;
+    SubSysMecDrive drive;
+    SubSysLift lift;
+    SubSysVision vision;
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
