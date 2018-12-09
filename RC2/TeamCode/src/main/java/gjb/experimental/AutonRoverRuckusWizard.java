@@ -272,7 +272,7 @@ public class AutonRoverRuckusWizard {
         encoderCrabMec(DRIVE_SPEED, 2.5, 2);
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
-        encoderDriveMec(DRIVE_SPEED, -63, 6);
+        encoderDriveMec(0.7, -60, 6);
         setMotorPowerAll(0,0,0,0);
     }
 
