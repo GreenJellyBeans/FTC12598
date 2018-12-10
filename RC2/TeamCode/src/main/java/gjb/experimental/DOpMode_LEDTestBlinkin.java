@@ -29,7 +29,7 @@ public class DOpMode_LEDTestBlinkin extends OpMode{
     @Override
 
     public void init() {
-        diagnostics  = new SubSysDiagnostics(rt);
+        diagnostics  = new SubSysDiagnostics(rt, null);
         // Initialize the subsystem and associated task
         diagnostics.init();
     }

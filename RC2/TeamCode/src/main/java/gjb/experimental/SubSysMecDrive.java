@@ -162,5 +162,11 @@ public class SubSysMecDrive implements SubSystemInterface {
 
 
     }
+    void stopAndResetAllEncoders(){
+        leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fleftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 }
 

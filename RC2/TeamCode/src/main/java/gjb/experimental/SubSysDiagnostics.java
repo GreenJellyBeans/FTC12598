@@ -62,6 +62,7 @@ public class SubSysDiagnostics implements SubSystemInterface {
         blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
     }
     public void diagnosticEncoderMotor(){
+         wizard.drive.stopAndResetAllEncoders();
          wizard.log("right after init:");
          wizard.log("fl:" + wizard.drive.fleftDrive.getCurrentPosition());
          wizard.log("fr:" + wizard.drive.frightDrive.getCurrentPosition());
@@ -79,6 +80,8 @@ public class SubSysDiagnostics implements SubSystemInterface {
          wizard.log("fr:" + wizard.drive.frightDrive.getCurrentPosition());
          wizard.log("bl:" + wizard.drive.leftDrive.getCurrentPosition());
          wizard.log("br:" + wizard.drive.rightDrive.getCurrentPosition());
+         wizard.betterSleep(10000);
+
     }
 
 }
