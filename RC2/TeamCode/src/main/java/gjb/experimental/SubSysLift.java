@@ -23,11 +23,13 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.25;
     public static final double DROP_POS = 0.9;
+    public static final double BOAS_START = 0; //find number using servo test
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
     public DcMotor motorola;
     public Servo markerpolo;
+    public Servo boas; //Stands for box on a stick :P
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
     public SubSysLift(RuntimeSupportInterface rt) {
@@ -50,10 +52,12 @@ public class SubSysLift implements SubSystemInterface {
         limitswitch_down  = rt.hwLookup().getDigitalChannel("limit_switch_down");
         limitswitch_down.setMode(DigitalChannel.Mode.INPUT);
         markerpolo = rt.hwLookup().getServo("marker_polo");
+        boas = rt.hwLookup().getServo("boas");
         // Set lift motor to zero power
         motorola.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorola.setPower(0);
         markerpolo.setPosition(START_POS);
+        boas.setPosition(BOAS_START);
         this.log.pri1(LoggingInterface.OTHER, "initialized marker servo");
 
         // Set lift motor to run without encoders.
