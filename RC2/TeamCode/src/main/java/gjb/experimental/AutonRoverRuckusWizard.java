@@ -674,10 +674,9 @@ public class AutonRoverRuckusWizard {
 
     }
 
-    public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
+    public void knockSampling(){
         vision.lightsOn();
         vision.activateTFOD();
-
         if (vision.decideMineral().equals("right")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
@@ -715,9 +714,9 @@ public class AutonRoverRuckusWizard {
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from center");
 
-        } else if (vision.decideMineral()==null){
+        } else if (vision.decideMineral()=="cannot_decide"){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
-            log("reached center from null");
+            log("reached center cuz it couldn't find it");
         }
         vision.deactivateTFOD();
         vision.lightsOff();
