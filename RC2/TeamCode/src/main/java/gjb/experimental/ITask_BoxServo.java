@@ -14,15 +14,15 @@ import gjb.interfaces.TaskInterface;
 public class ITask_BoxServo implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
-    final double MIN_STICK = -0.5;
-    final double MAX_STICK = 0.09;
+    final double MIN_STICK = 0.5;
+    final double MAX_STICK = 0.75;
     final double STICK_SPEED = 0.01;// taken from last year's servo claws
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
     SubSysLift boas;
-    double stickPos = - 0.5;
+    double stickPos =  0.5;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.

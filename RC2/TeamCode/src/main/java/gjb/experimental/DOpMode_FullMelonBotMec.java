@@ -46,7 +46,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         driveTask = new ITask_simpleDriveMec(rt, drive);
         lift = new SubSysLift(rt);
         liftTask = new ITask_LiftWLimitSwitches(rt, lift);
-
+        boasTask = new ITask_BoxServo(rt, lift);
         // Initialize the subsystem and associated task
         drive.init();
         driveTask.init();

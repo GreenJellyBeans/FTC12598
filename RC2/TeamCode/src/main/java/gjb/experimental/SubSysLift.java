@@ -23,12 +23,12 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.25;
     public static final double DROP_POS = 0.9;
-    public static final double BOAS_START = 0; //find number using servo test
+    public static final double BOAS_START = 0.3; //find number using servo test
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
-    public DcMotor motorola;
-    public Servo markerpolo;
+    public DcMotor motorola; //lift motor
+    public Servo markerpolo; //marker motor
     public Servo boas; //Stands for box on a stick :P
     // Modify this constructor to add any additional initialization parameters - see
     // other subsystems for examples.
