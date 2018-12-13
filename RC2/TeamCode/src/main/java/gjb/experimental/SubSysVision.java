@@ -196,7 +196,15 @@ public class SubSysVision implements SubSystemInterface {
     boolean goodMineral( Recognition r) {
         final double MIN_WIDTH = 0;
         final double MAX_WIDTH = 10000;
-        return r.getWidth()<MAX_WIDTH && r.getWidth()>MIN_WIDTH;
+        final double MAX_Y = 1000;//bottome y coordinate
+        final double MIN_Y = 0; // bottom y coordinate
+        final double ASPECT_RATIO_DIF = 0.1; //
+        final double MIN_CONFIDENCE = 0;
+        boolean w = r.getWidth()<MAX_WIDTH && r.getWidth()>MIN_WIDTH;
+        boolean y = r.getBottom()<MAX_Y && r.getBottom()>MIN_Y;
+        boolean a = Math.abs((r.getHeight()/r.getWidth())-1)<ASPECT_RATIO_DIF;
+        boolean c = true;
+        return w&&y&&a&&c;
     }
 
 
