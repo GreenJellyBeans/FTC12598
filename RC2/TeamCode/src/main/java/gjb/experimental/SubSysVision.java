@@ -168,6 +168,7 @@ public class SubSysVision implements SubSystemInterface {
 
                 }
             }
+            rt.telemetry();
         }
         return CANNOT_DECIDE;
     }
@@ -185,26 +186,23 @@ public class SubSysVision implements SubSystemInterface {
     List<Recognition>  filterRecognitions(List<Recognition> input) {
         ArrayList<Recognition> output = new ArrayList<Recognition>();
         for(Recognition r: input) {
-            if (goodMineral(r)){
+            if (goodMineral(r)) {
                 output.add(r);
             }
+        }
+        if (input.size()!= output.size()){
+            rt.telemetry().addData("bad objects", (input.size()-output.size()));
         }
         return output;
     }
 
 
     boolean goodMineral( Recognition r) {
-        final double MIN_WIDTH = 0;
-        final double MAX_WIDTH = 10000;
-        final double MAX_Y = 1000;//bottome y coordinate
-        final double MIN_Y = 0; // bottom y coordinate
-        final double ASPECT_RATIO_DIF = 0.1; //
-        final double MIN_CONFIDENCE = 0;
-        boolean w = r.getWidth()<MAX_WIDTH && r.getWidth()>MIN_WIDTH;
-        boolean y = r.getBottom()<MAX_Y && r.getBottom()>MIN_Y;
-        boolean a = Math.abs((r.getHeight()/r.getWidth())-1)<ASPECT_RATIO_DIF;
-        boolean c = true;
-        return w&&y&&a&&c;
+        final double MIN_WIDTH = 120;
+        final double MIN_CONFIDENCE = 0.8; // based on trials, in only one condition
+        boolean w = r.getWidth()>MIN_WIDTH;
+        boolean c = r.getConfidence()>MIN_CONFIDENCE;
+        return w && c;
     }
 
 
