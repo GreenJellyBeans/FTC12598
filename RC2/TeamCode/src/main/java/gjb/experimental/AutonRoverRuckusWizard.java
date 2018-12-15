@@ -65,9 +65,10 @@ public class AutonRoverRuckusWizard {
     ColorSensor lHuemanatee;
 
     // variables for landLift method
-    int timeoutS = 5; //set value later
-    static final double LIFT_MOTOR_POWER = -0.1; //change it later
-    boolean reached = false;
+    int timeoutS = 15; //set value later
+    static final double LIFT_MOTOR_POWER = 1.0; //change it later
+    static final double LIFT_DOWN_POWER  = -1.0;
+
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -323,6 +324,35 @@ public class AutonRoverRuckusWizard {
         encoderDriveMec(DRIVE_SPEED, -18, 3);
         setMotorPowerAll(0,0,0,0);
     }
+    public void landSamplingDepotOtherCraterPath() {
+        //going to Depot and other crater after sampling
+        autonTrial();
+        knockSampling();
+        encoderDriveMec(0.4, 1, 2);
+        encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
+        imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderCrabMec(DRIVE_SPEED, -9, 3);
+        encoderCrabMec(0.2, -10, 3);
+
+        encoderCrabMec(DRIVE_SPEED, 2.5, 2);
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
+        dropMarker();
+        encoderDriveMec(0.7, -60, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
+    public void landSamplingTestPath() {
+        //going to Depot and other crater after sampling
+        autonTrial();
+        knockSampling();
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
+        dropMarker();
+        imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderCrabMec(DRIVE_SPEED, -9, 3);
+        encoderCrabMec(0.2, -8, 3);
+        encoderCrabMec(DRIVE_SPEED, 3.5, 2);
+        encoderDriveMec(0.7, -65, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
 
 
 
@@ -494,9 +524,11 @@ public class AutonRoverRuckusWizard {
     public void autonTrial() {
         boolean result = landLift();
         if (result == true) {
-            // Code to move backward etc.
+
+            log("can you see this");
         }
     }
+
 
     void setMotorPowerAll(double pFL, double pFR, double pBL, double pBR) {
         drive.fleftDrive.setPower(pFL);
@@ -507,8 +539,11 @@ public class AutonRoverRuckusWizard {
     }
 
     public boolean landLift() {
+        final double start = runtime.seconds();
+        boolean reached = false;
+        log("start");
         while (rt.opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
+                (runtime.seconds() - start < timeoutS) &&
                 lift.limitswitch_up.getState() == false) {
             lift.motorola.setPower(LIFT_MOTOR_POWER);
             // Display it for the driver.
@@ -517,13 +552,14 @@ public class AutonRoverRuckusWizard {
             rt.telemetry().update();
         }
         lift.motorola.setPower(0);
-        rt.telemetry().addData("lift status", "stopped");
+       log("lift status: stopped");
         rt.telemetry().update();
         if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) && lift.limitswitch_up.getState() == true) {
             reached = true;
         }
         return reached;
     }
+
 
     public void dropMarker() {
         this.log.pri1(LoggingInterface.OTHER, "marker servo going down");
