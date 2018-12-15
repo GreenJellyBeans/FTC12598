@@ -20,7 +20,7 @@ import gjb.utils.Logger;
 public class DOpMode_LEDTestBlinkin extends OpMode{
     final String THIS_COMPONENT = "DOM_driveOnlyPushBot";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
-
+    public AutonRoverRuckusWizard apu = new AutonRoverRuckusWizard(rt);
     // These are initialized during init()
     private  SubSysDiagnostics diagnostics;
 
@@ -29,7 +29,7 @@ public class DOpMode_LEDTestBlinkin extends OpMode{
     @Override
 
     public void init() {
-        diagnostics  = new SubSysDiagnostics(rt);
+        diagnostics  = new SubSysDiagnostics(rt, apu);
         // Initialize the subsystem and associated task
         diagnostics.init();
     }
