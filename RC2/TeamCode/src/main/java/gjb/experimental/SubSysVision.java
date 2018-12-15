@@ -6,6 +6,7 @@ package gjb.experimental;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -33,7 +34,9 @@ public class SubSysVision implements SubSystemInterface {
     public static final String GOLD_MINERAL_LEFT = "left";
     public static final String GOLD_MINERAL_RIGHT = "right";
     public static final String GOLD_MINERAL_CENTER = "center";
-
+    public static final String CANNOT_DECIDE = "cannot_decide";
+    public static final double TIMEOUTS = 3.0;
+    private ElapsedTime runtime = new ElapsedTime();
     private final RuntimeSupportInterface rt;
     //Servo to knock of sample
     public Servo minerservor = null;
@@ -121,7 +124,8 @@ public class SubSysVision implements SubSystemInterface {
     // position, the camera being flipped, and realizing that special value -1 is less
     // than any valid reading.
     public String decideMineral() {
-        while (rt.opModeIsActive()) {
+        double startTime = runtime.seconds();
+        while (rt.opModeIsActive()&& (runtime.seconds() - startTime)< TIMEOUTS) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -164,8 +168,9 @@ public class SubSysVision implements SubSystemInterface {
 
                 }
             }
+            rt.telemetry();
         }
-        return null;
+        return CANNOT_DECIDE;
     }
     //method for switching on the headlight on the front of MelonBot
     public void lightsOn() {
@@ -181,18 +186,23 @@ public class SubSysVision implements SubSystemInterface {
     List<Recognition>  filterRecognitions(List<Recognition> input) {
         ArrayList<Recognition> output = new ArrayList<Recognition>();
         for(Recognition r: input) {
-            if (goodMineral(r)){
+            if (goodMineral(r)) {
                 output.add(r);
             }
+        }
+        if (input.size()!= output.size()){
+            rt.telemetry().addData("bad objects", (input.size()-output.size()));
         }
         return output;
     }
 
 
     boolean goodMineral( Recognition r) {
-        final double MIN_WIDTH = 0;
-        final double MAX_WIDTH = 10000;
-        return r.getWidth()<MAX_WIDTH && r.getWidth()>MIN_WIDTH;
+        final double MIN_WIDTH = 120;
+        final double MIN_CONFIDENCE = 0.8; // based on trials, in only one condition
+        boolean w = r.getWidth()>MIN_WIDTH;
+        boolean c = r.getConfidence()>MIN_CONFIDENCE;
+        return w && c;
     }
 
 

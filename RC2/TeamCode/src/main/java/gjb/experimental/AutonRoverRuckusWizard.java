@@ -571,23 +571,35 @@ public class AutonRoverRuckusWizard {
         betterSleep(WAIT_TIME);
     }
     public void servoTest(){
-        /*log("putting power to servo");
-        vision.minerservor.setPosition(0);
+        log("putting power to servo");
+        log("0.3");
+        lift.boas.setPosition(0.3);
         betterSleep(2000);
-        vision.minerservor.setPosition(0.25);
+        log("0.4");
+        lift.boas.setPosition(0.4);
         betterSleep(2000);
-        vision.minerservor.setPosition(0.5);
+        log("0.5");
+        lift.boas.setPosition(0.5);
         betterSleep(2000);
-        vision.minerservor.setPosition(0.75);
+        log("0.75");
+        lift.boas.setPosition(0.75);
         betterSleep(2000);
-        vision.minerservor.setPosition(1);
+        log("1");
+        lift.boas.setPosition(1);
         betterSleep(2000);
-        log("finished power");*/
-        vision.minerservor.setPosition(0.25);
-        betterSleep(500);
-        vision.minerservor.setPosition(1.0);
-        encoderCrabMec(0.3,-10.0, 2);
-        log("finished secodtest");
+        log("finished power");
+        //vision.minerservor.setPosition(0.25);
+        //betterSleep(500);
+        //vision.minerservor.setPosition(1.0);
+        //encoderCrabMec(0.3,-10.0, 2);
+        //log("finished secodtest");
+    }
+    public void servoHalfway(){
+        log("putting power to servo");
+        log("0.5");
+        lift.boas.setPosition(0.5);
+        betterSleep(5000);
+        log("im done");
     }
 
     // Turn with max speed {speed} (which must be positive)
@@ -710,10 +722,9 @@ public class AutonRoverRuckusWizard {
 
     }
 
-    public void knockSampling(){ // MOST NUMBERS IN HERE ARE RANDOM RN
+    public void knockSampling(){
         vision.lightsOn();
         vision.activateTFOD();
-
         if (vision.decideMineral().equals("right")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
@@ -751,9 +762,9 @@ public class AutonRoverRuckusWizard {
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from center");
 
-        } else if (vision.decideMineral()==null){
+        } else if (vision.decideMineral()=="cannot_decide"){
             encoderDriveMec(DRIVE_SPEED, SAMPLE_FORWARD, 1.0 );
-            log("reached center from null");
+            log("reached center cuz it couldn't find it");
         }
         vision.deactivateTFOD();
         vision.lightsOff();
