@@ -536,6 +536,9 @@ public class AutonRoverRuckusWizard {
     }
     public void servoTest(){
         log("putting power to servo");
+        log("0.2");
+        lift.boas.setPosition(0.2);
+        betterSleep(2000);
         log("0.3");
         lift.boas.setPosition(0.3);
         betterSleep(2000);
@@ -548,9 +551,9 @@ public class AutonRoverRuckusWizard {
         log("0.75");
         lift.boas.setPosition(0.75);
         betterSleep(2000);
-        log("1");
-        lift.boas.setPosition(1);
-        betterSleep(2000);
+        //log("1");
+        //lift.boas.setPosition(1);
+        //betterSleep(2000);
         log("finished power");
         //vision.minerservor.setPosition(0.25);
         //betterSleep(500);

@@ -44,7 +44,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public void dsPrintln(String s) {
-            /*om.telemetry.log().add(s);*/
+            om.telemetry.log().add(s);
         }
 
         @Override

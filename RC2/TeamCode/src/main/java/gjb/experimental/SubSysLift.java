@@ -23,7 +23,7 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.25;
     public static final double DROP_POS = 0.9;
-    public static final double BOAS_START = 0.3; //find number using servo test
+    public static final double BOAS_START = 0.2; //find number using servo test
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
