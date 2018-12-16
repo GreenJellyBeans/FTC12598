@@ -54,7 +54,7 @@ public class AutonRoverRuckusWizard {
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
-    final double SAMPLE_FORWARD = 11.5;
+    final double SAMPLE_FORWARD = 9.5;
     Orientation angles;
 
     // values is a reference to the hsvValues array.
@@ -556,7 +556,7 @@ public class AutonRoverRuckusWizard {
            // betterSleep(5000);
             log("now move");
             //disengaging from the hook with a series of small actions
-            encoderDriveMec(0.6, -1,2);
+            encoderDriveMec(0.6, -2,2);
             encoderCrabMec(DRIVE_SPEED, -4, 2);
             encoderDriveMec(0.6, 2, 2);
             encoderCrabMec(DRIVE_SPEED, 4, 2);
