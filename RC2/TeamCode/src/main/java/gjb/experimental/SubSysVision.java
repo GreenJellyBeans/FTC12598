@@ -149,7 +149,6 @@ public class SubSysVision implements SubSystemInterface {
                                 log("There is no gold");
                             }
                         }
-
                         if ((goldMineralX != -1 && silverMineral1X != -1 )|| (silverMineral1X!= -1 && silverMineral2X != -1)) {
                             if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
                                 log("Gold Mineral Position : Left");
@@ -195,8 +194,6 @@ public class SubSysVision implements SubSystemInterface {
         }
         return output;
     }
-
-
     boolean goodMineral( Recognition r) {
         final double MIN_WIDTH = 120;
         final double MIN_CONFIDENCE = 0.8; // based on trials, in only one condition

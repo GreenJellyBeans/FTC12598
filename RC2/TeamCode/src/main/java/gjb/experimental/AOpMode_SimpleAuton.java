@@ -4,6 +4,7 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,7 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
 @Autonomous(name="AOpMode_SimpleAutonDrive_v1", group="Pushbot")
-//@Disabled
+@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */

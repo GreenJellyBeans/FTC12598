@@ -28,18 +28,16 @@ public class SubSysLift implements SubSystemInterface {
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
     public DcMotor motorola; //lift motor
-    public Servo markerpolo; //marker motor
+    public Servo markerpolo; //team marker servo
     public Servo boas; //Stands for box on a stick :P
-    // Modify this constructor to add any additional initialization parameters - see
-    // other subsystems for examples.
+
     public SubSysLift(RuntimeSupportInterface rt) {
         this.rt = rt;
-        this.log = rt.getRootLog().newLogger(THIS_COMPONENT); // Create a child log.
+        this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
 
     /********* START OF SUBSYSTEM INTERFACE METHODS ***************/
-
     @Override
     public void init() {
         this.log.pri1(LoggingInterface.INIT_START, "");
