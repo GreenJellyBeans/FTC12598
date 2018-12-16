@@ -376,8 +376,8 @@ public class AutonRoverRuckusWizard {
         imuBearingMec(SPIN_SPEED, 45, 2);
         encoderCrabMec(DRIVE_SPEED, 9, 3);
         encoderCrabMec(0.2, 8, 3);
-
         encoderCrabMec(DRIVE_SPEED, 2.5, 2);
+        encoderDriveMec(DRIVE_SPEED, 15, 4);
 
     }
 
