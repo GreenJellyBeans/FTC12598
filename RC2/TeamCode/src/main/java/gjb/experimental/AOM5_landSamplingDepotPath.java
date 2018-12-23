@@ -12,9 +12,9 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOM4_landSamplingCraterPath", group="Pushbot")
+@Autonomous(name="AOM2_landSamplingDepotPath", group="Pushbot")
 //@Disabled
-public class AOM2_landSamplingCraterPath extends LinearOpMode {
+public class AOM5_landSamplingDepotPath extends LinearOpMode {
 
     /* Declare OpMode members. */
 
@@ -35,7 +35,7 @@ public class AOM2_landSamplingCraterPath extends LinearOpMode {
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the BLUE alliance
-        apu.landSamplingCraterPath();
+        apu.landSamplingStraightDepotOtherCraterTestPath();
     }
 
 }
