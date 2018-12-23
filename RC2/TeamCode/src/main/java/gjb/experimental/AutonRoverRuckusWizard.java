@@ -54,7 +54,8 @@ public class AutonRoverRuckusWizard {
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
-    final double SAMPLE_FORWARD = 9.5;
+    final double SAMPLE_FORWARD = 14.5;
+    final double LAND_SAMPLE_FORWARD = 15;
     Orientation angles;
 
     // values is a reference to the hsvValues array.
@@ -291,7 +292,7 @@ public class AutonRoverRuckusWizard {
     public void landSamplingStraightDepotOtherCraterTestPath() {
         //going to Depot after sampling and landing
         autonTrial();
-        knockSampling();
+        landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
         imuBearingMec(SPIN_SPEED, -45, 2);
@@ -301,6 +302,34 @@ public class AutonRoverRuckusWizard {
         encoderDriveMec(0.7, -65, 6);
         setMotorPowerAll(0,0,0,0);
     }
+
+    public void landSamplingStraightDepotBkwdsOtherCraterTestPath() {
+        //going to Depot after sampling and landing
+        autonTrial();
+        landKnockSampling();
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
+        dropMarker();
+        //imuBearingMec(SPIN_SPEED, -45, 2);
+        //encoderDriveMec(DRIVE_SPEED,-5,3);
+        //encoderCrabMec(DRIVE_SPEED, -9, 3);
+        //encoderCrabMec(0.2, -8, 3);
+        //encoderCrabMec(DRIVE_SPEED, 3.5, 2);
+       // encoderDriveMec(0.7, -60, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
+    public void landSamplingStraightDepotTestPath() {
+        //going to Depot after sampling and landing
+        autonTrial();
+
+        knockSampling();
+        encoderDriveMec(DRIVE_SPEED, 40, 5);
+        dropMarker();
+        imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderCrabMec(DRIVE_SPEED, -9, 3);
+        encoderCrabMec(0.2, -8, 3);
+        setMotorPowerAll(0,0,0,0);
+    }
+
 
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
@@ -549,6 +578,7 @@ public class AutonRoverRuckusWizard {
             encoderDriveMec(0.6, 2, 2);
             encoderCrabMec(DRIVE_SPEED, 4, 2);
             log("can you see this");
+
         }
     }
 
@@ -793,6 +823,53 @@ public class AutonRoverRuckusWizard {
         }
         vision.deactivateTFOD();
        // vision.lightsOff();
+    }
+    public void landKnockSampling(){
+        // vision.lightsOn();
+        vision.activateTFOD();
+        if (vision.decideMineral().equals("right")){
+            vision.minerservor.setPosition(MID_SAMPLE);
+            encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
+            betterSleep(350);
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            betterSleep(350);
+            encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(0.5, -15.0, 1.0); // negative of the two previous encoder crabs added together
+            //Changed from DRIVE_SPEED to 0.5
+            log("reached center from right");
+
+        } else if (vision.decideMineral().equals("left")){
+            vision.minerservor.setPosition(MID_SAMPLE);
+            encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
+            encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
+            betterSleep(350);
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            betterSleep(350);
+            encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(0.5,  29.0,1.0); //absolute value of two previous encodercrabs combined
+            //Changed from DRIVE_SPEED to 0.5
+            log("reached center from left");
+
+        }else if (vision.decideMineral().equals("center")){
+            vision.minerservor.setPosition(MID_SAMPLE);
+            encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
+            betterSleep(350);
+            vision.minerservor.setPosition(DOWN_SAMPLE);
+            betterSleep(350);
+            encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
+            vision.minerservor.setPosition(UP_SAMPLE);
+            encoderCrabMec(0.5, 15.0, 1.0);// prev encoder crab *-1
+            //Changed from DRIVE_SPEED to 0.5
+            log("reached center from center");
+
+        } else if (vision.decideMineral()=="cannot_decide"){
+            encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
+            log("reached center cuz it couldn't find it");
+        }
+        vision.deactivateTFOD();
+        // vision.lightsOff();
     }
     // Return a value between -Pi and Pi - suitable for
 // PID algorithms and such
