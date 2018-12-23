@@ -301,18 +301,6 @@ public class AutonRoverRuckusWizard {
         encoderDriveMec(0.7, -65, 6);
         setMotorPowerAll(0,0,0,0);
     }
-    public void landSamplingStraightDepotTestPath() {
-        //going to Depot after sampling and landing
-        autonTrial();
-
-        knockSampling();
-        encoderDriveMec(DRIVE_SPEED, 40, 5);
-        dropMarker();
-        imuBearingMec(SPIN_SPEED, -45, 2);
-        encoderCrabMec(DRIVE_SPEED, -9, 3);
-        encoderCrabMec(0.2, -8, 3);
-        setMotorPowerAll(0,0,0,0);
-    }
 
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
