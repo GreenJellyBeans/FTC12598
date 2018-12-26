@@ -278,7 +278,7 @@ public class AutonRoverRuckusWizard {
         //probably not going to use this path
         //going to Depot and other crater after sampling
         //autonTrial();
-        knockSampling();
+        landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
@@ -324,7 +324,7 @@ public class AutonRoverRuckusWizard {
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
         //autonTrial();
-        knockSampling();
+        landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
@@ -336,37 +336,39 @@ public class AutonRoverRuckusWizard {
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
         encoderDriveMec(DRIVE_SPEED, 40, 5);//inches was 15
         dropMarker();
+        setMotorPowerAll(0,0,0,0);
     }
 
     public void landSamplingDepotCraterPath(){
         //going to Depot and our crater after sampling and landing
         //autonTrial();
-        knockSampling();
+        landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
         imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderDriveMec(DRIVE_SPEED, -3, 2);
         encoderCrabMec(DRIVE_SPEED,9,2);
         //betterSleep(50);
         encoderCrabMec(0.2,8,2);
         encoderCrabMec(DRIVE_SPEED, -3, 0.5);
-        encoderDriveMec(DRIVE_SPEED, -65, 6);
+        encoderDriveMec(DRIVE_SPEED, -70, 6);
         setMotorPowerAll(0,0,0,0);
     }
     public void landSamplingCraterDepotOurCraterPath(){
         //going to Depot and our crater after sampling and landing
         //autonTrial();
-        knockSampling();
+        landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 130, 4); //angle used to be 135
         //betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED,12,2);
-        betterSleep(50);
+        //betterSleep(50);
         encoderCrabMec(0.2,8,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
         //betterSleep(WAIT_TIME);
         imu_reset();
         encoderDriveMec(DRIVE_SPEED, 40, 3);
-        betterSleep(WAIT_TIME);
+        //betterSleep(WAIT_TIME);
         dropMarker();
         encoderCrabMec(0.2,4,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
@@ -377,15 +379,14 @@ public class AutonRoverRuckusWizard {
     public void landSamplingCraterPath () {
         //parking in crater after sampling and landing
         //autonTrial();
-        knockSampling();
-        encoderDriveMec(DRIVE_SPEED, 15, 2); //change forward later
+        landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 45, 2);
         encoderCrabMec(DRIVE_SPEED, 9, 3);
         encoderCrabMec(0.2, 8, 3);
         encoderCrabMec(DRIVE_SPEED, 2.5, 2);
-        encoderDriveMec(DRIVE_SPEED, 15, 4);
-
+        encoderDriveMec(DRIVE_SPEED, 8, 4);
+        setMotorPowerAll(0,0,0,0);
     }
 
 
@@ -832,7 +833,7 @@ public class AutonRoverRuckusWizard {
         } else if (vision.decideMineral().equals("left")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
-            encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
+            encoderCrabMec(DRIVE_SPEED, -13.0, 1.0);
             betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
