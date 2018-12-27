@@ -12,7 +12,7 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOM2_landSamplingDepotCraterPath", group="Pushbot")
+@Autonomous(name="AOM6_landSamplingDepotCraterPath", group="Pushbot")
 //@Disabled
 public class AOM6_landSamplingDepotCraterPath extends LinearOpMode {
 
