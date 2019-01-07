@@ -272,11 +272,13 @@ public class AutonRoverRuckusWizard {
 
 
 
+
+
     public void landSamplingDepotOtherCraterPath() {
         //probably not going to use this path
         //going to Depot and other crater after sampling
-        autonTrial();
-        knockSampling();
+        //autonTrial();
+        landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
@@ -291,7 +293,7 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingStraightDepotOtherCraterTestPath() {
         //going to Depot after sampling and landing
-        autonTrial();
+       // autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
@@ -302,37 +304,27 @@ public class AutonRoverRuckusWizard {
         encoderDriveMec(0.7, -65, 6);
         setMotorPowerAll(0,0,0,0);
     }
+
     public void landSamplingStraightDepotBkwdsOtherCraterTestPath() {
         //going to Depot after sampling and landing
-        autonTrial();
+        //autonTrial();
         landKnockSampling();
-        encoderDriveMec(DRIVE_SPEED, 40, 5);
-        dropMarker();
-        //imuBearingMec(SPIN_SPEED, -45, 2);
-        //encoderDriveMec(DRIVE_SPEED,-5,3);
-        //encoderCrabMec(DRIVE_SPEED, -9, 3);
-        //encoderCrabMec(0.2, -8, 3);
-        //encoderCrabMec(DRIVE_SPEED, 3.5, 2);
-       // encoderDriveMec(0.7, -60, 6);
-        setMotorPowerAll(0,0,0,0);
-    }
-    public void landSamplingStraightDepotTestPath() {
-        //going to Depot after sampling and landing
-        autonTrial();
-
-        knockSampling();
-        encoderDriveMec(DRIVE_SPEED, 40, 5);
+        encoderDriveMec(DRIVE_SPEED, 37, 5);
         dropMarker();
         imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderDriveMec(DRIVE_SPEED,-2,3);
         encoderCrabMec(DRIVE_SPEED, -9, 3);
         encoderCrabMec(0.2, -8, 3);
+        encoderCrabMec(DRIVE_SPEED, 3.5, 2);
+        encoderDriveMec(0.7, -60, 6);
         setMotorPowerAll(0,0,0,0);
     }
+
 
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
-        autonTrial();
-        knockSampling();
+        //autonTrial();
+        landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, -45, 2);
@@ -344,37 +336,39 @@ public class AutonRoverRuckusWizard {
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
         encoderDriveMec(DRIVE_SPEED, 40, 5);//inches was 15
         dropMarker();
+        setMotorPowerAll(0,0,0,0);
     }
 
     public void landSamplingDepotCraterPath(){
         //going to Depot and our crater after sampling and landing
-        autonTrial();
-        knockSampling();
+        //autonTrial();
+        landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
         imuBearingMec(SPIN_SPEED, 45, 2);
+        encoderDriveMec(DRIVE_SPEED, -3, 2);
         encoderCrabMec(DRIVE_SPEED,9,2);
         //betterSleep(50);
         encoderCrabMec(0.2,8,2);
         encoderCrabMec(DRIVE_SPEED, -3, 0.5);
-        encoderDriveMec(DRIVE_SPEED, -65, 6);
+        encoderDriveMec(DRIVE_SPEED, -70, 6);
         setMotorPowerAll(0,0,0,0);
     }
     public void landSamplingCraterDepotOurCraterPath(){
         //going to Depot and our crater after sampling and landing
-        autonTrial();
-        knockSampling();
+        //autonTrial();
+        landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 130, 4); //angle used to be 135
         //betterSleep(WAIT_TIME);
         encoderCrabMec(DRIVE_SPEED,12,2);
-        betterSleep(50);
+        //betterSleep(50);
         encoderCrabMec(0.2,8,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
         //betterSleep(WAIT_TIME);
         imu_reset();
         encoderDriveMec(DRIVE_SPEED, 40, 3);
-        betterSleep(WAIT_TIME);
+        //betterSleep(WAIT_TIME);
         dropMarker();
         encoderCrabMec(0.2,4,2);
         encoderCrabMec(DRIVE_SPEED, -4, 1);
@@ -384,16 +378,15 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingCraterPath () {
         //parking in crater after sampling and landing
-        autonTrial();
-        knockSampling();
-        encoderDriveMec(DRIVE_SPEED, 15, 2); //change forward later
+        //autonTrial();
+        landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 45, 2);
         encoderCrabMec(DRIVE_SPEED, 9, 3);
         encoderCrabMec(0.2, 8, 3);
         encoderCrabMec(DRIVE_SPEED, 2.5, 2);
-        encoderDriveMec(DRIVE_SPEED, 15, 4);
-
+        encoderDriveMec(DRIVE_SPEED, 8, 4);
+        setMotorPowerAll(0,0,0,0);
     }
 
 
@@ -833,20 +826,20 @@ public class AutonRoverRuckusWizard {
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(0.5, -15.0, 1.0); // negative of the two previous encoder crabs added together
+            encoderCrabMec(0.5, -17.0, 1.0); // negative of the two previous encoder crabs added together , was -15
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from right");
 
         } else if (vision.decideMineral().equals("left")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
-            encoderCrabMec(DRIVE_SPEED, -11.0, 1.0);
+            encoderCrabMec(DRIVE_SPEED, -13.0, 1.0);
             betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(0.5,  29.0,1.0); //absolute value of two previous encodercrabs combined
+            encoderCrabMec(0.5,  25.0,1.0); //absolute value of two previous encodercrabs combined, was 29.0
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from left");
 
