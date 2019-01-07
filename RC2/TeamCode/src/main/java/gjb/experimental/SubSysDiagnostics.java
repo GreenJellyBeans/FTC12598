@@ -1,5 +1,6 @@
 package gjb.experimental;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,9 +36,8 @@ public class SubSysDiagnostics implements SubSystemInterface {
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
     AutonRoverRuckusWizard wizard;
-
+    private BNO055IMU imu;
     //getBlinkinDriver
-
 
     public SubSysDiagnostics(RuntimeSupportInterface rt, AutonRoverRuckusWizard w) {
         this.wizard = w;
@@ -83,6 +83,10 @@ public class SubSysDiagnostics implements SubSystemInterface {
          wizard.betterSleep(10000);
 
     }
-
+    public  boolean isStalling(){
+        double xa = imu.getLinearAcceleration().xAccel;
+        wizard.log("xAccel" + xa);
+        return false;
+    }
 }
 
