@@ -320,6 +320,22 @@ public class AutonRoverRuckusWizard {
         setMotorPowerAll(0,0,0,0);
     }
 
+    public void landSamplingTestWSideMarker() {
+        //going to Depot after sampling and landing
+        //autonTrial()
+        landKnockSampling();
+        encoderDriveMec(DRIVE_SPEED, 37, 5);
+        imuBearingMec(SPIN_SPEED, -45, 2);
+        encoderDriveMec(DRIVE_SPEED, 9, 3);
+        dropMarker();
+        encoderCrabMec(DRIVE_SPEED, -2, 2);
+        encoderDriveMec(DRIVE_SPEED, 9, 3);
+        encoderDriveMec(0.2, 8, 3);
+        encoderDriveMec(DRIVE_SPEED, -3.5, 2);
+        encoderCrabMec(0.7, -60, 6);
+        setMotorPowerAll(0,0,0,0);
+    }
+
 
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
@@ -607,11 +623,11 @@ public class AutonRoverRuckusWizard {
 
     public void dropMarker() {
         this.log.pri1(LoggingInterface.OTHER, "marker servo going down");
-        lift.markerpolo.setPosition(lift.DROP_POS);
+        lift.markerpolo.setPosition(lift.DROP_POS); //was markerpolo
         log("waiting for it to slide off");
         betterSleep(MARKER_WAIT_TIME);
         log("marker servo lift up");
-        lift.markerpolo.setPosition(lift.START_POS);
+        lift.markerpolo.setPosition(lift.START_POS); //was markerpolo
         betterSleep(WAIT_TIME);
     }
     public void servoTest(){
