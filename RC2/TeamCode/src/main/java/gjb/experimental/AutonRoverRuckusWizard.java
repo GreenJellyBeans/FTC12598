@@ -325,7 +325,7 @@ public class AutonRoverRuckusWizard {
         //autonTrial()
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 37, 5);
-        imuBearingMec(SPIN_SPEED, -45, 2);
+        imuBearingMec(SPIN_SPEED,  45, 2);
         encoderDriveMec(DRIVE_SPEED, 9, 3);
         dropMarker();
         encoderCrabMec(DRIVE_SPEED, -2, 2);
