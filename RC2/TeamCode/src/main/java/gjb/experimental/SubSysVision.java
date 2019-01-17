@@ -64,7 +64,7 @@ public class SubSysVision implements SubSystemInterface {
         lumine = rt.hwLookup().getDcMotor("lumine");
         lumine.setDirection(DcMotor.Direction. FORWARD);
         lumine.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        minerservor.setPosition(0.25);
+        minerservor.setPosition(0.49); //was 0.25
         if (ENABLE_DISPLAY) {
             int cameraMonitorViewId = rt.getIdentifierFromPackage("cameraMonitorViewId", "id");
             parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);

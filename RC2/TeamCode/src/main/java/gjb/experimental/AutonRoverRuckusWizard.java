@@ -277,7 +277,7 @@ public class AutonRoverRuckusWizard {
     public void landSamplingDepotOtherCraterPath() {
         //probably not going to use this path
         //going to Depot and other crater after sampling
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
@@ -293,7 +293,7 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingStraightDepotOtherCraterTestPath() {
         //going to Depot after sampling and landing
-       // autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
@@ -307,7 +307,7 @@ public class AutonRoverRuckusWizard {
 
     public void landSamplingStraightDepotBkwdsOtherCraterTestPath() {
         //going to Depot after sampling and landing
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 37, 5);
         dropMarker();
@@ -322,24 +322,27 @@ public class AutonRoverRuckusWizard {
 
     public void landSamplingTestWSideMarker() {
         //going to Depot after sampling and landing
-        //autonTrial()
+        autonTrial();
         landKnockSampling();
-        encoderDriveMec(DRIVE_SPEED, 37, 5);
+        encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  45, 2);
-        encoderDriveMec(DRIVE_SPEED, 9, 3);
+        encoderDriveMec(0.7, 17, 3);
         dropMarker();
-        encoderCrabMec(DRIVE_SPEED, -2, 2);
-        encoderDriveMec(DRIVE_SPEED, 9, 3);
-        encoderDriveMec(0.2, 8, 3);
-        encoderDriveMec(DRIVE_SPEED, -3.5, 2);
-        encoderCrabMec(0.7, -60, 6);
+        encoderDriveMec(0.5, -3.5, 2);
+        encoderCrabMec(DRIVE_SPEED, -37, 4);
+        encoderDriveMec(0.7, 4, 2);
+        encoderCrabMec(0.7,-30,3);
         setMotorPowerAll(0,0,0,0);
+    }
+
+    public void crabTest(){
+        autonTrial();
     }
 
 
     public void landSamplingDepotPath() {
         //going to Depot after sampling and landing
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(0.4, 1, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
@@ -357,7 +360,7 @@ public class AutonRoverRuckusWizard {
 
     public void landSamplingDepotCraterPath(){
         //going to Depot and our crater after sampling and landing
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 40, 5);
         dropMarker();
@@ -372,7 +375,7 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingCraterDepotOurCraterPath(){
         //going to Depot and our crater after sampling and landing
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 130, 4); //angle used to be 135
@@ -394,7 +397,7 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingCraterPath () {
         //parking in crater after sampling and landing
-        //autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderCrabMec(DRIVE_SPEED, MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 45, 2);
@@ -587,6 +590,7 @@ public class AutonRoverRuckusWizard {
             log("can you see this");
 
         }
+        log("helooooooooooo");
     }
 
 
@@ -614,9 +618,11 @@ public class AutonRoverRuckusWizard {
         lift.motorola.setPower(0);
        log("lift status: stopped");
         rt.telemetry().update();
-        if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) && lift.limitswitch_up.getState() == true) {
+        if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) ) {
+
             reached = true;
         }
+        log("limit switch up:" +lift.limitswitch_up.getState());
         return reached;
     }
 
@@ -633,19 +639,19 @@ public class AutonRoverRuckusWizard {
     public void servoTest(){
         log("putting power to servo");
         log("0.2");
-        lift.boas.setPosition(0.2);
+        vision.minerservor.setPosition(0.2);
         betterSleep(2000);
         log("0.3");
-        lift.boas.setPosition(0.3);
+        vision.minerservor.setPosition(0.3);
         betterSleep(2000);
         log("0.4");
-        lift.boas.setPosition(0.4);
+        vision.minerservor.setPosition(0.4);
         betterSleep(2000);
         log("0.5");
-        lift.boas.setPosition(0.5);
+        vision.minerservor.setPosition(0.5);
         betterSleep(2000);
         log("0.75");
-        lift.boas.setPosition(0.75);
+        vision.minerservor.setPosition(0.75);
         betterSleep(2000);
         //log("1");
         //lift.boas.setPosition(1);
