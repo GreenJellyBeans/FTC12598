@@ -25,6 +25,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     private ITask_simpleDriveMec driveTask;
     private ITask_LiftWLimitSwitches liftTask;
     private ITask_BoxServo boasTask;
+    //private ITask_TwoPartArm armTask;
     private LoggingInterface log;
 
     /*************** START OF OPMODE INTERFACE METHODS **********************/
@@ -53,7 +54,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         lift.init();
         liftTask.init();
         boasTask.init();
-
+       // armTask.init();
         log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
     }
 
@@ -63,6 +64,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         driveTask.init_loop();
         liftTask.init_loop();
         boasTask.init_loop();
+        //armTask.init_loop();
     }
 
 
@@ -71,6 +73,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         driveTask.start();
         liftTask.start();
         boasTask.start();
+        //armTask.start();
     }
 
     @Override
@@ -78,6 +81,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         driveTask.loop();
         liftTask.loop();
         boasTask.loop();
+        //armTask.loop();
     }
 
     @Override
@@ -85,6 +89,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         driveTask.stop();
         liftTask.stop();
         boasTask.stop();
+        //armTask.stop();
         rt.stopLogging();
     }
 
