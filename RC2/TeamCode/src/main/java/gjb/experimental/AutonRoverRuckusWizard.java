@@ -618,7 +618,7 @@ public class AutonRoverRuckusWizard {
         lift.motorola.setPower(0);
        log("lift status: stopped");
         rt.telemetry().update();
-        if (rt.opModeIsActive() && (runtime.seconds() < timeoutS) ) {
+        if (rt.opModeIsActive() && (runtime.seconds() - start < timeoutS) ) {
 
             reached = true;
         }
@@ -637,21 +637,24 @@ public class AutonRoverRuckusWizard {
         betterSleep(WAIT_TIME);
     }
     public void servoTest(){
+
+        //was for minerservo
         log("putting power to servo");
         log("0.2");
-        vision.minerservor.setPosition(0.2);
+
+        lift.mineralputter.setPosition(0.2);
         betterSleep(2000);
         log("0.3");
-        vision.minerservor.setPosition(0.3);
+        lift.mineralputter.setPosition(0.3);
         betterSleep(2000);
         log("0.4");
-        vision.minerservor.setPosition(0.4);
+        lift.mineralputter.setPosition(0.4);
         betterSleep(2000);
         log("0.5");
-        vision.minerservor.setPosition(0.5);
+        lift.mineralputter.setPosition(0.5);
         betterSleep(2000);
         log("0.75");
-        vision.minerservor.setPosition(0.75);
+        lift.mineralputter.setPosition(0.75);
         betterSleep(2000);
         //log("1");
         //lift.boas.setPosition(1);

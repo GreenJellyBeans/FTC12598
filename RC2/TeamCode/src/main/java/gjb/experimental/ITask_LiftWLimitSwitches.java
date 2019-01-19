@@ -36,6 +36,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         // Any task initialization code goes here.
         this.log.pri1(LoggingInterface.INIT_END, "");
         lift.markerpolo.setPosition(lift.START_POS);
+        
     }
 
 
@@ -107,6 +108,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         // Send telemetry message to signify robot running;
        // rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
         lift.markerpolo.setPosition(lift.START_POS);
+
     }
 
     @Override
