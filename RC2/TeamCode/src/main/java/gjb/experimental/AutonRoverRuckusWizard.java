@@ -55,7 +55,7 @@ public class AutonRoverRuckusWizard {
     static final int RED = 1;
     static final int BLUE = 2;
     final double SAMPLE_FORWARD = 14.5;
-    final double LAND_SAMPLE_FORWARD = 15;
+    final double LAND_SAMPLE_FORWARD = 12.5;
     Orientation angles;
 
     // values is a reference to the hsvValues array.
@@ -390,7 +390,7 @@ public class AutonRoverRuckusWizard {
     }
     public void landSamplingTestDepotCraterPath(){
         //going to Depot and our crater after sampling and landing
-        autonTrial();
+        //autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  135, 2);
