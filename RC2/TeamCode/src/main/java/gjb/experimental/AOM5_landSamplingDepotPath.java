@@ -2,6 +2,7 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import gjb.interfaces.RuntimeSupportInterface;
@@ -13,7 +14,7 @@ import gjb.utils.AndroidRuntimeSupport;
   */
 
 @Autonomous(name="AOM5_landSamplingDepotPath", group="Pushbot")
-//@Disabled
+@Disabled
 public class AOM5_landSamplingDepotPath extends LinearOpMode {
 
     /* Declare OpMode members. */
