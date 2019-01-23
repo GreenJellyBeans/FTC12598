@@ -50,7 +50,7 @@ public class AutonRoverRuckusWizard {
     // color sensor (add later)
     final long MARKER_WAIT_TIME = 600;
     final double DRIVE_SPEED = 1.0;
-    final double SPIN_SPEED = 0.4;
+    final double SPIN_SPEED = 0.5;
     static final int UNKNOWN = 0;
     static final int RED = 1;
     static final int BLUE = 2;
@@ -393,12 +393,12 @@ public class AutonRoverRuckusWizard {
         autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 32, 5);
-        imuBearingMec(SPIN_SPEED,  135, 2);
-        encoderDriveMec(0.7, -17, 3);
+        imuBearingMec(0.5, 135, 3);
+        encoderDriveMec(0.7, -35, 3);
         dropMarker();
-        encoderDriveMec(0.5, 3.5, 2);
+        encoderDriveMec(0.5, 2.5, 2);
         encoderCrabMec(DRIVE_SPEED, -37, 4);
-        encoderDriveMec(0.7, -4, 2);
+        encoderDriveMec(0.7, -3, 2);
         encoderCrabMec(DRIVE_SPEED,-30,3);
         setMotorPowerAll(0,0,0,0);
     }
@@ -694,19 +694,19 @@ public class AutonRoverRuckusWizard {
         log("putting power to servo");
         log("0.2");
 
-        lift.mineralputter.setPosition(0.2);
+        lift.biggulp.setPosition(0.2);
         betterSleep(2000);
         log("0.3");
-        lift.mineralputter.setPosition(0.3);
+        lift.biggulp.setPosition(0.3);
         betterSleep(2000);
         log("0.4");
-        lift.mineralputter.setPosition(0.4);
+        lift.biggulp.setPosition(0.4);
         betterSleep(2000);
         log("0.5");
-        lift.mineralputter.setPosition(0.5);
+        lift.biggulp.setPosition(0.5);
         betterSleep(2000);
         log("0.75");
-        lift.mineralputter.setPosition(0.75);
+        lift.biggulp.setPosition(0.75);
         betterSleep(2000);
         //log("1");
         //lift.boas.setPosition(1);
@@ -721,7 +721,7 @@ public class AutonRoverRuckusWizard {
     public void servoHalfway(){
         log("putting power to servo");
         log("0.5");
-        lift.boas.setPosition(0.5);
+        lift.biggulp.setPosition(0.5);
         betterSleep(5000);
         log("im done");
     }

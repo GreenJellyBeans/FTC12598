@@ -14,7 +14,7 @@ import gjb.utils.AndroidRuntimeSupport;
   */
 
 @Autonomous(name="First_Strafe_Trial", group="Pushbot")
-@Disabled
+//@Disabled
 public class AOpMode_FirstStrafeTrial extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -36,7 +36,10 @@ public class AOpMode_FirstStrafeTrial extends LinearOpMode {
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the BLUE alliance
-        apu.encoderCrabMec(0.3, 20, 3000);
+       // apu.encoderCrabMec(0.3, 20, 3000);
+        apu.imuBearingMec(0.5, 135, 3);
+        apu.betterSleep(10000);
+        apu.imuBearingMec(1.0, 135, 3);
         apu.deinit();
     }
 
