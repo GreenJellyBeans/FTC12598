@@ -14,7 +14,7 @@ import gjb.utils.AndroidRuntimeSupport;
   */
 
 @Autonomous(name="AOM4_landSamplingCraterPath", group="Pushbot")
-@Disabled
+//@Disabled
 public class AOM4_landSamplingCraterPath extends LinearOpMode {
 
     /* Declare OpMode members. */
