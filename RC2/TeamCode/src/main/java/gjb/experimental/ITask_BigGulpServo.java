@@ -11,24 +11,24 @@ import gjb.interfaces.RuntimeSupportInterface;
 import gjb.interfaces.TaskInterface;
 
 
-public class ITask_BoxServo implements TaskInterface {
+public class ITask_BigGulpServo implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
-    final double MIN_STICK = 0.2;
+    final double MIN_STICK = 0.0;
     final double MAX_STICK = 0.85;
     final double STICK_SPEED = 0.005;// taken from last year's servo claws
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
-    SubSysLift boas;
+    SubSysLift biggulp;
     double stickPos =  MIN_STICK;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
-    public ITask_BoxServo(RuntimeSupportInterface rt, SubSysLift boas) {
+    public ITask_BigGulpServo(RuntimeSupportInterface rt, SubSysLift biggulp) {
         this.rt = rt;
-        this.boas  = boas;
+        this.biggulp  = biggulp;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
@@ -55,28 +55,11 @@ public class ITask_BoxServo implements TaskInterface {
     }
 
 
-   // @Override
-    public void loop_OLD() {
-        // Periodic code to be run when the task is actually running (after start and
-        // before stop) goes here.
-        //if limit switch is high, set power to zer.
-        //else set power to one
-        //armM.leftDrive.setPower(1);
-        // Set the red led on the DIM based on the input digital channel state.
-        /*if (armS.limitswitch_Y.getState()) {
-           // rt.telemetry().addData("limitswitch", "HIGH");
-            armS.armM.setPower(0);
-        } else {
-          //  rt.telemetry().addData("LimitSwitch", "LOW");
-            armS.armM.setPower(0.5);
-        }
-        */
-    }
 
     @Override
     public void loop() {
 
-        // Use gamepad left & right Bumpers to move the box servo up and down
+        // Use gamepad left & right Bumpers to move the mineral putter up and down
         if (rt.gamepad2().right_bumper()){
             stickPos = stickPos + STICK_SPEED;
         } else if (rt.gamepad2().left_bumper()){
@@ -84,7 +67,7 @@ public class ITask_BoxServo implements TaskInterface {
         }
 
         stickPos = Range.clip(stickPos, MIN_STICK, MAX_STICK);
-        boas.boas.setPosition(stickPos);
+        biggulp.biggulp.setPosition(stickPos);
 
 
         // Send telemetry message to signify robot running;

@@ -23,15 +23,15 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.5; //temporarily changed bc spacer of limit swith is too fat
     public static final double DROP_POS = 1.0; //servo is now boas, was 0.9
-    public static final double BOAS_START = 0.2; //find number using servo test,
-    public static final double PUTTER_START = 0.2; // find init pos using servo test
+   // public static final double BOAS_START = 0.2; //find number using servo test,
+    public static final double GULP_START = 0.5; // find init pos using servo test
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
     public DcMotor motorola; //lift motor
     public Servo markerpolo; //team marker servo
-    public Servo boas; //Stands for box on a stick :P
-    public Servo mineralputter;
+
+    public Servo biggulp;
     //public Servo servo1; // there are two servos and a motor for the 2 part arm
    // public Servo servo2;
     //public DcMotor motor1;
@@ -55,14 +55,15 @@ public class SubSysLift implements SubSystemInterface {
         limitswitch_down  = rt.hwLookup().getDigitalChannel("limit_switch_down");
         limitswitch_down.setMode(DigitalChannel.Mode.INPUT);
         markerpolo = rt.hwLookup().getServo("marker_polo");
-        boas = rt.hwLookup().getServo("boas");
-        mineralputter = rt.hwLookup().getServo("mineral_putter");
+
+        biggulp = rt.hwLookup().getServo("big_gulp");
         // Set lift motor to zero power
         motorola.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorola.setPower(0);
         markerpolo.setPosition(START_POS);
-        boas.setPosition(BOAS_START);
-        mineralputter.setPosition(PUTTER_START);
+
+        biggulp.setPosition(GULP_START);
+        //we will put the init back for the intake when it is less flimsy
         this.log.pri1(LoggingInterface.OTHER, "initialized marker servo");
 
         // Set lift motor to run without encoders.
