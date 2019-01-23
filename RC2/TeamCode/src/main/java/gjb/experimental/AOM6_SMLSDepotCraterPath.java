@@ -35,7 +35,7 @@ public class AOM6_SMLSDepotCraterPath extends LinearOpMode {
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the BLUE alliance
-        apu.landSamplingTestDepotCraterPath();
+        apu.SMLSDepotCraterPath();
     }
 
 }
