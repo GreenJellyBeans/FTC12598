@@ -2,6 +2,7 @@
 package gjb.experimental;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import gjb.interfaces.RuntimeSupportInterface;
@@ -12,9 +13,9 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOM5_landSamplingTestDepotPath", group="Pushbot")
+@Autonomous(name="AOM4_LSCraterPath", group="Pushbot")
 //@Disabled
-public class AOM5_landSamplingTestDepotPath extends LinearOpMode {
+public class AOM4_LSCraterPath extends LinearOpMode {
 
     /* Declare OpMode members. */
 
@@ -35,7 +36,7 @@ public class AOM5_landSamplingTestDepotPath extends LinearOpMode {
 
         // Work the wand, detect jewel color and move forward/backward to dislodge
         // the jewel - this is code specific to the BLUE alliance
-        apu.landSamplingTestDepotPath();
+        apu.LSCraterPath();
     }
 
 }

@@ -308,7 +308,7 @@ public class AutonRoverRuckusWizard {
         setMotorPowerAll(0,0,0,0);
     }
 
-    public void landSamplingTestWSideMarker() {
+    public void SMLSDepotOtherCraterPath() {
         //going to Depot after sampling and landing
         autonTrial();
         landKnockSampling();
@@ -352,7 +352,7 @@ public class AutonRoverRuckusWizard {
         setMotorPowerAll(0,0,0,0);
     }
 
-    public void landSamplingTestDepotPath() {
+    public void SMLSDepotPath() {
         //going to Depot after sampling and landing
         autonTrial();
         landKnockSampling();
@@ -447,7 +447,7 @@ public class AutonRoverRuckusWizard {
         setMotorPowerAll(0,0,0,0);
     }
 
-    public void landSamplingCraterPath () {
+    public void LSCraterPath () {
         //parking in crater after sampling and landing
         autonTrial();
         landKnockSampling();
