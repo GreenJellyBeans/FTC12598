@@ -36,6 +36,8 @@ public class SubSysDiagnostics implements SubSystemInterface {
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
     AutonRoverRuckusWizard wizard;
+    SubSysVision vision;
+    SubSysLift lift;
     private BNO055IMU imu;
     //getBlinkinDriver
 
@@ -81,7 +83,20 @@ public class SubSysDiagnostics implements SubSystemInterface {
          wizard.log("bl:" + wizard.drive.leftDrive.getCurrentPosition());
          wizard.log("br:" + wizard.drive.rightDrive.getCurrentPosition());
          wizard.betterSleep(10000);
-
+    }
+    public void diagnosticsAllServos(){
+        wizard.log("servo for mineral sampling should be moving:");
+        vision.minerservor.setPosition(0.49);
+        wizard.betterSleep(500);
+        vision.minerservor.setPosition(0.8);
+        wizard.betterSleep(500);
+        vision.minerservor.setPosition(1.0);
+        wizard.betterSleep(100);
+        wizard.log("servo for dropping the marker should be moving:");
+        lift.markerpolo.setPosition(0.5);
+        wizard.betterSleep(500);
+        lift.markerpolo.setPosition(1.0);
+        wizard.betterSleep(500);
     }
     public  boolean isStalling(){
         double xa = imu.getLinearAcceleration().xAccel;
