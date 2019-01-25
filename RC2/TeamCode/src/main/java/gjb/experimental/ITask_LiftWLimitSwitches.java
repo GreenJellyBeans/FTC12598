@@ -86,6 +86,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
         } else if (rt.gamepad2().a()){ //was y, switching since a is more intuitive for the driver
             rt.telemetry().addData("LimitSwitch_down", "LOW");
             power = lift.LIFT_DOWN_POWER;
+
         }
 
 
@@ -97,6 +98,7 @@ public class ITask_LiftWLimitSwitches implements TaskInterface {
             power = 0;
             if (rt.gamepad2().a()) //was y, switching since a is more intuitive for the driver
                 power = lift.LIFT_DOWN_POWER;
+
         } else if (rt.gamepad2().y()){ //was a, switching since y is more intuitive for the driver
             rt.telemetry().addData("LimitSwitch_up", "LOW");
             power = lift.LIFT_UP_POWER;

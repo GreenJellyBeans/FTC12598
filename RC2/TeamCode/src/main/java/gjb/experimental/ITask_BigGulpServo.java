@@ -58,7 +58,9 @@ public class ITask_BigGulpServo implements TaskInterface {
 
     @Override
     public void loop() {
-
+        if(rt.gamepad2().a()){
+            stickPos=biggulp.GULP_START;
+        }
         // Use gamepad left & right Bumpers to move the mineral putter up and down
         if (rt.gamepad2().right_bumper()){
             stickPos = stickPos + STICK_SPEED;
