@@ -16,6 +16,10 @@ public interface GamepadInterface {
     boolean right_bumper();
     float left_trigger();
     float right_trigger();
+    boolean dpad_up();
+    boolean dpad_down();
+    boolean dpad_left();
+    boolean dpad_right();
     boolean y();
     boolean a();
 }

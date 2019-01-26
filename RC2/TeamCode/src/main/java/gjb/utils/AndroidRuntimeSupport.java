@@ -179,6 +179,18 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         }
 
         @Override
+        public boolean dpad_up() { return gp.dpad_up; }
+
+        @Override
+        public boolean dpad_down() { return gp.dpad_down; }
+
+        @Override
+        public boolean dpad_left() { return gp.dpad_left; }
+
+        @Override
+        public boolean dpad_right() { return gp.dpad_right; }
+
+        @Override
         public boolean y() {
             return gp.y;
         }
