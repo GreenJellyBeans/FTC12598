@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogInputController;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.hardware.AnalogOutputController;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
@@ -50,6 +51,7 @@ public interface HardwareLookupInterface {
     DcMotor getDcMotor(String name);
     DigitalChannel getDigitalChannel(String name);
     Servo getServo(String name);
+    CRServo getCRServo(String name);
     int getVuforiaCameraId(String id);
     BNO055IMU getIMU(String id);
 }
