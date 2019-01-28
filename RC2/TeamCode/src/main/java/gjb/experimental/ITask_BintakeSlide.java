@@ -17,8 +17,10 @@ public class ITask_BintakeSlide implements TaskInterface {
 
     final double BIN_IN_SPEED = 0.3;// change after testing
     final double BIN_OUT_SPEED = 0.7;// change after testing
+    final double BIN_STOP = 0.495;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
     final double STRIDE_IN_POWER = 0.3; //change after testing
     final double STRIDE_OUT_POWER = 0.7; //change after testing
+    final double STRIDE_STOP = 0.5; //same comment as BIN_STOP
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
 
@@ -60,35 +62,43 @@ public class ITask_BintakeSlide implements TaskInterface {
 
     @Override
     public void loop() {
-        if(rt.gamepad2().dpad_down()) {
+        if (rt.gamepad2().dpad_down()) {
             intakeS.bintake.setPosition(BIN_IN_SPEED);
-       }
-        if(rt.gamepad2().dpad_up()) {
-            intakeS.bintake.setPosition(BIN_OUT_SPEED);
+            rt.telemetry().addData("Bintake", BIN_IN_SPEED);
+        } else{
+            intakeS.bintake.setPosition(BIN_STOP);
         }
-
+        rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
         //we inverted the check since we are using magnetic limit switches
-        double power = 0.5;
+        double power = STRIDE_STOP;
         if (!intakeS.limit_switch_in.getState()) {
             //Can't go in anymore
-            rt.telemetry().addData("limit_switch_in", "HIGH");
-            if (rt.gamepad2().right_stick_y() > 0.2);
+            rt.telemetry().addData("limit_switch_in", intakeS.limit_switch_in.getState());
+            power = STRIDE_STOP;
+            if (-rt.gamepad2().right_stick_y() > 0.2) { //negating joystick valur as a test
                 power = STRIDE_OUT_POWER;
-        } else if (rt.gamepad2().right_stick_y() < -0.2){ //change value later, testing needs to be done
+            }
+        } else if (-rt.gamepad2().right_stick_y() < -0.2) { //change value later, testing needs to be done, negating joystick valur as a test
             rt.telemetry().addData("limit_switch_in", "LOW");
             power = STRIDE_IN_POWER;
-
         }
+
+
+
+
+
+
         //we inverted the check since we are using magnetic limit switches
         if (!intakeS.limit_switch_out.getState()) {
             //Can't go out anymore
             rt.telemetry().addData("limit_switch_out", "HIGH");
-            power = 0;
-            if (rt.gamepad2().right_stick_y() < -0.2) //change value later, testing needs to be done
+            power = STRIDE_STOP;
+            if (-rt.gamepad2().right_stick_y() < -0.2) {//change value later, testing needs to be done //negating joystick valur as a test
                 power = STRIDE_IN_POWER;
-
-        } else if (rt.gamepad2().right_stick_y() > 0.2){ //change value later, testing needs to be done
+            }
+        } else if (-rt.gamepad2().right_stick_y() > 0.2){ //change value later, testing needs to be done //negating joystick valur as a test
             rt.telemetry().addData("limit_switch_out", "LOW");
+
             power = STRIDE_OUT_POWER;
         }
 
