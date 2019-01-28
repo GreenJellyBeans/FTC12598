@@ -23,7 +23,7 @@ public class DOpMode_IntakeSystem extends OpMode{
     private SubSysIntake Intake;
 
     private ITask_BintakeSlide binTask;
-
+    private ITask_ArMadillo dilloTask;
     //private ITask_TwoPartArm armTask;
     private LoggingInterface log;
 
@@ -44,11 +44,12 @@ public class DOpMode_IntakeSystem extends OpMode{
 
         Intake = new SubSysIntake(rt);
         binTask = new ITask_BintakeSlide(rt, Intake);
-
+        dilloTask = new ITask_ArMadillo(rt, Intake);
         // Initialize the subsystem and associated task
 
         Intake.init();
         binTask.init();
+        dilloTask.init();
 
 
         log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
@@ -58,26 +59,26 @@ public class DOpMode_IntakeSystem extends OpMode{
     @Override
     public void init_loop() {
         binTask.init_loop();
-
+        dilloTask.init_loop();
     }
 
 
     @Override
     public void start() {
         binTask.start();
-
+        dilloTask.start();
     }
 
     @Override
     public void loop() {
         binTask.loop();
-
+        dilloTask.loop();
     }
 
     @Override
     public void stop() {
         binTask.stop();
-
+        dilloTask.stop();
         rt.stopLogging();
     }
 
