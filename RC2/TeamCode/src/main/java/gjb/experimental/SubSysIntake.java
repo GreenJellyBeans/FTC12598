@@ -77,8 +77,7 @@ public class SubSysIntake implements SubSystemInterface {
 
 
         biggulp.setPosition(GULP_START);
-        bintake.setPosition(BIN_START);
-        //we will put the init back for the intake when it is less flimsy
+
         this.log.pri1(LoggingInterface.OTHER, "initialized marker servo");
 
         // Set lift motor to run without encoders.
