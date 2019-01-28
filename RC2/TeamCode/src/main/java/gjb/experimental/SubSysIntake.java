@@ -68,8 +68,13 @@ public class SubSysIntake implements SubSystemInterface {
         limit_switch_out  = rt.hwLookup().getDigitalChannel("limit_switch_out");
         limit_switch_out.setMode(DigitalChannel.Mode.INPUT);
 
+        //lookup and init the arm motor
         ArMadillo = rt.hwLookup().getDcMotor("ArMadillo");
         ArMadillo.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
+        ArMadillo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArMadillo.setPower(0);
+        ArMadillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         limit_switch_forward  = rt.hwLookup().getDigitalChannel("limit_switch_forward");
         limit_switch_forward.setMode(DigitalChannel.Mode.INPUT);
         limit_switch_backward  = rt.hwLookup().getDigitalChannel("limit_switch_backward");
