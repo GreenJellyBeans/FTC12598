@@ -60,6 +60,8 @@ public class ITask_ArMadillo implements TaskInterface {
 
         rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
         //high value indicated being pressed
+        //we took out the inverted thing because we are using normal limit switches for the arm
+
         double power = 0;
         if (intakeS.limit_switch_forward.getState()) {
             //Can't go forward anymore
@@ -73,6 +75,7 @@ public class ITask_ArMadillo implements TaskInterface {
             power = DILLO_FWD;
         }
 
+        //we took out the inverted thing because we are using normal limit switches for the arm
         if (intakeS.limit_switch_backward.getState()) {
             //Can't go backward anymore
             rt.telemetry().addData("limit_switch_backward", "HIGH");
