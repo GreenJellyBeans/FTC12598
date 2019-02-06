@@ -16,8 +16,8 @@ public class ITask_ArMadillo implements TaskInterface {
 
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
-    final double DILLO_FWD = 0.2; //change later
-    final double DILLO_BKWD = -0.2; //change later
+    final double DILLO_FWD = 0.8; //change later
+    final double DILLO_BKWD = -0.8; //change later
 
     // Place additional instance variables here - like sub system objects..
     SubSysIntake intakeS;
@@ -59,9 +59,9 @@ public class ITask_ArMadillo implements TaskInterface {
     public void loop() {
 
         rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
-        //we inverted the check since we are using magnetic limit switches
+        //high value indicated being pressed
         double power = 0;
-        if (!intakeS.limit_switch_forward.getState()) {
+        if (intakeS.limit_switch_forward.getState()) {
             //Can't go forward anymore
             rt.telemetry().addData("limit_switch_forward", intakeS.limit_switch_forward.getState());
             power = 0;
@@ -73,13 +73,7 @@ public class ITask_ArMadillo implements TaskInterface {
             power = DILLO_FWD;
         }
 
-
-
-
-
-
-        //we inverted the check since we are using magnetic limit switches
-        if (!intakeS.limit_switch_backward.getState()) {
+        if (intakeS.limit_switch_backward.getState()) {
             //Can't go backward anymore
             rt.telemetry().addData("limit_switch_backward", "HIGH");
             power = 0;
