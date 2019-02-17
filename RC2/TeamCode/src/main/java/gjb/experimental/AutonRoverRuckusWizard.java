@@ -709,6 +709,12 @@ public class AutonRoverRuckusWizard {
         log("0.75");
         lift.biggulp.setPosition(0.75);
         betterSleep(2000);
+        log("0.9");
+        lift.biggulp.setPosition(0.9);
+        betterSleep(2000);
+        log("1");
+        lift.biggulp.setPosition(1);
+        betterSleep(2000);
         //log("1");
         //lift.boas.setPosition(1);
         //betterSleep(2000);
