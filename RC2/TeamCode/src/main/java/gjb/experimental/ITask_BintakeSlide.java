@@ -17,10 +17,13 @@ public class ITask_BintakeSlide implements TaskInterface {
 
     final double BIN_IN_SPEED = 0.3;// change after testing
     final double BIN_OUT_SPEED = 0.7;// change after testing
-    final double BIN_STOP = 0.495;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
+    final double BIN_STOP = 0.5;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
     final double STRIDE_IN_POWER = 0.3; //change after testing
     final double STRIDE_OUT_POWER = 0.7; //change after testing
-    final double STRIDE_STOP = 0.52; //same comment as BIN_STOP  WAS 5
+
+    final double STRIDE_STOP = 0.52; //same comment as BIN_STOP
+
+
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
     boolean bFinished = true;
@@ -70,7 +73,7 @@ public class ITask_BintakeSlide implements TaskInterface {
         if (intakeS.bean_bintake_on()) {
             intakeS.bintake.setPosition(BIN_IN_SPEED);
             rt.telemetry().addData("Bintake", BIN_IN_SPEED);
-        } else{
+        } else {
             intakeS.bintake.setPosition(BIN_STOP);
         }
 
@@ -81,40 +84,36 @@ public class ITask_BintakeSlide implements TaskInterface {
         rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
 
         double power = STRIDE_STOP;
+
         if (intakeS.limit_in_pressed()) {
-            //Can't go in anymore
-         //   rt.telemetry().addData("limit_switch_in", intakeS.limit_switch_in.getState());
             power = STRIDE_STOP;
             if (intakeS.bean_slider_out()) {
                 power = STRIDE_OUT_POWER;
             }
-        } else if (intakeS.bean_slider_in()) { //change value later, testing needs to be done, negating joystick valur as a test
+        } else if (intakeS.bean_slider_in()) {
             power = STRIDE_IN_POWER;
         }
 
-        //we inverted the check since we are using magnetic limit switches
         if (intakeS.limit_out_pressed()) {
             //Can't go out anymore
-             power = STRIDE_STOP;
+            power = STRIDE_STOP;
             if (intakeS.bean_slider_in()) {
                 power = STRIDE_IN_POWER;
             }
-        } else if (intakeS.bean_slider_out()){
+        } else if (intakeS.bean_slider_out()) {
             power = STRIDE_OUT_POWER;
         }
-        intakeS.strider.setPosition(power);
 
+        intakeS.strider.setPosition(power);
 
         //
         // ------------ Telemetry ---------------------------------
         //
 
-        pressed = !intakeS.limit_switch_mid.getState();
-        rt.telemetry().addData("limit_switch_mid pressed: ", pressed );
+        boolean pressed = !intakeS.limit_switch_mid.getState();
+        rt.telemetry().addData("limit_switch_mid pressed: ", pressed);
         rt.telemetry().addData("stride power", power);
     }
-
-
 
     void doAssist() {
         /*
