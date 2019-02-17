@@ -37,6 +37,7 @@ public class SubSysIntake implements SubSystemInterface {
     public Servo strider;
     DigitalChannel limit_switch_out;
     DigitalChannel limit_switch_in;
+    DigitalChannel limit_switch_mid;
 
     public DcMotor ArMadillo;
     DigitalChannel limit_switch_forward;
@@ -68,6 +69,8 @@ public class SubSysIntake implements SubSystemInterface {
         limit_switch_in.setMode(DigitalChannel.Mode.INPUT);
         limit_switch_out  = rt.hwLookup().getDigitalChannel("limit_switch_out");
         limit_switch_out.setMode(DigitalChannel.Mode.INPUT);
+        limit_switch_mid = rt.hwLookup().getDigitalChannel("limit_switch_mid");
+        limit_switch_mid.setMode(DigitalChannel.Mode.INPUT);
 
         //lookup and init the arm motor
         ArMadillo = rt.hwLookup().getDcMotor("ArMadillo");
@@ -105,6 +108,33 @@ public class SubSysIntake implements SubSystemInterface {
     }
 
     /************ END OF SUBSYSTEM INTERFACE METHODS ****************/
+    boolean limit_in_pressed() {
+        //we inverted the check since we are using magnetic limit switches
+        boolean pressed = !this.limit_switch_in.getState();
+        rt.telemetry().addData("limit_switch_in", pressed);
+        return pressed;
+    }
+    boolean limit_out_pressed(){
+        //we inverted the check since we are using magnetic limit switches
+        boolean pressed = !this.limit_switch_out.getState();
+        rt.telemetry().addData("limit_switch_out", pressed);
+        return pressed;
+    }
+
+    boolean bean_slider_out(){
+        boolean out = -rt.gamepad2().right_stick_y() > 0.2; // negating joystick value as a test
+        return out;
+    }
+
+    boolean bean_slider_in(){
+        boolean in = -rt.gamepad2().right_stick_y() < -0.2;
+        return in;
+    }
+
+    boolean bean_bintake_on(){
+        boolean spin = rt.gamepad2().dpad_down();
+        return spin;
+    }
 
     // Place additional helper methods here.
     public double rampedPower (DcMotor motor, double goalpower){
