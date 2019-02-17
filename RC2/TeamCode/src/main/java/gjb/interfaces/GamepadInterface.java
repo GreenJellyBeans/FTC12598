@@ -22,4 +22,5 @@ public interface GamepadInterface {
     boolean dpad_right();
     boolean y();
     boolean a();
+    boolean b();
 }
