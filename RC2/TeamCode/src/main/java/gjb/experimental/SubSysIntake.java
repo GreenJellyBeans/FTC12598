@@ -23,6 +23,7 @@ public class SubSysIntake implements SubSystemInterface {
 
     public static final double GULP_START = 0.5;
     public static final double BIN_START = 0.2;
+    public static final double RATE = 0.1;
     // Place additional instance variables here - like hardware access objects
     /*
     DigitalChannel limitswitch_down; //prevents further downward motion
@@ -106,4 +107,17 @@ public class SubSysIntake implements SubSystemInterface {
     /************ END OF SUBSYSTEM INTERFACE METHODS ****************/
 
     // Place additional helper methods here.
+    public double rampedPower (DcMotor motor, double goalpower){
+        double currentpower = motor.getPower();
+        double newpower=0;
+        if(goalpower==0){
+            newpower=goalpower;
+        } else if (Math.abs(currentpower - goalpower) < RATE){
+            newpower = goalpower;
+        } else {
+            newpower = currentpower + Math.signum(goalpower-currentpower)*RATE;
+
+        }
+        return newpower;
+    }
 }

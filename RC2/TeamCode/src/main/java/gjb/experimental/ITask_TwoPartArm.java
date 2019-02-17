@@ -19,14 +19,14 @@ public class ITask_TwoPartArm implements TaskInterface {
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
-    SubSysLift lift;
+    SubSysIntake intake;
 
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
-    public ITask_TwoPartArm(RuntimeSupportInterface rt, SubSysArm arm) {
+    public ITask_TwoPartArm(RuntimeSupportInterface rt, SubSysIntake intake) {
         this.rt = rt;
-        this.lift = lift;
+        this.intake = intake;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
