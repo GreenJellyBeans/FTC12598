@@ -131,7 +131,7 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
         public CRServo getCRServo(String name) {
             return om.hardwareMap.get(CRServo.class, name);
         }
-        
+
         @Override
         public int getVuforiaCameraId(String id) {
             return getIdentifierFromPackage("cameraMonitorViewId", "id");

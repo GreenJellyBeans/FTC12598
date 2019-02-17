@@ -197,9 +197,11 @@ public class SubSysVision implements SubSystemInterface {
     boolean goodMineral( Recognition r) {
         final double MIN_WIDTH = 120;
         final double MIN_CONFIDENCE = 0.8; // based on trials, in only one condition
+        float aspect = r.getWidth()/Math.max(0.1f, r.getHeight()); // aspect ratio
         boolean w = r.getWidth()>MIN_WIDTH;
         boolean c = r.getConfidence()>MIN_CONFIDENCE;
-        return w && c;
+        boolean a =  aspect > 2.0/3 && aspect < 3.0/2;
+        return w && c && a;
     }
 
 

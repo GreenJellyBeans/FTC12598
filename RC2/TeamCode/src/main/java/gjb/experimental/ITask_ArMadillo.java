@@ -16,8 +16,8 @@ public class ITask_ArMadillo implements TaskInterface {
 
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
-    final double DILLO_FWD = 0.2; //change later
-    final double DILLO_BKWD = -0.2; //change later
+    final double DILLO_FWD = 0.8; //change later
+    final double DILLO_BKWD = -0.8; //change later
 
     // Place additional instance variables here - like sub system objects..
     SubSysIntake intakeS;
