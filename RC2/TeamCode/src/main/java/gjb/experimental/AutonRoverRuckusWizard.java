@@ -310,7 +310,7 @@ public class AutonRoverRuckusWizard {
 
     public void SMLSDepotOtherCraterPath() {
         //going to Depot after sampling and landing
-        autonTrial();
+       // autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  45, 2);
