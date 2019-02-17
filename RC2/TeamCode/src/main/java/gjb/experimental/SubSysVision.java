@@ -200,6 +200,10 @@ public class SubSysVision implements SubSystemInterface {
         boolean w = r.getWidth()>MIN_WIDTH;
         boolean c = r.getConfidence()>MIN_CONFIDENCE;
         return w && c;
+        // From BC competiton - not tested - take into account aspect ratio
+        //float aspect = r.getWidth()/Math.max(0.1f, r.getHeight()); // aspect ratio
+        //boolean a =  aspect > 2.0/3 && aspect < 3.0/2;
+        //return w && c && a;
     }
 
 
