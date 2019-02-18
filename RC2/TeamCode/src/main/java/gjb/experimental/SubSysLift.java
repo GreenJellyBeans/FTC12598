@@ -32,6 +32,10 @@ public class SubSysLift implements SubSystemInterface {
     public Servo markerpolo; //team marker servo
 
     public Servo biggulp;
+    final double MIN_STICK = 0.0;
+    final double MAX_STICK = 0.85;
+    final double STICK_SPEED = 0.005;// taken from last year's servo claws
+    double stickPos =  MIN_STICK;
     //public Servo servo1; // there are two servos and a motor for the 2 part arm
    // public Servo servo2;
     //public DcMotor motor1;

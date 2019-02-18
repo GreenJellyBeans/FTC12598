@@ -16,8 +16,27 @@ import gjb.interfaces.SubSystemInterface;
 
 public class SubSysIntake implements SubSystemInterface {
     final String THIS_COMPONENT = "SS_EMPTY"; // // Replace EMPTY by short word identifying task
-    final public RuntimeSupportInterface rt;
-    final public LoggingInterface log;
+
+    //final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
+
+
+    final double DILLO_FWD = 0.8; //change later
+    final double DILLO_BKWD = -0.8; //change later
+
+
+    final double BIN_IN_SPEED = 0.3;// change after testing
+    final double BIN_OUT_SPEED = 0.7;// change after testing
+    final double BIN_STOP = 0.5;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
+    final double STRIDE_IN_POWER = 0.3; //change after testing
+    final double STRIDE_OUT_POWER = 0.7; //change after testing
+
+    final double STRIDE_STOP = 0.52; //same comment as BIN_STOP
+
+
+    final RuntimeSupportInterface rt; // Runtime support
+    final LoggingInterface log; // Logger
+    boolean bFinished = true;
+    boolean onInside = true;
 
 
 

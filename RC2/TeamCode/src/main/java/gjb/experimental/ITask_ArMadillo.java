@@ -16,8 +16,7 @@ public class ITask_ArMadillo implements TaskInterface {
 
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
-    final double DILLO_FWD = 0.8; //change later
-    final double DILLO_BKWD = -0.8; //change later
+
 
     // Place additional instance variables here - like sub system objects..
     SubSysIntake intakeS;
@@ -68,11 +67,11 @@ public class ITask_ArMadillo implements TaskInterface {
             rt.telemetry().addData("limit_switch_forward", intakeS.limit_switch_forward.getState());
             power = 0;
             if (-rt.gamepad2().left_stick_y() > 0.2) { //negating joystick value as a test, and it works
-                power = DILLO_BKWD;
+                power = intakeS.DILLO_BKWD;
             }
         } else if (-rt.gamepad2().left_stick_y() < -0.2) { //change value later, testing needs to be done, negating joystick valur as a test
             rt.telemetry().addData("limit_switch_forward", "LOW");
-            power = DILLO_FWD;
+            power = intakeS.DILLO_FWD;
         }
 
         //we took out the inverted thing because we are using normal limit switches for the arm
@@ -81,12 +80,12 @@ public class ITask_ArMadillo implements TaskInterface {
             rt.telemetry().addData("limit_switch_backward", "HIGH");
             power = 0;
             if (-rt.gamepad2().left_stick_y() < -0.2) {//change value later, testing needs to be done //negating joystick valur as a test
-                power = DILLO_FWD;
+                power = intakeS.DILLO_FWD;
             }
         } else if (-rt.gamepad2().left_stick_y() > 0.2){ //change value later, testing needs to be done //negating joystick valur as a test
             rt.telemetry().addData("limit_switch_backward", "LOW");
 
-            power = DILLO_BKWD;
+            power = intakeS.DILLO_BKWD;
         }
         rt.telemetry().addData("motor power", power);
         intakeS.ArMadillo.setPower(power);

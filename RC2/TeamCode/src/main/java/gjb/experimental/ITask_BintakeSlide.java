@@ -15,18 +15,12 @@ public class ITask_BintakeSlide implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
 
-    final double BIN_IN_SPEED = 0.3;// change after testing
-    final double BIN_OUT_SPEED = 0.7;// change after testing
-    final double BIN_STOP = 0.5;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
-    final double STRIDE_IN_POWER = 0.3; //change after testing
-    final double STRIDE_OUT_POWER = 0.7; //change after testing
 
-    final double STRIDE_STOP = 0.52; //same comment as BIN_STOP
 
 
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
-    boolean bFinished = true;
+
 
     // Place additional instance variables here - like sub system objects..
     SubSysIntake intakeS;
@@ -52,6 +46,10 @@ public class ITask_BintakeSlide implements TaskInterface {
 
     @Override
     public void init_loop() {
+        if(!intakeS.limit_in_pressed())
+            intakeS.strider.setPosition(intakeS.STRIDE_IN_POWER);
+        if(intakeS.limit_in_pressed())
+            intakeS.strider.setPosition(intakeS.STRIDE_STOP);
         // Code that must execute WHILE waiting for START goes here.
     }
 
@@ -59,6 +57,7 @@ public class ITask_BintakeSlide implements TaskInterface {
     @Override
     public void start() {
         rt.resetStartTime();
+
         // Any code to execute ONCE just when the op mode is started goes here.
     }
 
@@ -71,10 +70,10 @@ public class ITask_BintakeSlide implements TaskInterface {
         //  ---- BINTAKE LOGIC ------
         //
         if (intakeS.bean_bintake_on()) {
-            intakeS.bintake.setPosition(BIN_IN_SPEED);
-            rt.telemetry().addData("Bintake", BIN_IN_SPEED);
+            intakeS.bintake.setPosition(intakeS.BIN_IN_SPEED);
+            rt.telemetry().addData("Bintake", intakeS.BIN_IN_SPEED);
         } else {
-            intakeS.bintake.setPosition(BIN_STOP);
+            intakeS.bintake.setPosition(intakeS.BIN_STOP);
         }
 
         //
@@ -83,25 +82,57 @@ public class ITask_BintakeSlide implements TaskInterface {
 
         rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
 
-        double power = STRIDE_STOP;
+        rt.telemetry().addData("onInside", intakeS.onInside);
+
+        double power = intakeS.STRIDE_STOP;
 
         if (intakeS.limit_in_pressed()) {
-            power = STRIDE_STOP;
+            power = intakeS.STRIDE_STOP;
             if (intakeS.bean_slider_out()) {
-                power = STRIDE_OUT_POWER;
+                power = intakeS.STRIDE_OUT_POWER;
             }
         } else if (intakeS.bean_slider_in()) {
-            power = STRIDE_IN_POWER;
+            power = intakeS.STRIDE_IN_POWER;
         }
 
         if (intakeS.limit_out_pressed()) {
             //Can't go out anymore
-            power = STRIDE_STOP;
+            power = intakeS.STRIDE_STOP;
             if (intakeS.bean_slider_in()) {
-                power = STRIDE_IN_POWER;
+                power = intakeS.STRIDE_IN_POWER;
             }
         } else if (intakeS.bean_slider_out()) {
-            power = STRIDE_OUT_POWER;
+            power = intakeS.STRIDE_OUT_POWER;
+        }
+
+        boolean midPressed = !intakeS.limit_switch_mid.getState();
+
+        if(midPressed){
+            if(power == intakeS.STRIDE_IN_POWER)
+                intakeS.onInside = true;
+            if(power == intakeS.STRIDE_OUT_POWER)
+                intakeS.onInside = false;
+        }
+
+        if(rt.gamepad2().b() ==  true || !intakeS.bFinished) {
+            intakeS.bFinished = false;
+            if (!midPressed) {
+                rt.telemetry().addData("limit_switch_mid", "not pressed");
+                if (!intakeS.limit_switch_in.getState() || intakeS.onInside) {//Can't go in anymore/on the inside from middle
+                    intakeS.onInside = true;
+                    power = intakeS.STRIDE_OUT_POWER;
+                    rt.telemetry().addData("limit_switch_in", "pressed");
+                }
+                if (!intakeS.limit_switch_out.getState() || !intakeS.onInside) {//Can't go out anymore/not on inside from middle
+                    intakeS.onInside = false;
+                    power = intakeS.STRIDE_IN_POWER;
+                    rt.telemetry().addData("limit_switch_out", "pressed");
+                }
+            } else {
+                power = intakeS.STRIDE_STOP;
+                rt.telemetry().addData("limit_switch_mid", "pressed");
+                intakeS.bFinished = true;
+            }
         }
 
         intakeS.strider.setPosition(power);
@@ -115,30 +146,7 @@ public class ITask_BintakeSlide implements TaskInterface {
         rt.telemetry().addData("stride power", power);
     }
 
-    void doAssist() {
-        /*
-        if(rt.gamepad2().b() ==  true || !bFinished) {
-            float power = 0
-            bFinished = false;
-            boolean midPressed = !intakeS.limit_switch_mid.getState();
-            if (!midPressed) {
-                rt.telemetry().addData("limit_switch_mid", "not pressed");
-                if (!intakeS.limit_switch_in.getState()) {//Can't go in anymore
-                    power = STRIDE_OUT_POWER;
-                    rt.telemetry().addData("limit_switch_in", "pressed");
-                }
-                if (!intakeS.limit_switch_out.getState()) {//Can't go out anymore
-                    power = STRIDE_IN_POWER;
-                    rt.telemetry().addData("limit_switch_out", "pressd");
-                }
-            } else {
-                power = STRIDE_STOP;
-                rt.telemetry().addData("limit_switch_mid", "pressed");
-                bFinished = true;
-            }
-        }
-       */
-    }
+
     @Override
     public void stop() {
         this.log.pri1("STOP", "");
