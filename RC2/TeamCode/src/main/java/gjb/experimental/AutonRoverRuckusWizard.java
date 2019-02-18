@@ -40,6 +40,7 @@ public class AutonRoverRuckusWizard {
     SubSysMecDrive drive;
     SubSysLift lift;
     SubSysVision vision;
+    SubSysIntake intake;
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
@@ -57,7 +58,7 @@ public class AutonRoverRuckusWizard {
     final double SAMPLE_FORWARD = 14.5;
     final double LAND_SAMPLE_FORWARD = 12.5;
     Orientation angles;
-
+    final double ARM_POWER = 0.5;
     // values is a reference to the hsvValues array.
     //final float values[] = hsvValues;
     float[] hsvValues = new float[3];
@@ -103,11 +104,12 @@ public class AutonRoverRuckusWizard {
         drive = new SubSysMecDrive(rt, driveConfig);
         lift = new SubSysLift(rt);
         vision = new SubSysVision(rt);
+        intake = new SubSysIntake(rt);
         //Initialize the subsystem and associated task
         drive.init();
         lift.init();
         vision.init();
-
+        intake.init();
     }
 
      public void GOFORWARD (){
@@ -310,7 +312,7 @@ public class AutonRoverRuckusWizard {
 
     public void SMLSDepotOtherCraterPath() {
         //going to Depot after sampling and landing
-       // autonTrial();
+       autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  45, 2);
@@ -461,7 +463,16 @@ public class AutonRoverRuckusWizard {
         setMotorPowerAll(0,0,0,0);
     }
 
+    public void dilloSet() {
+        betterSleep(1000);
+        intake.ArMadillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArMadillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArMadillo.setTargetPosition(100);
+        intake.ArMadillo.setPower(ARM_POWER);
 
+        log("done");
+        betterSleep(1000);
+    }
 
 
 
@@ -659,6 +670,7 @@ public class AutonRoverRuckusWizard {
         final double start = runtime.seconds();
         boolean reached = false;
         log("start");
+        //dilloSet();, we will add this later when we have the right measurements
         while (rt.opModeIsActive() &&
                 (runtime.seconds() - start < timeoutS) &&
                 lift.limitswitch_up.getState() == false) {//lift still hasn't reached the ground
