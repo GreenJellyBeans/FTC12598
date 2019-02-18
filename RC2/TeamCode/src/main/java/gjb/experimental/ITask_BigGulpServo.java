@@ -14,7 +14,7 @@ import gjb.interfaces.TaskInterface;
 public class ITask_BigGulpServo implements TaskInterface {
 
     final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
-    final double MIN_STICK = 0.0;
+    final double MIN_STICK = 0.0; //as high as possible
     final double MAX_STICK = 0.85;
     final double STICK_SPEED = 0.005;// taken from last year's servo claws
     final RuntimeSupportInterface rt; // Runtime support

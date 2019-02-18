@@ -120,6 +120,26 @@ public class SubSysIntake implements SubSystemInterface {
         rt.telemetry().addData("limit_switch_out", pressed);
         return pressed;
     }
+    boolean limit_mid_pressed(){
+        //we inverted the check since we are using magnetic limit switches
+        boolean pressed = !this.limit_switch_mid.getState();
+        rt.telemetry().addData("limit_switch_mid", pressed);
+        return pressed;
+    }
+
+    boolean limit_forward_pressed(){
+        //we inverted the check since we are using magnetic limit switches
+        boolean pressed = this.limit_switch_forward.getState();
+        rt.telemetry().addData("limit_switch_forward", pressed);
+        return pressed;
+    }
+
+    boolean limit_backward_pressed(){
+        //we inverted the check since we are using magnetic limit switches
+        boolean pressed = this.limit_switch_backward.getState();
+        rt.telemetry().addData("limit_switch_backward", pressed);
+        return pressed;
+    }
 
     boolean bean_slider_out(){
         boolean out = -rt.gamepad2().right_stick_y() > 0.2; // negating joystick value as a test
