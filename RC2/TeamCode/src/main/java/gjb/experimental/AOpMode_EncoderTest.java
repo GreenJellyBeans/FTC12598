@@ -33,10 +33,10 @@ public class AOpMode_EncoderTest extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         apu.betterSleep(1000);
-        intake.ArMadillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.ArMadillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.ArMadillo.setTargetPosition(1120);
-        intake.ArMadillo.setPower(ARM_POWER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(1120);
+        intake.ArmaDillo.setPower(ARM_POWER);
 
         apu.log("done");
         apu.betterSleep(1000);

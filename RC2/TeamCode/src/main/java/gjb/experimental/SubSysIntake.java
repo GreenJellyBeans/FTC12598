@@ -4,7 +4,6 @@
  */
 package gjb.experimental;
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -62,7 +61,7 @@ public class SubSysIntake implements SubSystemInterface {
     DigitalChannel limit_switch_in;
     DigitalChannel limit_switch_mid;
 
-    public DcMotor ArMadillo;
+    public DcMotor ArmaDillo;
     DigitalChannel limit_switch_forward;
     DigitalChannel limit_switch_backward;
 
@@ -96,11 +95,11 @@ public class SubSysIntake implements SubSystemInterface {
         limit_switch_mid.setMode(DigitalChannel.Mode.INPUT);
 
         //lookup and init the arm motor
-        ArMadillo = rt.hwLookup().getDcMotor("ArMadillo");
-        ArMadillo.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
-        ArMadillo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ArMadillo.setPower(0);
-        ArMadillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ArmaDillo = rt.hwLookup().getDcMotor("ArmaDillo");
+        ArmaDillo.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
+        ArmaDillo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmaDillo.setPower(0);
+        ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         limit_switch_forward  = rt.hwLookup().getDigitalChannel("limit_switch_forward");
         limit_switch_forward.setMode(DigitalChannel.Mode.INPUT);
@@ -185,6 +184,7 @@ public class SubSysIntake implements SubSystemInterface {
     }
 
     // Place additional helper methods here.
+    //this method makes the power of a motor gradually go to the goalpower
     public double rampedPower (DcMotor motor, double goalpower){
         double currentpower = motor.getPower();
         double newpower=0;
@@ -198,4 +198,15 @@ public class SubSysIntake implements SubSystemInterface {
         }
         return newpower;
     }
+
+
+    //this method uses the values of the joystick to apply a power to the motor
+    public double variablePower() {
+        double fwd_bkwd = -rt.gamepad1().left_stick_y();
+        if ((fwd_bkwd <-0.2 || fwd_bkwd>0.2)) {
+            return fwd_bkwd;
+        }
+        return 0;
+    }
+
 }

@@ -46,13 +46,13 @@ public class AOpMode_AssistTest extends LinearOpMode {
         apu.log("hit mid");
         apu.betterSleep(1000);
         while (!intake.limit_backward_pressed()){
-            intake.ArMadillo.setPower(-ARM_POWER); //wait until it hits the back switch
+            intake.ArmaDillo.setPower(-ARM_POWER); //wait until it hits the back switch
         }
         apu.betterSleep(3000);
-        intake.ArMadillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.ArMadillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.ArMadillo.setTargetPosition(100);
-        intake.ArMadillo.setPower(ARM_POWER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(100);
+        intake.ArmaDillo.setPower(ARM_POWER);
         apu.log("ready");
         intake.deinit();
     }

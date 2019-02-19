@@ -216,10 +216,12 @@ public class ITask_TwoPartArm implements TaskInterface {
         // rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
     }
 
+
     public void arMadilloLogic(){
         rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
         //high value indicated being pressed
         //we took out the inverted thing because we are using normal limit switches for the arm
+
 
         double power = 0;
         if (intakeS.limit_switch_forward.getState()) {
@@ -227,11 +229,11 @@ public class ITask_TwoPartArm implements TaskInterface {
             rt.telemetry().addData("limit_switch_forward", intakeS.limit_switch_forward.getState());
             power = 0;
             if (-rt.gamepad2().left_stick_y() > 0.2) { //negating joystick value as a test, and it works
-                power = intakeS.DILLO_BKWD;
+                power = intakeS.variablePower();
             }
         } else if (-rt.gamepad2().left_stick_y() < -0.2) { //change value later, testing needs to be done, negating joystick valur as a test
             rt.telemetry().addData("limit_switch_forward", "LOW");
-            power = intakeS.DILLO_FWD;
+            power = intakeS.variablePower();
         }
 
         //we took out the inverted thing because we are using normal limit switches for the arm
@@ -240,16 +242,16 @@ public class ITask_TwoPartArm implements TaskInterface {
             rt.telemetry().addData("limit_switch_backward", "HIGH");
             power = 0;
             if (-rt.gamepad2().left_stick_y() < -0.2) {//change value later, testing needs to be done //negating joystick valur as a test
-                power = intakeS.DILLO_FWD;
+                power = intakeS.variablePower();
             }
         } else if (-rt.gamepad2().left_stick_y() > 0.2){ //change value later, testing needs to be done //negating joystick valur as a test
             rt.telemetry().addData("limit_switch_backward", "LOW");
 
-            power = intakeS.DILLO_BKWD;
+            power = intakeS.variablePower();
         }
         rt.telemetry().addData("motor power", power);
-        double newpower = intakeS.rampedPower(intakeS.ArMadillo, power);
-        intakeS.ArMadillo.setPower(newpower);
+        double newpower = intakeS.rampedPower(intakeS.ArmaDillo, power);
+        intakeS.ArmaDillo.setPower(newpower);
         rt.telemetry().addData("newpower", newpower);
 
 

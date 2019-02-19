@@ -1,25 +1,17 @@
 package gjb.experimental;
 
-import android.graphics.Color;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-import java.security.KeyPairGenerator;
 import java.util.Locale;
 
 import gjb.interfaces.LoggingInterface;
@@ -465,10 +457,10 @@ public class AutonRoverRuckusWizard {
 
     public void dilloSet() {
         betterSleep(1000);
-        intake.ArMadillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.ArMadillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.ArMadillo.setTargetPosition(100);
-        intake.ArMadillo.setPower(ARM_POWER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(100);
+        intake.ArmaDillo.setPower(ARM_POWER);
 
         log("done");
         betterSleep(1000);
