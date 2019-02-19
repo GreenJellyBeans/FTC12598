@@ -7,6 +7,7 @@ package gjb.experimental;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
@@ -19,7 +20,7 @@ public class SubSysIntake implements SubSystemInterface {
     //final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
 
 
-    final double DILLO_FWD = 0.51 ; //change later
+    final double DILLO_FWD = 0.5 ; //change later
     final double DILLO_BKWD = -0.4; //change later
 
 
@@ -183,6 +184,13 @@ public class SubSysIntake implements SubSystemInterface {
         return spin;
     }
 
+    boolean bean_ArmaDillo_forward() {
+        return -rt.gamepad2().left_stick_y() > 0; // Need to negate y joystick value so +ve is forward
+    }
+
+    boolean bean_ArmaDillo_backward() {
+        return -rt.gamepad2().left_stick_y() < 0; // Need to negate y joystick value so +ve is forward
+    }
     // Place additional helper methods here.
     //this method makes the power of a motor gradually go to the goalpower
     public double rampedPower (DcMotor motor, double goalpower){
@@ -194,7 +202,6 @@ public class SubSysIntake implements SubSystemInterface {
             newpower = goalpower;
         } else {
             newpower = currentpower + Math.signum(goalpower-currentpower)*RATE;
-
         }
         return newpower;
     }
@@ -202,8 +209,9 @@ public class SubSysIntake implements SubSystemInterface {
 
     //this method uses the values of the joystick to apply a power to the motor
     public double variablePower() {
-        double fwd_bkwd = -rt.gamepad1().left_stick_y();
-        if ((fwd_bkwd <-0.2 || fwd_bkwd>0.2)) {
+        double fwd_bkwd = -rt.gamepad2().left_stick_y();
+        fwd_bkwd = Range.clip(fwd_bkwd, DILLO_BKWD, DILLO_FWD);
+        if ((Math.abs(fwd_bkwd) > 0.2)) {
             return fwd_bkwd;
         }
         return 0;

@@ -218,38 +218,35 @@ public class ITask_TwoPartArm implements TaskInterface {
 
 
     public void arMadilloLogic(){
-        rt.telemetry().addData("joystick_value", rt.gamepad2().right_stick_y());
+        rt.telemetry().addData("LEFT joystick Y value", rt.gamepad2().left_stick_y());
+        rt.telemetry().addData("RIGHT joystick Y value", rt.gamepad2().right_stick_y());
+
         //high value indicated being pressed
         //we took out the inverted thing because we are using normal limit switches for the arm
 
 
         double power = 0;
-        if (intakeS.limit_switch_forward.getState()) {
-            //Can't go forward anymore
-            rt.telemetry().addData("limit_switch_forward", intakeS.limit_switch_forward.getState());
+        if (intakeS.limit_forward_pressed()) {
+            //Can't go forward/downwards anymore
             power = 0;
-            if (-rt.gamepad2().left_stick_y() > 0.2) { //negating joystick value as a test, and it works
+            if (intakeS.bean_ArmaDillo_backward()) {
                 power = intakeS.variablePower();
             }
-        } else if (-rt.gamepad2().left_stick_y() < -0.2) { //change value later, testing needs to be done, negating joystick valur as a test
-            rt.telemetry().addData("limit_switch_forward", "LOW");
-            power = intakeS.variablePower();
+        } else if (intakeS.bean_ArmaDillo_forward()) {
+              power = intakeS.variablePower();
         }
 
-        //we took out the inverted thing because we are using normal limit switches for the arm
-        if (intakeS.limit_switch_backward.getState()) {
-            //Can't go backward anymore
-            rt.telemetry().addData("limit_switch_backward", "HIGH");
+
+        if (intakeS.limit_backward_pressed()) {
+            //Can't go backward/upwards anymore
             power = 0;
-            if (-rt.gamepad2().left_stick_y() < -0.2) {//change value later, testing needs to be done //negating joystick valur as a test
+            if (intakeS.bean_ArmaDillo_forward()) {
                 power = intakeS.variablePower();
             }
-        } else if (-rt.gamepad2().left_stick_y() > 0.2){ //change value later, testing needs to be done //negating joystick valur as a test
-            rt.telemetry().addData("limit_switch_backward", "LOW");
-
+        } else if (intakeS.bean_ArmaDillo_backward()){
             power = intakeS.variablePower();
         }
-        rt.telemetry().addData("motor power", power);
+        rt.telemetry().addData("variable power", power);
         double newpower = intakeS.rampedPower(intakeS.ArmaDillo, power);
         intakeS.ArmaDillo.setPower(newpower);
         rt.telemetry().addData("newpower", newpower);
