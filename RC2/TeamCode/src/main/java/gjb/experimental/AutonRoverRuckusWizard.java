@@ -707,25 +707,25 @@ public class AutonRoverRuckusWizard {
         log("putting power to servo");
         log("0.2");
 
-        lift.biggulp.setPosition(0.2);
+        intake.biggulp.setPosition(0.2);
         betterSleep(2000);
         log("0.3");
-        lift.biggulp.setPosition(0.3);
+        intake.biggulp.setPosition(0.3);
         betterSleep(2000);
         log("0.4");
-        lift.biggulp.setPosition(0.4);
+        intake.biggulp.setPosition(0.4);
         betterSleep(2000);
         log("0.5");
-        lift.biggulp.setPosition(0.5);
+        intake.biggulp.setPosition(0.5);
         betterSleep(2000);
         log("0.75");
-        lift.biggulp.setPosition(0.75);
+        intake.biggulp.setPosition(0.75);
         betterSleep(2000);
         log("0.9");
-        lift.biggulp.setPosition(0.9);
+        intake.biggulp.setPosition(0.9);
         betterSleep(2000);
         log("1");
-        lift.biggulp.setPosition(1);
+        intake.biggulp.setPosition(1);
         betterSleep(2000);
         //log("1");
         //lift.boas.setPosition(1);
@@ -740,7 +740,7 @@ public class AutonRoverRuckusWizard {
     public void servoHalfway(){
         log("putting power to servo");
         log("0.5");
-        lift.biggulp.setPosition(0.5);
+        intake.biggulp.setPosition(0.5);
         betterSleep(5000);
         log("im done");
     }
