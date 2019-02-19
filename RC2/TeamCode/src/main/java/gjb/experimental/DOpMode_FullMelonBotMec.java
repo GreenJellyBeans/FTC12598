@@ -22,9 +22,11 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     // These are initialized during
     private  SubSysMecDrive drive;
     private SubSysLift lift;
+    private SubSysIntake intake;
     private ITask_simpleDriveMec driveTask;
     private ITask_LiftWLimitSwitches liftTask;
-    private ITask_BigGulpServo biggulpTask;
+    private ITask_TwoPartArm armTask;
+
     //private ITask_TwoPartArm armTask;
     private LoggingInterface log;
 
@@ -46,14 +48,16 @@ public class DOpMode_FullMelonBotMec extends OpMode{
         drive = new SubSysMecDrive(rt, driveConfig);
         driveTask = new ITask_simpleDriveMec(rt, drive);
         lift = new SubSysLift(rt);
+        intake = new SubSysIntake(rt);
         liftTask = new ITask_LiftWLimitSwitches(rt, lift);
-        biggulpTask = new ITask_BigGulpServo(rt, lift);
+        armTask = new ITask_TwoPartArm(rt, intake, lift);
         // Initialize the subsystem and associated task
         drive.init();
         driveTask.init();
         lift.init();
         liftTask.init();
-        biggulpTask.init();
+        intake.init();
+        armTask.init();
        // armTask.init();
         log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
     }
@@ -63,7 +67,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     public void init_loop() {
         driveTask.init_loop();
         liftTask.init_loop();
-        biggulpTask.init_loop();
+        armTask.init_loop();
         //armTask.init_loop();
     }
 
@@ -72,7 +76,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     public void start() {
         driveTask.start();
         liftTask.start();
-        biggulpTask.start();
+        armTask.start();
         //armTask.start();
     }
 
@@ -80,7 +84,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     public void loop() {
         driveTask.loop();
         liftTask.loop();
-        biggulpTask.loop();
+        armTask.loop();
         //armTask.loop();
     }
 
@@ -88,7 +92,7 @@ public class DOpMode_FullMelonBotMec extends OpMode{
     public void stop() {
         driveTask.stop();
         liftTask.stop();
-        biggulpTask.stop();
+        armTask.stop();
         //armTask.stop();
         rt.stopLogging();
     }
