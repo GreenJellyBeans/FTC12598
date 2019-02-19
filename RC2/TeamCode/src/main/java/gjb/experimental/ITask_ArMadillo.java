@@ -88,7 +88,7 @@ public class ITask_ArMadillo implements TaskInterface {
             power = intakeS.DILLO_BKWD;
         }
         rt.telemetry().addData("motor power", power);
-        intakeS.ArMadillo.setPower(power);
+        intakeS.ArmaDillo.setPower(power);
 
 
 

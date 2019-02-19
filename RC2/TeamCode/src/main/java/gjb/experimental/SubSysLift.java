@@ -48,7 +48,7 @@ public class SubSysLift implements SubSystemInterface {
         // Any subsystem initialization code goes here.
         // Define and Initialize Motors
         motorola = rt.hwLookup().getDcMotor("lift_motor");
-        motorola.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
+        motorola.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark-40 motors, FORWARD with tetrix or AM-20
         limitswitch_up  = rt.hwLookup().getDigitalChannel("limit_switch_up");
         limitswitch_up.setMode(DigitalChannel.Mode.INPUT);
         limitswitch_down  = rt.hwLookup().getDigitalChannel("limit_switch_down");
