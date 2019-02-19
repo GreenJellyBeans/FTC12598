@@ -23,11 +23,11 @@ public class ITask_BigGulpServo implements TaskInterface {
     final LoggingInterface log; // Logger
 
     // Place additional instance variables here - like sub system objects..
-    SubSysLift biggulp;
+    SubSysIntake biggulp;
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
-    public ITask_BigGulpServo(RuntimeSupportInterface rt, SubSysLift biggulp) {
+    public ITask_BigGulpServo(RuntimeSupportInterface rt, SubSysIntake biggulp) {
         this.rt = rt;
         this.biggulp  = biggulp;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);

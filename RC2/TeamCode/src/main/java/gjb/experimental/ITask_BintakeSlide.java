@@ -86,6 +86,15 @@ public class ITask_BintakeSlide implements TaskInterface {
 
         double power = intakeS.STRIDE_STOP;
 
+        if (intakeS.limit_mid_pressed()) {
+            power = intakeS.STRIDE_STOP;
+            if (intakeS.bean_slider_out()) {
+                power = intakeS.STRIDE_OUT_POWER;
+            }
+        } else if (intakeS.bean_slider_in()) {
+            power = intakeS.STRIDE_IN_POWER;
+        }
+
         if (intakeS.limit_in_pressed()) {
             power = intakeS.STRIDE_STOP;
             if (intakeS.bean_slider_out()) {

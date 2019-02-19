@@ -20,7 +20,6 @@ public class ITask_TwoPartArm implements TaskInterface {
 
     // Place additional instance variables here - like sub system objects..
     SubSysIntake intakeS;
-    SubSysLift biggulp;
 
 
 
@@ -29,7 +28,6 @@ public class ITask_TwoPartArm implements TaskInterface {
     public ITask_TwoPartArm(RuntimeSupportInterface rt, SubSysIntake intake, SubSysLift lift) {
         this.rt = rt;
         this.intakeS = intake;
-        this.biggulp = lift;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
@@ -137,6 +135,15 @@ public class ITask_TwoPartArm implements TaskInterface {
 
         double power = intakeS.STRIDE_STOP;
 
+        if (intakeS.limit_mid_pressed()) {
+            power = intakeS.STRIDE_STOP;
+            if (intakeS.bean_slider_out()) {
+                power = intakeS.STRIDE_OUT_POWER;
+            }
+        } else if (intakeS.bean_slider_in()) {
+            power = intakeS.STRIDE_IN_POWER;
+        }
+
         if (intakeS.limit_in_pressed()) {
             power = intakeS.STRIDE_STOP;
             if (intakeS.bean_slider_out()) {
@@ -155,10 +162,8 @@ public class ITask_TwoPartArm implements TaskInterface {
         } else if (intakeS.bean_slider_out()) {
             power = intakeS.STRIDE_OUT_POWER;
         }
-
-        boolean midPressed = !intakeS.limit_switch_mid.getState();
-
-        if(midPressed){
+        // mira's auton assist code
+        if(intakeS.limit_mid_pressed()){
             if(power == intakeS.STRIDE_IN_POWER)
                 intakeS.onInside = true;
             if(power == intakeS.STRIDE_OUT_POWER)
@@ -167,7 +172,7 @@ public class ITask_TwoPartArm implements TaskInterface {
 
         if(rt.gamepad2().b() ==  true || !intakeS.bFinished) {
             intakeS.bFinished = false;
-            if (!midPressed) {
+            if (!intakeS.limit_mid_pressed()) {
                 rt.telemetry().addData("limit_switch_mid", "not pressed");
                 if (!intakeS.limit_switch_in.getState() || intakeS.onInside) {//Can't go in anymore/on the inside from middle
                     intakeS.onInside = true;
@@ -185,6 +190,7 @@ public class ITask_TwoPartArm implements TaskInterface {
                 intakeS.bFinished = true;
             }
         }
+        // end of Mira's auton assist code
 
         intakeS.strider.setPosition(power);
 
@@ -192,24 +198,24 @@ public class ITask_TwoPartArm implements TaskInterface {
         // ------------ Telemetry ---------------------------------
         //
 
-        boolean pressed = !intakeS.limit_switch_mid.getState();
+        boolean pressed = intakeS.limit_mid_pressed();
         rt.telemetry().addData("limit_switch_mid pressed: ", pressed);
         rt.telemetry().addData("stride power", power);
     }
 
     public void biggulpLogic(){
         if(rt.gamepad2().a()){
-            biggulp.stickPos=biggulp.GULP_START;
+            intakeS.stickPos=intakeS.GULP_START;
         }
         // Use gamepad left & right Bumpers to move the mineral putter up and down
         if (rt.gamepad1().dpad_down()){
-            biggulp.stickPos = biggulp.stickPos + biggulp.STICK_SPEED;
+            intakeS.stickPos = intakeS.stickPos + intakeS.STICK_SPEED;
         } else if (rt.gamepad1().dpad_up()){
-            biggulp.stickPos = biggulp.stickPos - biggulp.STICK_SPEED;
+            intakeS.stickPos = intakeS.stickPos - intakeS.STICK_SPEED;
         }
 
-        biggulp.stickPos = Range.clip(biggulp.stickPos, biggulp.MIN_STICK, biggulp.MAX_STICK);
-        biggulp.biggulp.setPosition(biggulp.stickPos);
+        intakeS.stickPos = Range.clip(intakeS.stickPos, intakeS.MIN_STICK, intakeS.MAX_STICK);
+        intakeS.biggulp.setPosition(intakeS.stickPos);
 
 
         // Send telemetry message to signify robot running;

@@ -45,8 +45,11 @@ public class SubSysIntake implements SubSystemInterface {
 
 
     public static final double GULP_START = 0.5;
-    public static final double BIN_START = 0.2;
     public static final double RATE = 0.1;
+    final double MIN_STICK = 0.0;
+    final double MAX_STICK = 0.85;
+    final double STICK_SPEED = 0.005;// taken from last year's servo claws
+    double stickPos =  MIN_STICK;
     // Place additional instance variables here - like hardware access objects
     /*
     DigitalChannel limitswitch_down; //prevents further downward motion
@@ -69,6 +72,7 @@ public class SubSysIntake implements SubSystemInterface {
     //public Servo servo1; // there are two servos and a motor for the 2 part arm
    // public Servo servo2;
     //public DcMotor motor1;
+
 
     public SubSysIntake(RuntimeSupportInterface rt) {
         this.rt = rt;

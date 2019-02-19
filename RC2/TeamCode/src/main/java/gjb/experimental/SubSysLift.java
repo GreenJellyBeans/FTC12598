@@ -23,19 +23,14 @@ public class SubSysLift implements SubSystemInterface {
     public static final double LIFT_UP_POWER  = 0.75 ; //was -.225
     public static final double START_POS = 0.5; //temporarily changed bc spacer of limit swith is too fat
     public static final double DROP_POS = 1.0; //servo is now boas, was 0.9
-    public static final double GULP_START = 0.5;
-    public static final double GULP_LOW = 1.0;
+
     // Place additional instance variables here - like hardware access objects
     DigitalChannel limitswitch_down; //prevents further downward motion
     DigitalChannel limitswitch_up; //prevents further upward motion
     public DcMotor motorola; //lift motor
     public Servo markerpolo; //team marker servo
 
-    public Servo biggulp;
-    final double MIN_STICK = 0.0;
-    final double MAX_STICK = 0.85;
-    final double STICK_SPEED = 0.005;// taken from last year's servo claws
-    double stickPos =  MIN_STICK;
+
     //public Servo servo1; // there are two servos and a motor for the 2 part arm
    // public Servo servo2;
     //public DcMotor motor1;
@@ -60,13 +55,11 @@ public class SubSysLift implements SubSystemInterface {
         limitswitch_down.setMode(DigitalChannel.Mode.INPUT);
         markerpolo = rt.hwLookup().getServo("marker_polo");
 
-        biggulp = rt.hwLookup().getServo("big_gulp");
         // Set lift motor to zero power
         motorola.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorola.setPower(0);
         markerpolo.setPosition(START_POS);
 
-        biggulp.setPosition(GULP_LOW);
         //we will put the init back for the intake when it is less flimsy
         this.log.pri1(LoggingInterface.OTHER, "initialized marker servo");
 
