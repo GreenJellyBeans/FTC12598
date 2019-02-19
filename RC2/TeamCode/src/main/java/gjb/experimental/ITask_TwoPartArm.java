@@ -26,9 +26,10 @@ public class ITask_TwoPartArm implements TaskInterface {
 
     // Modify this constructor to add any additional initialization parameters - see
     // other tasks for examples.
-    public ITask_TwoPartArm(RuntimeSupportInterface rt, SubSysIntake intake) {
+    public ITask_TwoPartArm(RuntimeSupportInterface rt, SubSysIntake intake, SubSysLift lift) {
         this.rt = rt;
         this.intakeS = intake;
+        this.biggulp = lift;
         this.log = rt.getRootLog().newLogger(THIS_COMPONENT);
     }
 
@@ -91,12 +92,40 @@ public class ITask_TwoPartArm implements TaskInterface {
         //
         //  ---- BINTAKE LOGIC ------
         //
-        if (intakeS.bean_bintake_on()) {
-            intakeS.bintake.setPosition(intakeS.BIN_IN_SPEED);
-            rt.telemetry().addData("Bintake", intakeS.BIN_IN_SPEED);
+        double bintakePower;
+        if (intakeS.bean_bintake_in()) {
+            bintakePower = intakeS.BIN_IN_SPEED;
+        } else if (intakeS.bean_bintake_out()) {
+            bintakePower = intakeS.BIN_OUT_SPEED;
         } else {
-            intakeS.bintake.setPosition(intakeS.BIN_STOP);
+            bintakePower = intakeS.BIN_STOP;
         }
+
+
+        /**
+
+         //Trying to find max & bin speeds for bintake in & out
+
+         if(rt.gamepad2().dpad_up())
+            intakeS.BIN_IN_SPEED+=.01;
+        if(rt.gamepad2().dpad_down())
+            intakeS.BIN_IN_SPEED-=.01;
+
+        if(rt.gamepad2().dpad_right())
+            intakeS.BIN_OUT_SPEED+=.01;
+        if(rt.gamepad2().dpad_left())
+            intakeS.BIN_OUT_SPEED-=.01;
+
+        rt.telemetry().addData("BIN_IN_SPEED", intakeS.BIN_OUT_SPEED);
+        rt.telemetry().addData("BIN_OUT_SPEED", intakeS.BIN_IN_SPEED);
+
+        **/
+
+
+        rt.telemetry().addData("g2 right bumper", rt.gamepad2().right_bumper());
+        rt.telemetry().addData("g2 left bumper", rt.gamepad2().left_bumper());
+        rt.telemetry().addData("Bintake", bintakePower);
+        intakeS.bintake.setPosition(bintakePower);
 
         //
         //  ---- STRIDER LOGIC ------
@@ -173,9 +202,9 @@ public class ITask_TwoPartArm implements TaskInterface {
             biggulp.stickPos=biggulp.GULP_START;
         }
         // Use gamepad left & right Bumpers to move the mineral putter up and down
-        if (rt.gamepad2().right_bumper()){
+        if (rt.gamepad1().dpad_down()){
             biggulp.stickPos = biggulp.stickPos + biggulp.STICK_SPEED;
-        } else if (rt.gamepad2().left_bumper()){
+        } else if (rt.gamepad1().dpad_up()){
             biggulp.stickPos = biggulp.stickPos - biggulp.STICK_SPEED;
         }
 
@@ -219,8 +248,9 @@ public class ITask_TwoPartArm implements TaskInterface {
             power = intakeS.DILLO_BKWD;
         }
         rt.telemetry().addData("motor power", power);
-        intakeS.ArMadillo.setPower(power);
-
+        double newpower = intakeS.rampedPower(intakeS.ArMadillo, power);
+        intakeS.ArMadillo.setPower(newpower);
+        rt.telemetry().addData("newpower", newpower);
 
 
         // Send telemetry message to signify robot running;

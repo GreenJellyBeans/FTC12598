@@ -69,7 +69,7 @@ public class ITask_BintakeSlide implements TaskInterface {
         //
         //  ---- BINTAKE LOGIC ------
         //
-        if (intakeS.bean_bintake_on()) {
+        if (intakeS.bean_bintake_in()) {
             intakeS.bintake.setPosition(intakeS.BIN_IN_SPEED);
             rt.telemetry().addData("Bintake", intakeS.BIN_IN_SPEED);
         } else {

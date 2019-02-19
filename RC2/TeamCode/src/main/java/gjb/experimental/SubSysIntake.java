@@ -20,13 +20,17 @@ public class SubSysIntake implements SubSystemInterface {
     //final String THIS_COMPONENT = "T_EMPTY"; // Replace EMPTY by short word identifying task
 
 
-    final double DILLO_FWD = 0.8; //change later
-    final double DILLO_BKWD = -0.8; //change later
+    final double DILLO_FWD = 0.51 ; //change later
+    final double DILLO_BKWD = -0.4; //change later
 
 
-    final double BIN_IN_SPEED = 0.3;// change after testing
-    final double BIN_OUT_SPEED = 0.7;// change after testing
+
+    //below two doubles can be adjusted using the dpad when not finals (also would have to uncomment code in ITask_TwoPartArm
+
+    final double BIN_OUT_SPEED = .91;// change after testing
+    final double BIN_IN_SPEED = 0.089;// change after testing
     final double BIN_STOP = 0.5;//This value is completely customized for each individual CRServo, we got this value by testing out "random" values close to 0.5
+
     final double STRIDE_IN_POWER = 0.3; //change after testing
     final double STRIDE_OUT_POWER = 0.7; //change after testing
 
@@ -170,8 +174,13 @@ public class SubSysIntake implements SubSystemInterface {
         return in;
     }
 
-    boolean bean_bintake_on(){
-        boolean spin = rt.gamepad2().dpad_down();
+    boolean bean_bintake_in(){
+        boolean spin = rt.gamepad2().right_bumper();
+        return spin;
+    }
+
+    boolean bean_bintake_out(){
+        boolean spin = rt.gamepad2().left_bumper();
         return spin;
     }
 

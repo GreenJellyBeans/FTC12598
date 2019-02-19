@@ -43,10 +43,12 @@ public class DOpMode_IntakeSystem extends OpMode{
 
 
         Intake = new SubSysIntake(rt);
-        armTask = new ITask_TwoPartArm(rt, Intake);
+        lift = new SubSysLift(rt);
+        armTask = new ITask_TwoPartArm(rt, Intake, lift);
         // Initialize the subsystem and associated task
 
         Intake.init();
+        lift.init();
         armTask.init();
         log.pri1(LoggingInterface.INIT_END, THIS_COMPONENT);
     }
