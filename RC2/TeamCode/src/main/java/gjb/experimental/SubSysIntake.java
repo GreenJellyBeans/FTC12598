@@ -34,13 +34,16 @@ public class SubSysIntake implements SubSystemInterface {
     final double STRIDE_IN_POWER = 0.3; //change after testing
     final double STRIDE_OUT_POWER = 0.7; //change after testing
 
+
     final double STRIDE_STOP = 0.52; //same comment as BIN_STOP
+    double stridePower = STRIDE_STOP;
 
 
     final RuntimeSupportInterface rt; // Runtime support
     final LoggingInterface log; // Logger
     boolean bFinished = true;
     boolean onInside = true;
+    boolean assistContinue = false;
 
 
 
