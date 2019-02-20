@@ -205,7 +205,7 @@ public class ITask_TwoPartArm implements TaskInterface {
 
     public void biggulpLogic(){
         if(rt.gamepad2().a()){
-            intakeS.stickPos=intakeS.GULP_START;
+            intakeS.stickPos=intakeS.GULP_END;
         }
         // Use gamepad left & right Bumpers to move the mineral putter up and down
         if (rt.gamepad1().dpad_down()){

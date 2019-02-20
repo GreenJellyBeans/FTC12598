@@ -48,6 +48,7 @@ public class SubSysIntake implements SubSystemInterface {
 
 
     public static final double GULP_START = 0.5;
+    public static final double GULP_END = 0.1;
     public static final double RATE = 0.1;
     final double MIN_STICK = 0.0;
     final double MAX_STICK = 0.85;
