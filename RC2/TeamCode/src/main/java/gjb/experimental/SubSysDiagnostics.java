@@ -2,6 +2,7 @@ package gjb.experimental;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
@@ -33,36 +34,35 @@ IMU - Put the robot on the turn table, and see if the imus report roughly the sa
  */
 public class SubSysDiagnostics implements SubSystemInterface {
     final public RuntimeSupportInterface rt;
-    RevBlinkinLedDriver blinkinLedDriver;
-    RevBlinkinLedDriver.BlinkinPattern pattern;
     AutonRoverRuckusWizard wizard;
     SubSysVision vision;
     SubSysLift lift;
+    SubSysIntake intake;
+    DcMotor motor;
     private BNO055IMU imu;
     //getBlinkinDriver
 
     public SubSysDiagnostics(RuntimeSupportInterface rt, AutonRoverRuckusWizard w) {
-        this.wizard = w;
+        this.wizard = w;// could be null
         this.rt = rt;
     }
 
     @Override
     public void init() {
-        blinkinLedDriver = rt.hwLookup().getBlinkinDriver("blinkin");
-        pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        blinkinLedDriver.setPattern(pattern);
-
+        //lookup and init the arm motor
+        motor = rt.hwLookup().getDcMotor("ArmaDillo");
+        motor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors, was FORWARD with tetrix
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setPower(0);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override
     public void deinit() {
-        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+
     }
 
-    protected void goBlack()
-    {
-        blinkinLedDriver.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-    }
+
     public void diagnosticEncoderMotor(){
          wizard.drive.stopAndResetAllEncoders();
          wizard.log("right after init:");
@@ -103,5 +103,40 @@ public class SubSysDiagnostics implements SubSystemInterface {
         wizard.log("xAccel" + xa);
         return false;
     }
+    public void dilloSet() {
+        intake = new SubSysIntake(rt);
+        intake.init();
+        wizard.betterSleep(4000);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(62);
+       intake.ArmaDillo.setPower(wizard.ARM_POWER);
+       /* wizard.betterSleep(3000);
+        intake.ArmaDillo.setTargetPosition(-100);
+        intake.ArmaDillo.setPower(wizard.ARM_POWER);
+        wizard.betterSleep(3000);
+        intake.ArmaDillo.setTargetPosition(-150);
+        intake.ArmaDillo.setPower(wizard.ARM_POWER);
+        wizard.betterSleep(3000);
+        intake.ArmaDillo.setTargetPosition(-200);
+        intake.ArmaDillo.setPower(wizard.ARM_POWER);
+        wizard.betterSleep(3000);
+        intake.ArmaDillo.setTargetPosition(-250);
+        intake.ArmaDillo.setPower(wizard.ARM_POWER);
+*/
+        wizard.log("done");
+        wizard.betterSleep(10000);
+    }
+    public void dilloReset() {
+        wizard.betterSleep(1000);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(-100);
+        intake.ArmaDillo.setPower(wizard.ARM_POWER);
+
+        wizard.log("done");
+        wizard.betterSleep(1000);
+    }
+
 }
 

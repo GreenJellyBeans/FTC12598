@@ -34,14 +34,6 @@ public class DOpMode_IntakeSystem extends OpMode{
         log = rt.startLogging(DOpMode_IntakeSystem.class.toString());
         log.pri1(LoggingInterface.INIT_START, THIS_COMPONENT);
 
-        //configure the motors
-        SubSysMecDrive.Config driveConfig = new SubSysMecDrive.Config();
-        driveConfig.leftMotorName("left_drive");
-        driveConfig.rightMotorName("right_drive");
-        driveConfig.fleftMotorName("fleft_drive");
-        driveConfig.frightMotorName("fright_drive");
-
-
         Intake = new SubSysIntake(rt);
         lift = new SubSysLift(rt);
         armTask = new ITask_TwoPartArm(rt, Intake, lift);

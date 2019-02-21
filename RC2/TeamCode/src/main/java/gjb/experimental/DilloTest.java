@@ -12,9 +12,9 @@ import gjb.utils.AndroidRuntimeSupport;
  * AutonWizard
   */
 
-@Autonomous(name="AOpMode_DiagnosticsAll", group="Pushbot")
+@Autonomous(name="DilloTest", group="Pushbot")
 //@Disabled
-public class AOpMode_DiagnosticsAll extends LinearOpMode {
+public class DilloTest extends LinearOpMode {
 
     /* Declare OpMode members. */
 
@@ -22,24 +22,21 @@ public class AOpMode_DiagnosticsAll extends LinearOpMode {
 
 
     AutonRoverRuckusWizard apu = null;
-    SubSysVision vision = null;
+    SubSysDiagnostics diagnostics;
+    SubSysIntake intake;
     @Override
     public void runOpMode() {
         double timeoutS;
 
         apu = new AutonRoverRuckusWizard(rt) ;
-        vision= new SubSysVision(rt);
-        SubSysDiagnostics dia = new SubSysDiagnostics(rt, apu);
-        dia.init();
-        vision.init();
+        diagnostics = new SubSysDiagnostics(rt, apu);
+        diagnostics.init();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Work the wand, detect jewel color and move forward/backward to dislodge
-        // the jewel - this is code specific to the BLUE alliance
 
-        dia.diagnosticEncoderMotor();
-        dia.diagnosticsAllServos();
+        diagnostics.dilloSet();
     }
 
 }
