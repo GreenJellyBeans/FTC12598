@@ -206,6 +206,9 @@ public class AndroidRuntimeSupport implements RuntimeSupportInterface {
 
         @Override
         public boolean b() { return gp.b; }
+
+        @Override
+        public boolean x() { return gp.x; }
     }
 
     // INTERFACE METHOD IMPLEMENTATIONS ...

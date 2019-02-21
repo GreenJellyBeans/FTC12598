@@ -23,4 +23,5 @@ public interface GamepadInterface {
     boolean y();
     boolean a();
     boolean b();
+    boolean x();
 }
