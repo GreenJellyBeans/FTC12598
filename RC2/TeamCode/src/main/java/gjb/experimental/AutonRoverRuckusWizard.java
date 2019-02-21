@@ -33,6 +33,8 @@ public class AutonRoverRuckusWizard {
     SubSysLift lift;
     SubSysVision vision;
     SubSysIntake intake;
+
+
     // Put additional h/w objects here:
     // servo
     public Servo color_sorcerer;
@@ -304,13 +306,13 @@ public class AutonRoverRuckusWizard {
 
     public void SMLSDepotOtherCraterPath() {
         //going to Depot after sampling and landing
-       autonTrial();
+        autonTrial();
         landKnockSampling();
         encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  45, 2);
-        encoderDriveMec(0.7, 17, 3);
+        encoderDriveMec(0.7, 25, 3);
         dropMarker();
-        encoderDriveMec(0.5, -3.5, 2);
+        encoderDriveMec(0.5, -2.5, 2);
         encoderCrabMec(DRIVE_SPEED, -37, 4);
         encoderDriveMec(0.7, 4, 2);
         encoderCrabMec(DRIVE_SPEED,-30,3);
@@ -350,12 +352,12 @@ public class AutonRoverRuckusWizard {
         //going to Depot after sampling and landing
         autonTrial();
         landKnockSampling();
-        encoderDriveMec(0.4, 1, 2);
+        encoderDriveMec(0.7, 2, 2);
         encoderCrabMec(DRIVE_SPEED, -MINERAL_STRAFE_DISTANCE, 3);
         imuBearingMec(SPIN_SPEED, 45, 2);
         encoderDriveMec(DRIVE_SPEED,9,3);
         //betterSleep(50);
-        encoderDriveMec(0.2,5,2);
+        encoderDriveMec(0.4,7,2);
         encoderDriveMec(DRIVE_SPEED, -2.5, 2);
         // encoderCrabMec(0.2, 6, 3);
         // encoderCrabMec(DRIVE_SPEED, -4, 2);
@@ -456,10 +458,21 @@ public class AutonRoverRuckusWizard {
     }
 
     public void dilloSet() {
+       // betterSleep(1000);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        intake.ArmaDillo.setTargetPosition(62);
+
+        intake.ArmaDillo.setPower(ARM_POWER);
+
+        log("done");
+        //betterSleep(1000);
+    }
+    public void dilloReset() {
         betterSleep(1000);
         intake.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intake.ArmaDillo.setTargetPosition(100);
+        intake.ArmaDillo.setTargetPosition(-62);
         intake.ArmaDillo.setPower(ARM_POWER);
 
         log("done");
@@ -638,6 +651,9 @@ public class AutonRoverRuckusWizard {
         if (result == true) {
            // betterSleep(5000);
             log("now move");
+            //Resetting the ArmaDillo
+            dilloReset();
+            //betterSleep(500);
             //disengaging from the hook with a series of small actions
             encoderDriveMec(0.6, -2,2);
             encoderCrabMec(DRIVE_SPEED, -4, 2);
@@ -661,8 +677,10 @@ public class AutonRoverRuckusWizard {
     public boolean landLift() {
         final double start = runtime.seconds();
         boolean reached = false;
-        log("start");
-        //dilloSet();, we will add this later when we have the right measurements
+        log("start and wait 5 seconds"); //change after testing
+
+        dilloSet();
+        //betterSleep(5000);
         while (rt.opModeIsActive() &&
                 (runtime.seconds() - start < timeoutS) &&
                 lift.limitswitch_up.getState() == false) {//lift still hasn't reached the ground
@@ -681,6 +699,7 @@ public class AutonRoverRuckusWizard {
         }
         log("limit switch up:" +lift.limitswitch_up.getState());
         return reached;
+
     }
 
 
@@ -909,7 +928,7 @@ public class AutonRoverRuckusWizard {
         if (vision.decideMineral().equals("right")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
-            betterSleep(350);
+            //betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, 16.0, 1.0);
@@ -922,7 +941,7 @@ public class AutonRoverRuckusWizard {
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
             encoderCrabMec(DRIVE_SPEED, -13.0, 1.0);
-            betterSleep(350);
+            //betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
@@ -934,7 +953,7 @@ public class AutonRoverRuckusWizard {
         }else if (vision.decideMineral().equals("center")){
             vision.minerservor.setPosition(MID_SAMPLE);
             encoderDriveMec(DRIVE_SPEED, LAND_SAMPLE_FORWARD, 1.0 );
-            betterSleep(350);
+            //betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
