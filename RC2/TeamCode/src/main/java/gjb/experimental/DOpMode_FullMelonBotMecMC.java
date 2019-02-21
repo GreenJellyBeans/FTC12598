@@ -10,13 +10,13 @@ import gjb.interfaces.LoggingInterface;
 import gjb.interfaces.RuntimeSupportInterface;
 import gjb.utils.AndroidRuntimeSupport;
 
-@TeleOp(name="DOpMode_FullMelonBotMec", group="Pushbot")
+@TeleOp(name="DOpMode_FullMelonBotMecMC", group="Pushbot")
 //@Disabled
 /*
  *  This Driver Controlled OpMode does controls the wheels of the pushbot.
  */
 public class DOpMode_FullMelonBotMecMC extends OpMode{
-    final String THIS_COMPONENT = "DOM_FullMelonBotMec";
+    final String THIS_COMPONENT = "DOM_FullMelonBotMecMC";
     private final RuntimeSupportInterface rt = new AndroidRuntimeSupport(this);
 
     // These are initialized during
