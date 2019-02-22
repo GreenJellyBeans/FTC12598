@@ -44,9 +44,9 @@ public class ITask_TwoPartArmMC implements TaskInterface {
 
     @Override
     public void init_loop() {
-        if(!intakeS.limit_in_pressed())
-            intakeS.strider.setPosition(intakeS.STRIDE_IN_POWER);
-        if(intakeS.limit_in_pressed())
+        if(!intakeS.limit_out_pressed())
+            intakeS.strider.setPosition(intakeS.STRIDE_OUT_POWER);
+        if(intakeS.limit_out_pressed())
             intakeS.strider.setPosition(intakeS.STRIDE_STOP);
         // Code that must execute WHILE waiting for START goes here.
     }
@@ -312,7 +312,6 @@ public class ITask_TwoPartArmMC implements TaskInterface {
     public void autonAssist_loop(){
         //as soon as it hits the backward limit switch, if the current encoder value is not 0, set it to 0
         if(intakeS.limit_backward_pressed()){
-
             if(assistActive){
                 autonAssist_end();
             } else if(intakeS.ArmaDillo.getMode()!= DcMotor.RunMode.STOP_AND_RESET_ENCODER){
@@ -348,16 +347,15 @@ public class ITask_TwoPartArmMC implements TaskInterface {
                 //Mira's code for slider ending*/
                 intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intakeS.biggulp.setPosition(intakeS.GULP_START);
-                //intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                // intakeS.ArmaDillo.setTargetPosition(0);
-                //intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+                intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                intakeS.ArmaDillo.setTargetPosition(0);
+                intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
                 log("assist is done from assist");
             }
         }
     }
 
     public void autonAssist_cancel(){
-        log("was it canceled?");
         if(assistActive) {
             intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intakeS.ArmaDillo.setPower(0);
@@ -369,14 +367,14 @@ public class ITask_TwoPartArmMC implements TaskInterface {
     public void autonAssist_start(){
         //set power to be negative (safely goes back)
         if(!intakeS.limit_backward_pressed()) {
-            //intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+            intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
             log("ARM POWER IS NEGATIVE");
             log("set arm power to negative");
         }
     }
 
     public void autonAssist_end(){
-        log("assist had finished??");
+        log("assist had finished??? from auton end");
         if(assistActive) {
             intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intakeS.ArmaDillo.setPower(0);
