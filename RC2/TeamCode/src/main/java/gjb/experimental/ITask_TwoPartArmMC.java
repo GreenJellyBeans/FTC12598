@@ -72,7 +72,7 @@ public class ITask_TwoPartArmMC implements TaskInterface {
         bintakeSliderLogic();
         biggulpLogic();
         arMadilloLogic();
-        autonAssist();
+       // autonAssist();
         autonAssist_loop();
     }
 
@@ -138,14 +138,14 @@ public class ITask_TwoPartArmMC implements TaskInterface {
 
 
 
-        /*if (intakeS.limit_mid_pressed()) {
+        if (intakeS.limit_mid_pressed()) {
             intakeS.stridePower = intakeS.STRIDE_STOP;
             if (intakeS.bean_slider_out()) {
                 intakeS.stridePower = intakeS.STRIDE_OUT_POWER;
             }
         } else if (intakeS.bean_slider_in()) {
             intakeS.stridePower = intakeS.STRIDE_IN_POWER;
-        } */
+        }
 
         if(!intakeS.bean_slider_out() && !intakeS.bean_slider_in())
             intakeS.stridePower = intakeS.STRIDE_STOP;
@@ -182,19 +182,22 @@ public class ITask_TwoPartArmMC implements TaskInterface {
     }
 
     public void biggulpLogic(){
+        double newPos = intakeS.stickPos;
         if(rt.gamepad2().a()){
-            intakeS.stickPos=intakeS.GULP_START;
+            newPos=intakeS.GULP_END;
         }
         // Use gamepad left & right Bumpers to move the mineral putter up and down
         if (rt.gamepad1().dpad_down()){
-            intakeS.stickPos = intakeS.stickPos + intakeS.STICK_SPEED;
+            newPos = newPos + intakeS.STICK_SPEED;
         } else if (rt.gamepad1().dpad_up()){
-            intakeS.stickPos = intakeS.stickPos - intakeS.STICK_SPEED;
+            newPos = newPos - intakeS.STICK_SPEED;
         }
 
-        intakeS.stickPos = Range.clip(intakeS.stickPos, intakeS.MIN_STICK, intakeS.MAX_STICK);
-        intakeS.biggulp.setPosition(intakeS.stickPos);
-
+        newPos = Range.clip(newPos, intakeS.MIN_STICK, intakeS.MAX_STICK);
+        if(intakeS.stickPos!= newPos) {
+            intakeS.biggulp.setPosition(newPos);
+            intakeS.stickPos = newPos;
+        }
 
         // Send telemetry message to signify robot running;
         // rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
@@ -232,6 +235,8 @@ public class ITask_TwoPartArmMC implements TaskInterface {
         } else if (intakeS.bean_ArmaDillo_backward()){
             power = intakeS.variablePower();
         }
+
+
         rt.telemetry().addData("variable power", power);
         double newpower = intakeS.rampedPower(intakeS.ArmaDillo, power);
         intakeS.ArmaDillo.setPower(newpower);
@@ -241,7 +246,7 @@ public class ITask_TwoPartArmMC implements TaskInterface {
         // Send telemetry message to signify robot running;
         // rt.telemetry().addData("claw",  "Offset = %.2f", clawOffset);
     }
-    // mira's auton assist code
+    // mira's auton assist code-----------------------------
     public void autonAssist(){
         if(intakeS.limit_mid_pressed()){
             if(intakeS.stridePower == intakeS.STRIDE_IN_POWER) {
@@ -289,7 +294,7 @@ public class ITask_TwoPartArmMC implements TaskInterface {
                 }*/
             } else {
                 intakeS.stridePower = intakeS.STRIDE_STOP;
-                rt.telemetry().addData("limit_switch_mid", "pressed");
+               // rt.telemetry().addData("limit_switch_mid", "pressed");
                 if(!intakeS.limit_backward_pressed()){
                     intakeS.ArmaDillo.setPower(intakeS.rampedPower(intakeS.ArmaDillo, intakeS.DILLO_BKWD-.05));
                 }else{
@@ -301,16 +306,16 @@ public class ITask_TwoPartArmMC implements TaskInterface {
 
         }
 
-        // end of Mira's auton assist code
-        //start of Keya's
+        // end of Mira's auton assist code----------------------------------------------------
+        //start of Keya's---------------------------------------------------------------------
     }
     public void autonAssist_loop(){
         //as soon as it hits the backward limit switch, if the current encoder value is not 0, set it to 0
         if(intakeS.limit_backward_pressed()){
-            int ticks = intakeS.ArmaDillo.getCurrentPosition();
+
             if(assistActive){
                 autonAssist_end();
-            } else if(ticks<10){
+            } else if(intakeS.ArmaDillo.getMode()!= DcMotor.RunMode.STOP_AND_RESET_ENCODER){
                 intakeS.ArmaDillo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 encoderReset = true;
                 log("resetting encoder");
@@ -318,6 +323,10 @@ public class ITask_TwoPartArmMC implements TaskInterface {
         }
 
         if(beanActive()){
+            if (intakeS.ArmaDillo.getMode()!= DcMotor.RunMode.RUN_WITHOUT_ENCODER){
+                intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                log("Switching to running w/o encoder");
+            }
             autonAssist_cancel();
         } else if (rt.gamepad2().x()&& !assistActive){
             assistActive = true;
@@ -326,16 +335,29 @@ public class ITask_TwoPartArmMC implements TaskInterface {
                 log("encoders weren't reset!!");
                 autonAssist_cancel();
             } else {
+                /*//Mira's code for slider starting
+                if (!intakeS.limit_out_pressed()) {
+                    rt.telemetry().addData("limit_switch_out", "not pressed");
+                    if(intakeS.strider.getPosition() != intakeS.STRIDE_OUT_POWER){
+                        intakeS.strider.setPosition(intakeS.STRIDE_OUT_POWER);
+                    }
+                } else {
+                    intakeS.stridePower = intakeS.STRIDE_STOP;
+                    rt.telemetry().addData("limit_switch_mid", "pressed");
+                }
+                //Mira's code for slider ending*/
                 intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intakeS.biggulp.setPosition(intakeS.GULP_START);
-                intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                intakeS.ArmaDillo.setTargetPosition(0);
-                intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+                //intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                // intakeS.ArmaDillo.setTargetPosition(0);
+                //intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+                log("assist is done from assist");
             }
         }
     }
 
     public void autonAssist_cancel(){
+        log("was it canceled?");
         if(assistActive) {
             intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intakeS.ArmaDillo.setPower(0);
@@ -347,12 +369,14 @@ public class ITask_TwoPartArmMC implements TaskInterface {
     public void autonAssist_start(){
         //set power to be negative (safely goes back)
         if(!intakeS.limit_backward_pressed()) {
-            intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+            //intakeS.ArmaDillo.setPower(intakeS.DILLO_BKWD);
+            log("ARM POWER IS NEGATIVE");
             log("set arm power to negative");
         }
     }
 
     public void autonAssist_end(){
+        log("assist had finished??");
         if(assistActive) {
             intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intakeS.ArmaDillo.setPower(0);
@@ -374,7 +398,7 @@ public class ITask_TwoPartArmMC implements TaskInterface {
         If the bumper is pressed, enable auton assist, and set motor to RUN_USING_ENCODERS
         startAssist: set biggulp to 0.9, setPosition to 0
      */
-    // end of keya's auton assist code
+    // end of keya's auton assist code---------------------------------------------------
 
     // Place additional helper methods here.
     void log(String s) {
