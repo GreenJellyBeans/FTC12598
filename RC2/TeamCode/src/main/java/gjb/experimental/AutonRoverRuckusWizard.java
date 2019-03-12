@@ -308,15 +308,17 @@ public class AutonRoverRuckusWizard {
         //going to Depot after sampling and landing
         autonTrial();
         landKnockSampling();
-        encoderDriveMec(DRIVE_SPEED, 32, 5);
+       /* encoderDriveMec(DRIVE_SPEED, 32, 5);
         imuBearingMec(SPIN_SPEED,  45, 2);
         encoderDriveMec(0.7, 25, 3);
         dropMarker();
         encoderDriveMec(0.5, -2.5, 2);
         encoderCrabMec(DRIVE_SPEED, -37, 4);
         encoderDriveMec(0.7, 4, 2);
-        encoderCrabMec(DRIVE_SPEED,-30,3);
+        encoderCrabMec(DRIVE_SPEED,-22,3);
+        */
         setMotorPowerAll(0,0,0,0);
+
     }
 
     public void strafeTest() {
@@ -946,7 +948,7 @@ public class AutonRoverRuckusWizard {
             betterSleep(350);
             encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(0.5,  27.0,1.0); //absolute value of two previous encodercrabs combined, was 29.0
+           // encoderCrabMec(0.5,  29.0,1.0); //absolute value of two previous encodercrabs combined, was 29.0
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from left");
 
@@ -956,9 +958,9 @@ public class AutonRoverRuckusWizard {
             //betterSleep(350);
             vision.minerservor.setPosition(DOWN_SAMPLE);
             betterSleep(350);
-            encoderCrabMec(DRIVE_SPEED, -16.0, 1.0);
+            encoderCrabMec(DRIVE_SPEED, -13.0, 1.0);
             vision.minerservor.setPosition(UP_SAMPLE);
-            encoderCrabMec(0.5, 15.0, 1.0);// prev encoder crab *-1
+            encoderCrabMec(0.5, 12.0, 1.0);// prev encoder crab *-1
             //Changed from DRIVE_SPEED to 0.5
             log("reached center from center");
 

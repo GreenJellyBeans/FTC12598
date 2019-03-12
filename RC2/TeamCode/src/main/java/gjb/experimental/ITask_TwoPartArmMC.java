@@ -334,17 +334,6 @@ public class ITask_TwoPartArmMC implements TaskInterface {
                 log("encoders weren't reset!!");
                 autonAssist_cancel();
             } else {
-                /*//Mira's code for slider starting
-                if (!intakeS.limit_out_pressed()) {
-                    rt.telemetry().addData("limit_switch_out", "not pressed");
-                    if(intakeS.strider.getPosition() != intakeS.STRIDE_OUT_POWER){
-                        intakeS.strider.setPosition(intakeS.STRIDE_OUT_POWER);
-                    }
-                } else {
-                    intakeS.stridePower = intakeS.STRIDE_STOP;
-                    rt.telemetry().addData("limit_switch_mid", "pressed");
-                }
-                //Mira's code for slider ending*/
                 intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 intakeS.biggulp.setPosition(intakeS.GULP_START);
                 intakeS.ArmaDillo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -384,7 +373,8 @@ public class ITask_TwoPartArmMC implements TaskInterface {
     }
     //if anything on the 2nd controller or the dpad on the first controller is pressed, then it returns true, because a driver is pressing something
     public boolean beanActive(){
-        return intakeS.bean_slider_out() || intakeS.bean_ArmaDillo_backward() || intakeS.bean_ArmaDillo_forward() || intakeS.bean_slider_in()
+        return intakeS.bean_slider_out() || intakeS.bean_ArmaDillo_backward() || intakeS.bean_ArmaDillo_forward()
+                || intakeS.bean_slider_in()
                 || rt.gamepad1().dpad_up() || rt.gamepad1().dpad_down();
     }
     /* planning:
