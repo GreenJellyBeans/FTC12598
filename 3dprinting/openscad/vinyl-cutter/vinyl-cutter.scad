@@ -1,4 +1,8 @@
-// Frame to mount OFLA rotary cutter on a rail and weigh it down
+// Frame to mount OLFA rotary cutter on a rail and weigh it down.
+// Consists of a back plate, a front plate. Additonally,
+// a weight holder (made of wood or polycarb) attaches to the 
+// front plate.
+//
 // History:
 //  2020 May 1: JMJ Created original design
 //
@@ -10,7 +14,7 @@ MM = 25.4; // Inch to mm
 hole_dist = 3.5*MM;
 base_w = 0.4*MM; // from hole to edge
 ro = 0.5*MM;
-rod_dia = 4; // To let #10 threaded rod fit
+rod_dia = 3/16*1.2*MM; // To let #10 threaded rod fit easily
 
 
 // Back plate
@@ -60,18 +64,13 @@ module front_plate() {
         translate([base_w + hole_dist, hole_y, -EPSILON]) 
             cylinder(r=rod_dia/2, h=2*t);
         bdd = big_hole_dia;
-        translate([base_w + hole_dist/2 -bdd/2, hole_y - bdd/2, -EPSILON])
+        translate([base_w + hole_dist/2 -bdd/2, hole_y - bdd    /2, -EPSILON])
             oblong(bdd, bdd, bdd/2, 2*t);
 
     }
 }
 
 
-//wb = 10;
-//hb = 20;
-//ro = 5;
-
-//oblong(wb, hb, ro, t);
-//back_plate();
-//translate([0, 5*base_w, 0])
+back_plate();
+translate([0, 5*base_w, 0])
     front_plate();
